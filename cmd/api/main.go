@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"management-be/cmd/api/server/commands"
 	"net/http"
 	"os/signal"
 	"syscall"
 	"time"
-
-	"management-be/internal/server"
 )
 
 func gracefulShutdown(apiServer *http.Server, done chan bool) {
@@ -38,7 +37,7 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 
 func main() {
 
-	server := server.NewServer()
+	server := commands.NewServer()
 
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)
