@@ -11,52 +11,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int32) predicate.PlayerStatistic {
+func ID(id int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int32) predicate.PlayerStatistic {
+func IDEQ(id int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int32) predicate.PlayerStatistic {
+func IDNEQ(id int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int32) predicate.PlayerStatistic {
+func IDIn(ids ...int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int32) predicate.PlayerStatistic {
+func IDNotIn(ids ...int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int32) predicate.PlayerStatistic {
+func IDGT(id int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int32) predicate.PlayerStatistic {
+func IDGTE(id int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int32) predicate.PlayerStatistic {
+func IDLT(id int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int32) predicate.PlayerStatistic {
+func IDLTE(id int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldLTE(FieldID, id))
 }
 
 // PlayerID applies equality check predicate on the "player_id" field. It's identical to PlayerIDEQ.
-func PlayerID(v int32) predicate.PlayerStatistic {
+func PlayerID(v int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldEQ(FieldPlayerID, v))
 }
 
@@ -101,22 +101,22 @@ func UpdatedAt(v time.Time) predicate.PlayerStatistic {
 }
 
 // PlayerIDEQ applies the EQ predicate on the "player_id" field.
-func PlayerIDEQ(v int32) predicate.PlayerStatistic {
+func PlayerIDEQ(v int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldEQ(FieldPlayerID, v))
 }
 
 // PlayerIDNEQ applies the NEQ predicate on the "player_id" field.
-func PlayerIDNEQ(v int32) predicate.PlayerStatistic {
+func PlayerIDNEQ(v int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldNEQ(FieldPlayerID, v))
 }
 
 // PlayerIDIn applies the In predicate on the "player_id" field.
-func PlayerIDIn(vs ...int32) predicate.PlayerStatistic {
+func PlayerIDIn(vs ...int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldIn(FieldPlayerID, vs...))
 }
 
 // PlayerIDNotIn applies the NotIn predicate on the "player_id" field.
-func PlayerIDNotIn(vs ...int32) predicate.PlayerStatistic {
+func PlayerIDNotIn(vs ...int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldNotIn(FieldPlayerID, vs...))
 }
 

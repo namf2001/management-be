@@ -18,11 +18,11 @@ import (
 type MatchPlayer struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int32 `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// MatchID holds the value of the "match_id" field.
-	MatchID int32 `json:"match_id,omitempty"`
+	MatchID int `json:"match_id,omitempty"`
 	// PlayerID holds the value of the "player_id" field.
-	PlayerID int32 `json:"player_id,omitempty"`
+	PlayerID int `json:"player_id,omitempty"`
 	// MinutesPlayed holds the value of the "minutes_played" field.
 	MinutesPlayed int32 `json:"minutes_played,omitempty"`
 	// GoalsScored holds the value of the "goals_scored" field.
@@ -107,18 +107,18 @@ func (mp *MatchPlayer) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			mp.ID = int32(value.Int64)
+			mp.ID = int(value.Int64)
 		case matchplayer.FieldMatchID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field match_id", values[i])
 			} else if value.Valid {
-				mp.MatchID = int32(value.Int64)
+				mp.MatchID = int(value.Int64)
 			}
 		case matchplayer.FieldPlayerID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field player_id", values[i])
 			} else if value.Valid {
-				mp.PlayerID = int32(value.Int64)
+				mp.PlayerID = int(value.Int64)
 			}
 		case matchplayer.FieldMinutesPlayed:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

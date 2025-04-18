@@ -10,7 +10,7 @@ import (
 var (
 	// DepartmentsColumns holds the columns for the "departments" table.
 	DepartmentsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
@@ -24,7 +24,7 @@ var (
 	}
 	// MatchesColumns holds the columns for the "matches" table.
 	MatchesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "match_date", Type: field.TypeTime},
 		{Name: "venue", Type: field.TypeString, Nullable: true},
 		{Name: "is_home_game", Type: field.TypeBool, Nullable: true},
@@ -34,7 +34,7 @@ var (
 		{Name: "notes", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "opponent_team_id", Type: field.TypeInt32, Nullable: true},
+		{Name: "opponent_team_id", Type: field.TypeInt, Nullable: true},
 	}
 	// MatchesTable holds the schema information for the "matches" table.
 	MatchesTable = &schema.Table{
@@ -52,7 +52,7 @@ var (
 	}
 	// MatchPlayersColumns holds the columns for the "match_players" table.
 	MatchPlayersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "minutes_played", Type: field.TypeInt32, Nullable: true},
 		{Name: "goals_scored", Type: field.TypeInt32, Nullable: true},
 		{Name: "assists", Type: field.TypeInt32, Nullable: true},
@@ -60,8 +60,8 @@ var (
 		{Name: "red_card", Type: field.TypeBool, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "match_id", Type: field.TypeInt32, Nullable: true},
-		{Name: "player_id", Type: field.TypeInt32, Nullable: true},
+		{Name: "match_id", Type: field.TypeInt, Nullable: true},
+		{Name: "player_id", Type: field.TypeInt, Nullable: true},
 	}
 	// MatchPlayersTable holds the schema information for the "match_players" table.
 	MatchPlayersTable = &schema.Table{
@@ -85,7 +85,7 @@ var (
 	}
 	// PlayersColumns holds the columns for the "players" table.
 	PlayersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "full_name", Type: field.TypeString},
 		{Name: "jersey_number", Type: field.TypeInt32, Unique: true, Nullable: true},
 		{Name: "position", Type: field.TypeString},
@@ -97,7 +97,7 @@ var (
 		{Name: "is_active", Type: field.TypeBool, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "department_id", Type: field.TypeInt32, Nullable: true},
+		{Name: "department_id", Type: field.TypeInt, Nullable: true},
 	}
 	// PlayersTable holds the schema information for the "players" table.
 	PlayersTable = &schema.Table{
@@ -115,7 +115,7 @@ var (
 	}
 	// PlayerStatisticsColumns holds the columns for the "player_statistics" table.
 	PlayerStatisticsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "total_matches", Type: field.TypeInt32, Nullable: true},
 		{Name: "total_minutes_played", Type: field.TypeInt32, Nullable: true},
 		{Name: "total_goals", Type: field.TypeInt32, Nullable: true},
@@ -124,7 +124,7 @@ var (
 		{Name: "total_red_cards", Type: field.TypeInt32, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "player_id", Type: field.TypeInt32, Unique: true, Nullable: true},
+		{Name: "player_id", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// PlayerStatisticsTable holds the schema information for the "player_statistics" table.
 	PlayerStatisticsTable = &schema.Table{
@@ -140,9 +140,20 @@ var (
 			},
 		},
 	}
+	// SchemaMigrationsColumns holds the columns for the "schema_migrations" table.
+	SchemaMigrationsColumns = []*schema.Column{
+		{Name: "version", Type: field.TypeInt, Increment: true},
+		{Name: "dirty", Type: field.TypeBool},
+	}
+	// SchemaMigrationsTable holds the schema information for the "schema_migrations" table.
+	SchemaMigrationsTable = &schema.Table{
+		Name:       "schema_migrations",
+		Columns:    SchemaMigrationsColumns,
+		PrimaryKey: []*schema.Column{SchemaMigrationsColumns[0]},
+	}
 	// TeamsColumns holds the columns for the "teams" table.
 	TeamsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "company_name", Type: field.TypeString, Nullable: true},
 		{Name: "contact_person", Type: field.TypeString, Nullable: true},
@@ -159,7 +170,7 @@ var (
 	}
 	// TeamFeesColumns holds the columns for the "team_fees" table.
 	TeamFeesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "amount", Type: field.TypeFloat64},
 		{Name: "payment_date", Type: field.TypeTime},
 		{Name: "description", Type: field.TypeString, Nullable: true},
@@ -174,7 +185,7 @@ var (
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "username", Type: field.TypeString, Unique: true},
 		{Name: "password", Type: field.TypeString},
 		{Name: "email", Type: field.TypeString, Unique: true},
@@ -195,6 +206,7 @@ var (
 		MatchPlayersTable,
 		PlayersTable,
 		PlayerStatisticsTable,
+		SchemaMigrationsTable,
 		TeamsTable,
 		TeamFeesTable,
 		UsersTable,

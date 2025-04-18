@@ -131,8 +131,8 @@ func (mq *MatchQuery) FirstX(ctx context.Context) *Match {
 
 // FirstID returns the first Match ID from the query.
 // Returns a *NotFoundError when no Match ID was found.
-func (mq *MatchQuery) FirstID(ctx context.Context) (id int32, err error) {
-	var ids []int32
+func (mq *MatchQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = mq.Limit(1).IDs(setContextOp(ctx, mq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -144,7 +144,7 @@ func (mq *MatchQuery) FirstID(ctx context.Context) (id int32, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (mq *MatchQuery) FirstIDX(ctx context.Context) int32 {
+func (mq *MatchQuery) FirstIDX(ctx context.Context) int {
 	id, err := mq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -182,8 +182,8 @@ func (mq *MatchQuery) OnlyX(ctx context.Context) *Match {
 // OnlyID is like Only, but returns the only Match ID in the query.
 // Returns a *NotSingularError when more than one Match ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (mq *MatchQuery) OnlyID(ctx context.Context) (id int32, err error) {
-	var ids []int32
+func (mq *MatchQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = mq.Limit(2).IDs(setContextOp(ctx, mq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -199,7 +199,7 @@ func (mq *MatchQuery) OnlyID(ctx context.Context) (id int32, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (mq *MatchQuery) OnlyIDX(ctx context.Context) int32 {
+func (mq *MatchQuery) OnlyIDX(ctx context.Context) int {
 	id, err := mq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -227,7 +227,7 @@ func (mq *MatchQuery) AllX(ctx context.Context) []*Match {
 }
 
 // IDs executes the query and returns a list of Match IDs.
-func (mq *MatchQuery) IDs(ctx context.Context) (ids []int32, err error) {
+func (mq *MatchQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if mq.ctx.Unique == nil && mq.path != nil {
 		mq.Unique(true)
 	}
@@ -239,7 +239,7 @@ func (mq *MatchQuery) IDs(ctx context.Context) (ids []int32, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (mq *MatchQuery) IDsX(ctx context.Context) []int32 {
+func (mq *MatchQuery) IDsX(ctx context.Context) []int {
 	ids, err := mq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -335,7 +335,7 @@ func (mq *MatchQuery) WithTeam(opts ...func(*TeamQuery)) *MatchQuery {
 // Example:
 //
 //	var v []struct {
-//		OpponentTeamID int32 `json:"opponent_team_id,omitempty"`
+//		OpponentTeamID int `json:"opponent_team_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -358,7 +358,7 @@ func (mq *MatchQuery) GroupBy(field string, fields ...string) *MatchGroupBy {
 // Example:
 //
 //	var v []struct {
-//		OpponentTeamID int32 `json:"opponent_team_id,omitempty"`
+//		OpponentTeamID int `json:"opponent_team_id,omitempty"`
 //	}
 //
 //	client.Match.Query().
@@ -448,7 +448,7 @@ func (mq *MatchQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Match,
 
 func (mq *MatchQuery) loadMatchPlayers(ctx context.Context, query *MatchPlayerQuery, nodes []*Match, init func(*Match), assign func(*Match, *MatchPlayer)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int32]*Match)
+	nodeids := make(map[int]*Match)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -477,8 +477,8 @@ func (mq *MatchQuery) loadMatchPlayers(ctx context.Context, query *MatchPlayerQu
 	return nil
 }
 func (mq *MatchQuery) loadTeam(ctx context.Context, query *TeamQuery, nodes []*Match, init func(*Match), assign func(*Match, *Team)) error {
-	ids := make([]int32, 0, len(nodes))
-	nodeids := make(map[int32][]*Match)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Match)
 	for i := range nodes {
 		fk := nodes[i].OpponentTeamID
 		if _, ok := nodeids[fk]; !ok {
@@ -516,7 +516,7 @@ func (mq *MatchQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (mq *MatchQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(match.Table, match.Columns, sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewQuerySpec(match.Table, match.Columns, sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt))
 	_spec.From = mq.sql
 	if unique := mq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

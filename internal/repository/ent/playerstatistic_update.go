@@ -30,13 +30,13 @@ func (psu *PlayerStatisticUpdate) Where(ps ...predicate.PlayerStatistic) *Player
 }
 
 // SetPlayerID sets the "player_id" field.
-func (psu *PlayerStatisticUpdate) SetPlayerID(i int32) *PlayerStatisticUpdate {
+func (psu *PlayerStatisticUpdate) SetPlayerID(i int) *PlayerStatisticUpdate {
 	psu.mutation.SetPlayerID(i)
 	return psu
 }
 
 // SetNillablePlayerID sets the "player_id" field if the given value is not nil.
-func (psu *PlayerStatisticUpdate) SetNillablePlayerID(i *int32) *PlayerStatisticUpdate {
+func (psu *PlayerStatisticUpdate) SetNillablePlayerID(i *int) *PlayerStatisticUpdate {
 	if i != nil {
 		psu.SetPlayerID(*i)
 	}
@@ -295,7 +295,7 @@ func (psu *PlayerStatisticUpdate) ExecX(ctx context.Context) {
 }
 
 func (psu *PlayerStatisticUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(playerstatistic.Table, playerstatistic.Columns, sqlgraph.NewFieldSpec(playerstatistic.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(playerstatistic.Table, playerstatistic.Columns, sqlgraph.NewFieldSpec(playerstatistic.FieldID, field.TypeInt))
 	if ps := psu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -377,7 +377,7 @@ func (psu *PlayerStatisticUpdate) sqlSave(ctx context.Context) (n int, err error
 			Columns: []string{playerstatistic.PlayerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -390,7 +390,7 @@ func (psu *PlayerStatisticUpdate) sqlSave(ctx context.Context) (n int, err error
 			Columns: []string{playerstatistic.PlayerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -419,13 +419,13 @@ type PlayerStatisticUpdateOne struct {
 }
 
 // SetPlayerID sets the "player_id" field.
-func (psuo *PlayerStatisticUpdateOne) SetPlayerID(i int32) *PlayerStatisticUpdateOne {
+func (psuo *PlayerStatisticUpdateOne) SetPlayerID(i int) *PlayerStatisticUpdateOne {
 	psuo.mutation.SetPlayerID(i)
 	return psuo
 }
 
 // SetNillablePlayerID sets the "player_id" field if the given value is not nil.
-func (psuo *PlayerStatisticUpdateOne) SetNillablePlayerID(i *int32) *PlayerStatisticUpdateOne {
+func (psuo *PlayerStatisticUpdateOne) SetNillablePlayerID(i *int) *PlayerStatisticUpdateOne {
 	if i != nil {
 		psuo.SetPlayerID(*i)
 	}
@@ -697,7 +697,7 @@ func (psuo *PlayerStatisticUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (psuo *PlayerStatisticUpdateOne) sqlSave(ctx context.Context) (_node *PlayerStatistic, err error) {
-	_spec := sqlgraph.NewUpdateSpec(playerstatistic.Table, playerstatistic.Columns, sqlgraph.NewFieldSpec(playerstatistic.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(playerstatistic.Table, playerstatistic.Columns, sqlgraph.NewFieldSpec(playerstatistic.FieldID, field.TypeInt))
 	id, ok := psuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PlayerStatistic.id" for update`)}
@@ -796,7 +796,7 @@ func (psuo *PlayerStatisticUpdateOne) sqlSave(ctx context.Context) (_node *Playe
 			Columns: []string{playerstatistic.PlayerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -809,7 +809,7 @@ func (psuo *PlayerStatisticUpdateOne) sqlSave(ctx context.Context) (_node *Playe
 			Columns: []string{playerstatistic.PlayerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -40,7 +40,7 @@ func (pd *PlayerDelete) ExecX(ctx context.Context) int {
 }
 
 func (pd *PlayerDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(player.Table, sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewDeleteSpec(player.Table, sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt))
 	if ps := pd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

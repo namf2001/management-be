@@ -156,7 +156,7 @@ func (tfu *TeamFeeUpdate) ExecX(ctx context.Context) {
 }
 
 func (tfu *TeamFeeUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(teamfee.Table, teamfee.Columns, sqlgraph.NewFieldSpec(teamfee.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(teamfee.Table, teamfee.Columns, sqlgraph.NewFieldSpec(teamfee.FieldID, field.TypeInt))
 	if ps := tfu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -352,7 +352,7 @@ func (tfuo *TeamFeeUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (tfuo *TeamFeeUpdateOne) sqlSave(ctx context.Context) (_node *TeamFee, err error) {
-	_spec := sqlgraph.NewUpdateSpec(teamfee.Table, teamfee.Columns, sqlgraph.NewFieldSpec(teamfee.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(teamfee.Table, teamfee.Columns, sqlgraph.NewFieldSpec(teamfee.FieldID, field.TypeInt))
 	id, ok := tfuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TeamFee.id" for update`)}

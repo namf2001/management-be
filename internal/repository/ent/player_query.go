@@ -155,8 +155,8 @@ func (pq *PlayerQuery) FirstX(ctx context.Context) *Player {
 
 // FirstID returns the first Player ID from the query.
 // Returns a *NotFoundError when no Player ID was found.
-func (pq *PlayerQuery) FirstID(ctx context.Context) (id int32, err error) {
-	var ids []int32
+func (pq *PlayerQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = pq.Limit(1).IDs(setContextOp(ctx, pq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -168,7 +168,7 @@ func (pq *PlayerQuery) FirstID(ctx context.Context) (id int32, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (pq *PlayerQuery) FirstIDX(ctx context.Context) int32 {
+func (pq *PlayerQuery) FirstIDX(ctx context.Context) int {
 	id, err := pq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -206,8 +206,8 @@ func (pq *PlayerQuery) OnlyX(ctx context.Context) *Player {
 // OnlyID is like Only, but returns the only Player ID in the query.
 // Returns a *NotSingularError when more than one Player ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (pq *PlayerQuery) OnlyID(ctx context.Context) (id int32, err error) {
-	var ids []int32
+func (pq *PlayerQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = pq.Limit(2).IDs(setContextOp(ctx, pq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -223,7 +223,7 @@ func (pq *PlayerQuery) OnlyID(ctx context.Context) (id int32, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (pq *PlayerQuery) OnlyIDX(ctx context.Context) int32 {
+func (pq *PlayerQuery) OnlyIDX(ctx context.Context) int {
 	id, err := pq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -251,7 +251,7 @@ func (pq *PlayerQuery) AllX(ctx context.Context) []*Player {
 }
 
 // IDs executes the query and returns a list of Player IDs.
-func (pq *PlayerQuery) IDs(ctx context.Context) (ids []int32, err error) {
+func (pq *PlayerQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if pq.ctx.Unique == nil && pq.path != nil {
 		pq.Unique(true)
 	}
@@ -263,7 +263,7 @@ func (pq *PlayerQuery) IDs(ctx context.Context) (ids []int32, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (pq *PlayerQuery) IDsX(ctx context.Context) []int32 {
+func (pq *PlayerQuery) IDsX(ctx context.Context) []int {
 	ids, err := pq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -371,7 +371,7 @@ func (pq *PlayerQuery) WithDepartment(opts ...func(*DepartmentQuery)) *PlayerQue
 // Example:
 //
 //	var v []struct {
-//		DepartmentID int32 `json:"department_id,omitempty"`
+//		DepartmentID int `json:"department_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -394,7 +394,7 @@ func (pq *PlayerQuery) GroupBy(field string, fields ...string) *PlayerGroupBy {
 // Example:
 //
 //	var v []struct {
-//		DepartmentID int32 `json:"department_id,omitempty"`
+//		DepartmentID int `json:"department_id,omitempty"`
 //	}
 //
 //	client.Player.Query().
@@ -491,7 +491,7 @@ func (pq *PlayerQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Playe
 
 func (pq *PlayerQuery) loadMatchPlayers(ctx context.Context, query *MatchPlayerQuery, nodes []*Player, init func(*Player), assign func(*Player, *MatchPlayer)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int32]*Player)
+	nodeids := make(map[int]*Player)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -521,7 +521,7 @@ func (pq *PlayerQuery) loadMatchPlayers(ctx context.Context, query *MatchPlayerQ
 }
 func (pq *PlayerQuery) loadPlayerStatistic(ctx context.Context, query *PlayerStatisticQuery, nodes []*Player, init func(*Player), assign func(*Player, *PlayerStatistic)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int32]*Player)
+	nodeids := make(map[int]*Player)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -547,8 +547,8 @@ func (pq *PlayerQuery) loadPlayerStatistic(ctx context.Context, query *PlayerSta
 	return nil
 }
 func (pq *PlayerQuery) loadDepartment(ctx context.Context, query *DepartmentQuery, nodes []*Player, init func(*Player), assign func(*Player, *Department)) error {
-	ids := make([]int32, 0, len(nodes))
-	nodeids := make(map[int32][]*Player)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Player)
 	for i := range nodes {
 		fk := nodes[i].DepartmentID
 		if _, ok := nodeids[fk]; !ok {
@@ -586,7 +586,7 @@ func (pq *PlayerQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (pq *PlayerQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(player.Table, player.Columns, sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewQuerySpec(player.Table, player.Columns, sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt))
 	_spec.From = pq.sql
 	if unique := pq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

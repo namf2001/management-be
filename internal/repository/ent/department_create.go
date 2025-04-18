@@ -70,20 +70,20 @@ func (dc *DepartmentCreate) SetNillableUpdatedAt(t *time.Time) *DepartmentCreate
 }
 
 // SetID sets the "id" field.
-func (dc *DepartmentCreate) SetID(i int32) *DepartmentCreate {
+func (dc *DepartmentCreate) SetID(i int) *DepartmentCreate {
 	dc.mutation.SetID(i)
 	return dc
 }
 
 // AddPlayerIDs adds the "players" edge to the Player entity by IDs.
-func (dc *DepartmentCreate) AddPlayerIDs(ids ...int32) *DepartmentCreate {
+func (dc *DepartmentCreate) AddPlayerIDs(ids ...int) *DepartmentCreate {
 	dc.mutation.AddPlayerIDs(ids...)
 	return dc
 }
 
 // AddPlayers adds the "players" edges to the Player entity.
 func (dc *DepartmentCreate) AddPlayers(p ...*Player) *DepartmentCreate {
-	ids := make([]int32, len(p))
+	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -143,7 +143,7 @@ func (dc *DepartmentCreate) sqlSave(ctx context.Context) (*Department, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int32(id)
+		_node.ID = int(id)
 	}
 	dc.mutation.id = &_node.ID
 	dc.mutation.done = true
@@ -153,7 +153,7 @@ func (dc *DepartmentCreate) sqlSave(ctx context.Context) (*Department, error) {
 func (dc *DepartmentCreate) createSpec() (*Department, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Department{config: dc.config}
-		_spec = sqlgraph.NewCreateSpec(department.Table, sqlgraph.NewFieldSpec(department.FieldID, field.TypeInt32))
+		_spec = sqlgraph.NewCreateSpec(department.Table, sqlgraph.NewFieldSpec(department.FieldID, field.TypeInt))
 	)
 	if id, ok := dc.mutation.ID(); ok {
 		_node.ID = id
@@ -183,7 +183,7 @@ func (dc *DepartmentCreate) createSpec() (*Department, *sqlgraph.CreateSpec) {
 			Columns: []string{department.PlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -240,7 +240,7 @@ func (dcb *DepartmentCreateBulk) Save(ctx context.Context) ([]*Department, error
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int32(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

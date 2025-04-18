@@ -42,7 +42,7 @@ func (i impl) Login(ctx context.Context, username, password string) (string, mod
 }
 
 // generateJWT creates a new JWT token for the given user ID
-func generateJWT(userID int32) (string, error) {
+func generateJWT(userID int) (string, error) {
 	// In a real implementation, you would get the secret from environment variables
 	secret := []byte("your-secret-key")
 

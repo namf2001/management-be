@@ -8,7 +8,7 @@ import (
 )
 
 // GetUserByID retrieves a user by their ID.
-func (i impl) GetUserByID(ctx context.Context, id int32) (model.User, error) {
+func (i impl) GetUserByID(ctx context.Context, id int) (model.User, error) {
 	user, err := i.entClient.User.Get(ctx, id)
 	if err != nil {
 		return model.User{}, pkgerrors.WithStack(ErrDatabase)

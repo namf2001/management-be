@@ -24,13 +24,13 @@ type PlayerCreate struct {
 }
 
 // SetDepartmentID sets the "department_id" field.
-func (pc *PlayerCreate) SetDepartmentID(i int32) *PlayerCreate {
+func (pc *PlayerCreate) SetDepartmentID(i int) *PlayerCreate {
 	pc.mutation.SetDepartmentID(i)
 	return pc
 }
 
 // SetNillableDepartmentID sets the "department_id" field if the given value is not nil.
-func (pc *PlayerCreate) SetNillableDepartmentID(i *int32) *PlayerCreate {
+func (pc *PlayerCreate) SetNillableDepartmentID(i *int) *PlayerCreate {
 	if i != nil {
 		pc.SetDepartmentID(*i)
 	}
@@ -176,20 +176,20 @@ func (pc *PlayerCreate) SetNillableUpdatedAt(t *time.Time) *PlayerCreate {
 }
 
 // SetID sets the "id" field.
-func (pc *PlayerCreate) SetID(i int32) *PlayerCreate {
+func (pc *PlayerCreate) SetID(i int) *PlayerCreate {
 	pc.mutation.SetID(i)
 	return pc
 }
 
 // AddMatchPlayerIDs adds the "match_players" edge to the MatchPlayer entity by IDs.
-func (pc *PlayerCreate) AddMatchPlayerIDs(ids ...int32) *PlayerCreate {
+func (pc *PlayerCreate) AddMatchPlayerIDs(ids ...int) *PlayerCreate {
 	pc.mutation.AddMatchPlayerIDs(ids...)
 	return pc
 }
 
 // AddMatchPlayers adds the "match_players" edges to the MatchPlayer entity.
 func (pc *PlayerCreate) AddMatchPlayers(m ...*MatchPlayer) *PlayerCreate {
-	ids := make([]int32, len(m))
+	ids := make([]int, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
@@ -197,13 +197,13 @@ func (pc *PlayerCreate) AddMatchPlayers(m ...*MatchPlayer) *PlayerCreate {
 }
 
 // SetPlayerStatisticID sets the "player_statistic" edge to the PlayerStatistic entity by ID.
-func (pc *PlayerCreate) SetPlayerStatisticID(id int32) *PlayerCreate {
+func (pc *PlayerCreate) SetPlayerStatisticID(id int) *PlayerCreate {
 	pc.mutation.SetPlayerStatisticID(id)
 	return pc
 }
 
 // SetNillablePlayerStatisticID sets the "player_statistic" edge to the PlayerStatistic entity by ID if the given value is not nil.
-func (pc *PlayerCreate) SetNillablePlayerStatisticID(id *int32) *PlayerCreate {
+func (pc *PlayerCreate) SetNillablePlayerStatisticID(id *int) *PlayerCreate {
 	if id != nil {
 		pc = pc.SetPlayerStatisticID(*id)
 	}
@@ -276,7 +276,7 @@ func (pc *PlayerCreate) sqlSave(ctx context.Context) (*Player, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int32(id)
+		_node.ID = int(id)
 	}
 	pc.mutation.id = &_node.ID
 	pc.mutation.done = true
@@ -286,7 +286,7 @@ func (pc *PlayerCreate) sqlSave(ctx context.Context) (*Player, error) {
 func (pc *PlayerCreate) createSpec() (*Player, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Player{config: pc.config}
-		_spec = sqlgraph.NewCreateSpec(player.Table, sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32))
+		_spec = sqlgraph.NewCreateSpec(player.Table, sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt))
 	)
 	if id, ok := pc.mutation.ID(); ok {
 		_node.ID = id
@@ -344,7 +344,7 @@ func (pc *PlayerCreate) createSpec() (*Player, *sqlgraph.CreateSpec) {
 			Columns: []string{player.MatchPlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -360,7 +360,7 @@ func (pc *PlayerCreate) createSpec() (*Player, *sqlgraph.CreateSpec) {
 			Columns: []string{player.PlayerStatisticColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(playerstatistic.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(playerstatistic.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -376,7 +376,7 @@ func (pc *PlayerCreate) createSpec() (*Player, *sqlgraph.CreateSpec) {
 			Columns: []string{player.DepartmentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(department.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(department.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -434,7 +434,7 @@ func (pcb *PlayerCreateBulk) Save(ctx context.Context) ([]*Player, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int32(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

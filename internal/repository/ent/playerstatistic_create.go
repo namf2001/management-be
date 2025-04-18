@@ -21,13 +21,13 @@ type PlayerStatisticCreate struct {
 }
 
 // SetPlayerID sets the "player_id" field.
-func (psc *PlayerStatisticCreate) SetPlayerID(i int32) *PlayerStatisticCreate {
+func (psc *PlayerStatisticCreate) SetPlayerID(i int) *PlayerStatisticCreate {
 	psc.mutation.SetPlayerID(i)
 	return psc
 }
 
 // SetNillablePlayerID sets the "player_id" field if the given value is not nil.
-func (psc *PlayerStatisticCreate) SetNillablePlayerID(i *int32) *PlayerStatisticCreate {
+func (psc *PlayerStatisticCreate) SetNillablePlayerID(i *int) *PlayerStatisticCreate {
 	if i != nil {
 		psc.SetPlayerID(*i)
 	}
@@ -147,7 +147,7 @@ func (psc *PlayerStatisticCreate) SetNillableUpdatedAt(t *time.Time) *PlayerStat
 }
 
 // SetID sets the "id" field.
-func (psc *PlayerStatisticCreate) SetID(i int32) *PlayerStatisticCreate {
+func (psc *PlayerStatisticCreate) SetID(i int) *PlayerStatisticCreate {
 	psc.mutation.SetID(i)
 	return psc
 }
@@ -207,7 +207,7 @@ func (psc *PlayerStatisticCreate) sqlSave(ctx context.Context) (*PlayerStatistic
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int32(id)
+		_node.ID = int(id)
 	}
 	psc.mutation.id = &_node.ID
 	psc.mutation.done = true
@@ -217,7 +217,7 @@ func (psc *PlayerStatisticCreate) sqlSave(ctx context.Context) (*PlayerStatistic
 func (psc *PlayerStatisticCreate) createSpec() (*PlayerStatistic, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PlayerStatistic{config: psc.config}
-		_spec = sqlgraph.NewCreateSpec(playerstatistic.Table, sqlgraph.NewFieldSpec(playerstatistic.FieldID, field.TypeInt32))
+		_spec = sqlgraph.NewCreateSpec(playerstatistic.Table, sqlgraph.NewFieldSpec(playerstatistic.FieldID, field.TypeInt))
 	)
 	if id, ok := psc.mutation.ID(); ok {
 		_node.ID = id
@@ -263,7 +263,7 @@ func (psc *PlayerStatisticCreate) createSpec() (*PlayerStatistic, *sqlgraph.Crea
 			Columns: []string{playerstatistic.PlayerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -321,7 +321,7 @@ func (pscb *PlayerStatisticCreateBulk) Save(ctx context.Context) ([]*PlayerStati
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int32(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

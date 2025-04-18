@@ -11,52 +11,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int32) predicate.Match {
+func ID(id int) predicate.Match {
 	return predicate.Match(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int32) predicate.Match {
+func IDEQ(id int) predicate.Match {
 	return predicate.Match(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int32) predicate.Match {
+func IDNEQ(id int) predicate.Match {
 	return predicate.Match(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int32) predicate.Match {
+func IDIn(ids ...int) predicate.Match {
 	return predicate.Match(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int32) predicate.Match {
+func IDNotIn(ids ...int) predicate.Match {
 	return predicate.Match(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int32) predicate.Match {
+func IDGT(id int) predicate.Match {
 	return predicate.Match(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int32) predicate.Match {
+func IDGTE(id int) predicate.Match {
 	return predicate.Match(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int32) predicate.Match {
+func IDLT(id int) predicate.Match {
 	return predicate.Match(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int32) predicate.Match {
+func IDLTE(id int) predicate.Match {
 	return predicate.Match(sql.FieldLTE(FieldID, id))
 }
 
 // OpponentTeamID applies equality check predicate on the "opponent_team_id" field. It's identical to OpponentTeamIDEQ.
-func OpponentTeamID(v int32) predicate.Match {
+func OpponentTeamID(v int) predicate.Match {
 	return predicate.Match(sql.FieldEQ(FieldOpponentTeamID, v))
 }
 
@@ -106,22 +106,22 @@ func UpdatedAt(v time.Time) predicate.Match {
 }
 
 // OpponentTeamIDEQ applies the EQ predicate on the "opponent_team_id" field.
-func OpponentTeamIDEQ(v int32) predicate.Match {
+func OpponentTeamIDEQ(v int) predicate.Match {
 	return predicate.Match(sql.FieldEQ(FieldOpponentTeamID, v))
 }
 
 // OpponentTeamIDNEQ applies the NEQ predicate on the "opponent_team_id" field.
-func OpponentTeamIDNEQ(v int32) predicate.Match {
+func OpponentTeamIDNEQ(v int) predicate.Match {
 	return predicate.Match(sql.FieldNEQ(FieldOpponentTeamID, v))
 }
 
 // OpponentTeamIDIn applies the In predicate on the "opponent_team_id" field.
-func OpponentTeamIDIn(vs ...int32) predicate.Match {
+func OpponentTeamIDIn(vs ...int) predicate.Match {
 	return predicate.Match(sql.FieldIn(FieldOpponentTeamID, vs...))
 }
 
 // OpponentTeamIDNotIn applies the NotIn predicate on the "opponent_team_id" field.
-func OpponentTeamIDNotIn(vs ...int32) predicate.Match {
+func OpponentTeamIDNotIn(vs ...int) predicate.Match {
 	return predicate.Match(sql.FieldNotIn(FieldOpponentTeamID, vs...))
 }
 

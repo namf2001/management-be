@@ -107,8 +107,8 @@ func (tq *TeamQuery) FirstX(ctx context.Context) *Team {
 
 // FirstID returns the first Team ID from the query.
 // Returns a *NotFoundError when no Team ID was found.
-func (tq *TeamQuery) FirstID(ctx context.Context) (id int32, err error) {
-	var ids []int32
+func (tq *TeamQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = tq.Limit(1).IDs(setContextOp(ctx, tq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -120,7 +120,7 @@ func (tq *TeamQuery) FirstID(ctx context.Context) (id int32, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (tq *TeamQuery) FirstIDX(ctx context.Context) int32 {
+func (tq *TeamQuery) FirstIDX(ctx context.Context) int {
 	id, err := tq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -158,8 +158,8 @@ func (tq *TeamQuery) OnlyX(ctx context.Context) *Team {
 // OnlyID is like Only, but returns the only Team ID in the query.
 // Returns a *NotSingularError when more than one Team ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (tq *TeamQuery) OnlyID(ctx context.Context) (id int32, err error) {
-	var ids []int32
+func (tq *TeamQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = tq.Limit(2).IDs(setContextOp(ctx, tq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -175,7 +175,7 @@ func (tq *TeamQuery) OnlyID(ctx context.Context) (id int32, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (tq *TeamQuery) OnlyIDX(ctx context.Context) int32 {
+func (tq *TeamQuery) OnlyIDX(ctx context.Context) int {
 	id, err := tq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -203,7 +203,7 @@ func (tq *TeamQuery) AllX(ctx context.Context) []*Team {
 }
 
 // IDs executes the query and returns a list of Team IDs.
-func (tq *TeamQuery) IDs(ctx context.Context) (ids []int32, err error) {
+func (tq *TeamQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if tq.ctx.Unique == nil && tq.path != nil {
 		tq.Unique(true)
 	}
@@ -215,7 +215,7 @@ func (tq *TeamQuery) IDs(ctx context.Context) (ids []int32, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (tq *TeamQuery) IDsX(ctx context.Context) []int32 {
+func (tq *TeamQuery) IDsX(ctx context.Context) []int {
 	ids, err := tq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -405,7 +405,7 @@ func (tq *TeamQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Team, e
 
 func (tq *TeamQuery) loadMatches(ctx context.Context, query *MatchQuery, nodes []*Team, init func(*Team), assign func(*Team, *Match)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int32]*Team)
+	nodeids := make(map[int]*Team)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -444,7 +444,7 @@ func (tq *TeamQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (tq *TeamQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(team.Table, team.Columns, sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewQuerySpec(team.Table, team.Columns, sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt))
 	_spec.From = tq.sql
 	if unique := tq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

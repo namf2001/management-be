@@ -7,7 +7,7 @@ import (
 )
 
 // UpdatePassword changes a user's password
-func (i impl) UpdatePassword(ctx context.Context, userID int32, currentPassword, newPassword string) error {
+func (i impl) UpdatePassword(ctx context.Context, userID int, currentPassword, newPassword string) error {
 	// Get the user
 	userRepo := i.repo.User()
 	user, err := userRepo.GetUserByID(ctx, userID)

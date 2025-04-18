@@ -40,7 +40,7 @@ func (mpd *MatchPlayerDelete) ExecX(ctx context.Context) int {
 }
 
 func (mpd *MatchPlayerDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(matchplayer.Table, sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewDeleteSpec(matchplayer.Table, sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt))
 	if ps := mpd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

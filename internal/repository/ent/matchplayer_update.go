@@ -31,13 +31,13 @@ func (mpu *MatchPlayerUpdate) Where(ps ...predicate.MatchPlayer) *MatchPlayerUpd
 }
 
 // SetMatchID sets the "match_id" field.
-func (mpu *MatchPlayerUpdate) SetMatchID(i int32) *MatchPlayerUpdate {
+func (mpu *MatchPlayerUpdate) SetMatchID(i int) *MatchPlayerUpdate {
 	mpu.mutation.SetMatchID(i)
 	return mpu
 }
 
 // SetNillableMatchID sets the "match_id" field if the given value is not nil.
-func (mpu *MatchPlayerUpdate) SetNillableMatchID(i *int32) *MatchPlayerUpdate {
+func (mpu *MatchPlayerUpdate) SetNillableMatchID(i *int) *MatchPlayerUpdate {
 	if i != nil {
 		mpu.SetMatchID(*i)
 	}
@@ -51,13 +51,13 @@ func (mpu *MatchPlayerUpdate) ClearMatchID() *MatchPlayerUpdate {
 }
 
 // SetPlayerID sets the "player_id" field.
-func (mpu *MatchPlayerUpdate) SetPlayerID(i int32) *MatchPlayerUpdate {
+func (mpu *MatchPlayerUpdate) SetPlayerID(i int) *MatchPlayerUpdate {
 	mpu.mutation.SetPlayerID(i)
 	return mpu
 }
 
 // SetNillablePlayerID sets the "player_id" field if the given value is not nil.
-func (mpu *MatchPlayerUpdate) SetNillablePlayerID(i *int32) *MatchPlayerUpdate {
+func (mpu *MatchPlayerUpdate) SetNillablePlayerID(i *int) *MatchPlayerUpdate {
 	if i != nil {
 		mpu.SetPlayerID(*i)
 	}
@@ -293,7 +293,7 @@ func (mpu *MatchPlayerUpdate) ExecX(ctx context.Context) {
 }
 
 func (mpu *MatchPlayerUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(matchplayer.Table, matchplayer.Columns, sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(matchplayer.Table, matchplayer.Columns, sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt))
 	if ps := mpu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -363,7 +363,7 @@ func (mpu *MatchPlayerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{matchplayer.MatchColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -376,7 +376,7 @@ func (mpu *MatchPlayerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{matchplayer.MatchColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -392,7 +392,7 @@ func (mpu *MatchPlayerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{matchplayer.PlayerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -405,7 +405,7 @@ func (mpu *MatchPlayerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{matchplayer.PlayerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -434,13 +434,13 @@ type MatchPlayerUpdateOne struct {
 }
 
 // SetMatchID sets the "match_id" field.
-func (mpuo *MatchPlayerUpdateOne) SetMatchID(i int32) *MatchPlayerUpdateOne {
+func (mpuo *MatchPlayerUpdateOne) SetMatchID(i int) *MatchPlayerUpdateOne {
 	mpuo.mutation.SetMatchID(i)
 	return mpuo
 }
 
 // SetNillableMatchID sets the "match_id" field if the given value is not nil.
-func (mpuo *MatchPlayerUpdateOne) SetNillableMatchID(i *int32) *MatchPlayerUpdateOne {
+func (mpuo *MatchPlayerUpdateOne) SetNillableMatchID(i *int) *MatchPlayerUpdateOne {
 	if i != nil {
 		mpuo.SetMatchID(*i)
 	}
@@ -454,13 +454,13 @@ func (mpuo *MatchPlayerUpdateOne) ClearMatchID() *MatchPlayerUpdateOne {
 }
 
 // SetPlayerID sets the "player_id" field.
-func (mpuo *MatchPlayerUpdateOne) SetPlayerID(i int32) *MatchPlayerUpdateOne {
+func (mpuo *MatchPlayerUpdateOne) SetPlayerID(i int) *MatchPlayerUpdateOne {
 	mpuo.mutation.SetPlayerID(i)
 	return mpuo
 }
 
 // SetNillablePlayerID sets the "player_id" field if the given value is not nil.
-func (mpuo *MatchPlayerUpdateOne) SetNillablePlayerID(i *int32) *MatchPlayerUpdateOne {
+func (mpuo *MatchPlayerUpdateOne) SetNillablePlayerID(i *int) *MatchPlayerUpdateOne {
 	if i != nil {
 		mpuo.SetPlayerID(*i)
 	}
@@ -709,7 +709,7 @@ func (mpuo *MatchPlayerUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (mpuo *MatchPlayerUpdateOne) sqlSave(ctx context.Context) (_node *MatchPlayer, err error) {
-	_spec := sqlgraph.NewUpdateSpec(matchplayer.Table, matchplayer.Columns, sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(matchplayer.Table, matchplayer.Columns, sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt))
 	id, ok := mpuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "MatchPlayer.id" for update`)}
@@ -796,7 +796,7 @@ func (mpuo *MatchPlayerUpdateOne) sqlSave(ctx context.Context) (_node *MatchPlay
 			Columns: []string{matchplayer.MatchColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -809,7 +809,7 @@ func (mpuo *MatchPlayerUpdateOne) sqlSave(ctx context.Context) (_node *MatchPlay
 			Columns: []string{matchplayer.MatchColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -825,7 +825,7 @@ func (mpuo *MatchPlayerUpdateOne) sqlSave(ctx context.Context) (_node *MatchPlay
 			Columns: []string{matchplayer.PlayerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -838,7 +838,7 @@ func (mpuo *MatchPlayerUpdateOne) sqlSave(ctx context.Context) (_node *MatchPlay
 			Columns: []string{matchplayer.PlayerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

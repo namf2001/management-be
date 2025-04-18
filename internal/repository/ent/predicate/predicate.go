@@ -21,6 +21,9 @@ type Player func(*sql.Selector)
 // PlayerStatistic is the predicate function for playerstatistic builders.
 type PlayerStatistic func(*sql.Selector)
 
+// SchemaMigration is the predicate function for schemamigration builders.
+type SchemaMigration func(*sql.Selector)
+
 // Team is the predicate function for team builders.
 type Team func(*sql.Selector)
 

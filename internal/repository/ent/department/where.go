@@ -11,47 +11,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int32) predicate.Department {
+func ID(id int) predicate.Department {
 	return predicate.Department(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int32) predicate.Department {
+func IDEQ(id int) predicate.Department {
 	return predicate.Department(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int32) predicate.Department {
+func IDNEQ(id int) predicate.Department {
 	return predicate.Department(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int32) predicate.Department {
+func IDIn(ids ...int) predicate.Department {
 	return predicate.Department(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int32) predicate.Department {
+func IDNotIn(ids ...int) predicate.Department {
 	return predicate.Department(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int32) predicate.Department {
+func IDGT(id int) predicate.Department {
 	return predicate.Department(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int32) predicate.Department {
+func IDGTE(id int) predicate.Department {
 	return predicate.Department(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int32) predicate.Department {
+func IDLT(id int) predicate.Department {
 	return predicate.Department(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int32) predicate.Department {
+func IDLTE(id int) predicate.Department {
 	return predicate.Department(sql.FieldLTE(FieldID, id))
 }
 

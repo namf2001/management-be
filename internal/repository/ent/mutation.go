@@ -12,6 +12,7 @@ import (
 	"management-be/internal/repository/ent/player"
 	"management-be/internal/repository/ent/playerstatistic"
 	"management-be/internal/repository/ent/predicate"
+	"management-be/internal/repository/ent/schemamigration"
 	"management-be/internal/repository/ent/team"
 	"management-be/internal/repository/ent/teamfee"
 	"management-be/internal/repository/ent/user"
@@ -36,6 +37,7 @@ const (
 	TypeMatchPlayer     = "MatchPlayer"
 	TypePlayer          = "Player"
 	TypePlayerStatistic = "PlayerStatistic"
+	TypeSchemaMigration = "SchemaMigration"
 	TypeTeam            = "Team"
 	TypeTeamFee         = "TeamFee"
 	TypeUser            = "User"
@@ -46,14 +48,14 @@ type DepartmentMutation struct {
 	config
 	op             Op
 	typ            string
-	id             *int32
+	id             *int
 	name           *string
 	description    *string
 	created_at     *time.Time
 	updated_at     *time.Time
 	clearedFields  map[string]struct{}
-	players        map[int32]struct{}
-	removedplayers map[int32]struct{}
+	players        map[int]struct{}
+	removedplayers map[int]struct{}
 	clearedplayers bool
 	done           bool
 	oldValue       func(context.Context) (*Department, error)
@@ -80,7 +82,7 @@ func newDepartmentMutation(c config, op Op, opts ...departmentOption) *Departmen
 }
 
 // withDepartmentID sets the ID field of the mutation.
-func withDepartmentID(id int32) departmentOption {
+func withDepartmentID(id int) departmentOption {
 	return func(m *DepartmentMutation) {
 		var (
 			err   error
@@ -132,13 +134,13 @@ func (m DepartmentMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Department entities.
-func (m *DepartmentMutation) SetID(id int32) {
+func (m *DepartmentMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *DepartmentMutation) ID() (id int32, exists bool) {
+func (m *DepartmentMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -149,12 +151,12 @@ func (m *DepartmentMutation) ID() (id int32, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *DepartmentMutation) IDs(ctx context.Context) ([]int32, error) {
+func (m *DepartmentMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int32{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -348,9 +350,9 @@ func (m *DepartmentMutation) ResetUpdatedAt() {
 }
 
 // AddPlayerIDs adds the "players" edge to the Player entity by ids.
-func (m *DepartmentMutation) AddPlayerIDs(ids ...int32) {
+func (m *DepartmentMutation) AddPlayerIDs(ids ...int) {
 	if m.players == nil {
-		m.players = make(map[int32]struct{})
+		m.players = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.players[ids[i]] = struct{}{}
@@ -368,9 +370,9 @@ func (m *DepartmentMutation) PlayersCleared() bool {
 }
 
 // RemovePlayerIDs removes the "players" edge to the Player entity by IDs.
-func (m *DepartmentMutation) RemovePlayerIDs(ids ...int32) {
+func (m *DepartmentMutation) RemovePlayerIDs(ids ...int) {
 	if m.removedplayers == nil {
-		m.removedplayers = make(map[int32]struct{})
+		m.removedplayers = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.players, ids[i])
@@ -379,7 +381,7 @@ func (m *DepartmentMutation) RemovePlayerIDs(ids ...int32) {
 }
 
 // RemovedPlayers returns the removed IDs of the "players" edge to the Player entity.
-func (m *DepartmentMutation) RemovedPlayersIDs() (ids []int32) {
+func (m *DepartmentMutation) RemovedPlayersIDs() (ids []int) {
 	for id := range m.removedplayers {
 		ids = append(ids, id)
 	}
@@ -387,7 +389,7 @@ func (m *DepartmentMutation) RemovedPlayersIDs() (ids []int32) {
 }
 
 // PlayersIDs returns the "players" edge IDs in the mutation.
-func (m *DepartmentMutation) PlayersIDs() (ids []int32) {
+func (m *DepartmentMutation) PlayersIDs() (ids []int) {
 	for id := range m.players {
 		ids = append(ids, id)
 	}
@@ -693,7 +695,7 @@ type MatchMutation struct {
 	config
 	op                   Op
 	typ                  string
-	id                   *int32
+	id                   *int
 	match_date           *time.Time
 	venue                *string
 	is_home_game         *bool
@@ -706,10 +708,10 @@ type MatchMutation struct {
 	created_at           *time.Time
 	updated_at           *time.Time
 	clearedFields        map[string]struct{}
-	match_players        map[int32]struct{}
-	removedmatch_players map[int32]struct{}
+	match_players        map[int]struct{}
+	removedmatch_players map[int]struct{}
 	clearedmatch_players bool
-	team                 *int32
+	team                 *int
 	clearedteam          bool
 	done                 bool
 	oldValue             func(context.Context) (*Match, error)
@@ -736,7 +738,7 @@ func newMatchMutation(c config, op Op, opts ...matchOption) *MatchMutation {
 }
 
 // withMatchID sets the ID field of the mutation.
-func withMatchID(id int32) matchOption {
+func withMatchID(id int) matchOption {
 	return func(m *MatchMutation) {
 		var (
 			err   error
@@ -788,13 +790,13 @@ func (m MatchMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Match entities.
-func (m *MatchMutation) SetID(id int32) {
+func (m *MatchMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *MatchMutation) ID() (id int32, exists bool) {
+func (m *MatchMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -805,12 +807,12 @@ func (m *MatchMutation) ID() (id int32, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *MatchMutation) IDs(ctx context.Context) ([]int32, error) {
+func (m *MatchMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int32{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -821,12 +823,12 @@ func (m *MatchMutation) IDs(ctx context.Context) ([]int32, error) {
 }
 
 // SetOpponentTeamID sets the "opponent_team_id" field.
-func (m *MatchMutation) SetOpponentTeamID(i int32) {
+func (m *MatchMutation) SetOpponentTeamID(i int) {
 	m.team = &i
 }
 
 // OpponentTeamID returns the value of the "opponent_team_id" field in the mutation.
-func (m *MatchMutation) OpponentTeamID() (r int32, exists bool) {
+func (m *MatchMutation) OpponentTeamID() (r int, exists bool) {
 	v := m.team
 	if v == nil {
 		return
@@ -837,7 +839,7 @@ func (m *MatchMutation) OpponentTeamID() (r int32, exists bool) {
 // OldOpponentTeamID returns the old "opponent_team_id" field's value of the Match entity.
 // If the Match object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MatchMutation) OldOpponentTeamID(ctx context.Context) (v int32, err error) {
+func (m *MatchMutation) OldOpponentTeamID(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldOpponentTeamID is only allowed on UpdateOne operations")
 	}
@@ -1340,9 +1342,9 @@ func (m *MatchMutation) ResetUpdatedAt() {
 }
 
 // AddMatchPlayerIDs adds the "match_players" edge to the MatchPlayer entity by ids.
-func (m *MatchMutation) AddMatchPlayerIDs(ids ...int32) {
+func (m *MatchMutation) AddMatchPlayerIDs(ids ...int) {
 	if m.match_players == nil {
-		m.match_players = make(map[int32]struct{})
+		m.match_players = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.match_players[ids[i]] = struct{}{}
@@ -1360,9 +1362,9 @@ func (m *MatchMutation) MatchPlayersCleared() bool {
 }
 
 // RemoveMatchPlayerIDs removes the "match_players" edge to the MatchPlayer entity by IDs.
-func (m *MatchMutation) RemoveMatchPlayerIDs(ids ...int32) {
+func (m *MatchMutation) RemoveMatchPlayerIDs(ids ...int) {
 	if m.removedmatch_players == nil {
-		m.removedmatch_players = make(map[int32]struct{})
+		m.removedmatch_players = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.match_players, ids[i])
@@ -1371,7 +1373,7 @@ func (m *MatchMutation) RemoveMatchPlayerIDs(ids ...int32) {
 }
 
 // RemovedMatchPlayers returns the removed IDs of the "match_players" edge to the MatchPlayer entity.
-func (m *MatchMutation) RemovedMatchPlayersIDs() (ids []int32) {
+func (m *MatchMutation) RemovedMatchPlayersIDs() (ids []int) {
 	for id := range m.removedmatch_players {
 		ids = append(ids, id)
 	}
@@ -1379,7 +1381,7 @@ func (m *MatchMutation) RemovedMatchPlayersIDs() (ids []int32) {
 }
 
 // MatchPlayersIDs returns the "match_players" edge IDs in the mutation.
-func (m *MatchMutation) MatchPlayersIDs() (ids []int32) {
+func (m *MatchMutation) MatchPlayersIDs() (ids []int) {
 	for id := range m.match_players {
 		ids = append(ids, id)
 	}
@@ -1394,7 +1396,7 @@ func (m *MatchMutation) ResetMatchPlayers() {
 }
 
 // SetTeamID sets the "team" edge to the Team entity by id.
-func (m *MatchMutation) SetTeamID(id int32) {
+func (m *MatchMutation) SetTeamID(id int) {
 	m.team = &id
 }
 
@@ -1410,7 +1412,7 @@ func (m *MatchMutation) TeamCleared() bool {
 }
 
 // TeamID returns the "team" edge ID in the mutation.
-func (m *MatchMutation) TeamID() (id int32, exists bool) {
+func (m *MatchMutation) TeamID() (id int, exists bool) {
 	if m.team != nil {
 		return *m.team, true
 	}
@@ -1420,7 +1422,7 @@ func (m *MatchMutation) TeamID() (id int32, exists bool) {
 // TeamIDs returns the "team" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // TeamID instead. It exists only for internal usage by the builders.
-func (m *MatchMutation) TeamIDs() (ids []int32) {
+func (m *MatchMutation) TeamIDs() (ids []int) {
 	if id := m.team; id != nil {
 		ids = append(ids, *id)
 	}
@@ -1565,7 +1567,7 @@ func (m *MatchMutation) OldField(ctx context.Context, name string) (ent.Value, e
 func (m *MatchMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case match.FieldOpponentTeamID:
-		v, ok := value.(int32)
+		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1908,7 +1910,7 @@ type MatchPlayerMutation struct {
 	config
 	op                Op
 	typ               string
-	id                *int32
+	id                *int
 	minutes_played    *int32
 	addminutes_played *int32
 	goals_scored      *int32
@@ -1921,9 +1923,9 @@ type MatchPlayerMutation struct {
 	created_at        *time.Time
 	updated_at        *time.Time
 	clearedFields     map[string]struct{}
-	match             *int32
+	match             *int
 	clearedmatch      bool
-	player            *int32
+	player            *int
 	clearedplayer     bool
 	done              bool
 	oldValue          func(context.Context) (*MatchPlayer, error)
@@ -1950,7 +1952,7 @@ func newMatchPlayerMutation(c config, op Op, opts ...matchplayerOption) *MatchPl
 }
 
 // withMatchPlayerID sets the ID field of the mutation.
-func withMatchPlayerID(id int32) matchplayerOption {
+func withMatchPlayerID(id int) matchplayerOption {
 	return func(m *MatchPlayerMutation) {
 		var (
 			err   error
@@ -2002,13 +2004,13 @@ func (m MatchPlayerMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of MatchPlayer entities.
-func (m *MatchPlayerMutation) SetID(id int32) {
+func (m *MatchPlayerMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *MatchPlayerMutation) ID() (id int32, exists bool) {
+func (m *MatchPlayerMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -2019,12 +2021,12 @@ func (m *MatchPlayerMutation) ID() (id int32, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *MatchPlayerMutation) IDs(ctx context.Context) ([]int32, error) {
+func (m *MatchPlayerMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int32{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -2035,12 +2037,12 @@ func (m *MatchPlayerMutation) IDs(ctx context.Context) ([]int32, error) {
 }
 
 // SetMatchID sets the "match_id" field.
-func (m *MatchPlayerMutation) SetMatchID(i int32) {
+func (m *MatchPlayerMutation) SetMatchID(i int) {
 	m.match = &i
 }
 
 // MatchID returns the value of the "match_id" field in the mutation.
-func (m *MatchPlayerMutation) MatchID() (r int32, exists bool) {
+func (m *MatchPlayerMutation) MatchID() (r int, exists bool) {
 	v := m.match
 	if v == nil {
 		return
@@ -2051,7 +2053,7 @@ func (m *MatchPlayerMutation) MatchID() (r int32, exists bool) {
 // OldMatchID returns the old "match_id" field's value of the MatchPlayer entity.
 // If the MatchPlayer object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MatchPlayerMutation) OldMatchID(ctx context.Context) (v int32, err error) {
+func (m *MatchPlayerMutation) OldMatchID(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldMatchID is only allowed on UpdateOne operations")
 	}
@@ -2084,12 +2086,12 @@ func (m *MatchPlayerMutation) ResetMatchID() {
 }
 
 // SetPlayerID sets the "player_id" field.
-func (m *MatchPlayerMutation) SetPlayerID(i int32) {
+func (m *MatchPlayerMutation) SetPlayerID(i int) {
 	m.player = &i
 }
 
 // PlayerID returns the value of the "player_id" field in the mutation.
-func (m *MatchPlayerMutation) PlayerID() (r int32, exists bool) {
+func (m *MatchPlayerMutation) PlayerID() (r int, exists bool) {
 	v := m.player
 	if v == nil {
 		return
@@ -2100,7 +2102,7 @@ func (m *MatchPlayerMutation) PlayerID() (r int32, exists bool) {
 // OldPlayerID returns the old "player_id" field's value of the MatchPlayer entity.
 // If the MatchPlayer object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MatchPlayerMutation) OldPlayerID(ctx context.Context) (v int32, err error) {
+func (m *MatchPlayerMutation) OldPlayerID(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPlayerID is only allowed on UpdateOne operations")
 	}
@@ -2573,7 +2575,7 @@ func (m *MatchPlayerMutation) MatchCleared() bool {
 // MatchIDs returns the "match" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // MatchID instead. It exists only for internal usage by the builders.
-func (m *MatchPlayerMutation) MatchIDs() (ids []int32) {
+func (m *MatchPlayerMutation) MatchIDs() (ids []int) {
 	if id := m.match; id != nil {
 		ids = append(ids, *id)
 	}
@@ -2600,7 +2602,7 @@ func (m *MatchPlayerMutation) PlayerCleared() bool {
 // PlayerIDs returns the "player" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // PlayerID instead. It exists only for internal usage by the builders.
-func (m *MatchPlayerMutation) PlayerIDs() (ids []int32) {
+func (m *MatchPlayerMutation) PlayerIDs() (ids []int) {
 	if id := m.player; id != nil {
 		ids = append(ids, *id)
 	}
@@ -2738,14 +2740,14 @@ func (m *MatchPlayerMutation) OldField(ctx context.Context, name string) (ent.Va
 func (m *MatchPlayerMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case matchplayer.FieldMatchID:
-		v, ok := value.(int32)
+		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMatchID(v)
 		return nil
 	case matchplayer.FieldPlayerID:
-		v, ok := value.(int32)
+		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -3085,7 +3087,7 @@ type PlayerMutation struct {
 	config
 	op                      Op
 	typ                     string
-	id                      *int32
+	id                      *int
 	full_name               *string
 	jersey_number           *int32
 	addjersey_number        *int32
@@ -3101,12 +3103,12 @@ type PlayerMutation struct {
 	created_at              *time.Time
 	updated_at              *time.Time
 	clearedFields           map[string]struct{}
-	match_players           map[int32]struct{}
-	removedmatch_players    map[int32]struct{}
+	match_players           map[int]struct{}
+	removedmatch_players    map[int]struct{}
 	clearedmatch_players    bool
-	player_statistic        *int32
+	player_statistic        *int
 	clearedplayer_statistic bool
-	department              *int32
+	department              *int
 	cleareddepartment       bool
 	done                    bool
 	oldValue                func(context.Context) (*Player, error)
@@ -3133,7 +3135,7 @@ func newPlayerMutation(c config, op Op, opts ...playerOption) *PlayerMutation {
 }
 
 // withPlayerID sets the ID field of the mutation.
-func withPlayerID(id int32) playerOption {
+func withPlayerID(id int) playerOption {
 	return func(m *PlayerMutation) {
 		var (
 			err   error
@@ -3185,13 +3187,13 @@ func (m PlayerMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Player entities.
-func (m *PlayerMutation) SetID(id int32) {
+func (m *PlayerMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *PlayerMutation) ID() (id int32, exists bool) {
+func (m *PlayerMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -3202,12 +3204,12 @@ func (m *PlayerMutation) ID() (id int32, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *PlayerMutation) IDs(ctx context.Context) ([]int32, error) {
+func (m *PlayerMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int32{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -3218,12 +3220,12 @@ func (m *PlayerMutation) IDs(ctx context.Context) ([]int32, error) {
 }
 
 // SetDepartmentID sets the "department_id" field.
-func (m *PlayerMutation) SetDepartmentID(i int32) {
+func (m *PlayerMutation) SetDepartmentID(i int) {
 	m.department = &i
 }
 
 // DepartmentID returns the value of the "department_id" field in the mutation.
-func (m *PlayerMutation) DepartmentID() (r int32, exists bool) {
+func (m *PlayerMutation) DepartmentID() (r int, exists bool) {
 	v := m.department
 	if v == nil {
 		return
@@ -3234,7 +3236,7 @@ func (m *PlayerMutation) DepartmentID() (r int32, exists bool) {
 // OldDepartmentID returns the old "department_id" field's value of the Player entity.
 // If the Player object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PlayerMutation) OldDepartmentID(ctx context.Context) (v int32, err error) {
+func (m *PlayerMutation) OldDepartmentID(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDepartmentID is only allowed on UpdateOne operations")
 	}
@@ -3843,9 +3845,9 @@ func (m *PlayerMutation) ResetUpdatedAt() {
 }
 
 // AddMatchPlayerIDs adds the "match_players" edge to the MatchPlayer entity by ids.
-func (m *PlayerMutation) AddMatchPlayerIDs(ids ...int32) {
+func (m *PlayerMutation) AddMatchPlayerIDs(ids ...int) {
 	if m.match_players == nil {
-		m.match_players = make(map[int32]struct{})
+		m.match_players = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.match_players[ids[i]] = struct{}{}
@@ -3863,9 +3865,9 @@ func (m *PlayerMutation) MatchPlayersCleared() bool {
 }
 
 // RemoveMatchPlayerIDs removes the "match_players" edge to the MatchPlayer entity by IDs.
-func (m *PlayerMutation) RemoveMatchPlayerIDs(ids ...int32) {
+func (m *PlayerMutation) RemoveMatchPlayerIDs(ids ...int) {
 	if m.removedmatch_players == nil {
-		m.removedmatch_players = make(map[int32]struct{})
+		m.removedmatch_players = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.match_players, ids[i])
@@ -3874,7 +3876,7 @@ func (m *PlayerMutation) RemoveMatchPlayerIDs(ids ...int32) {
 }
 
 // RemovedMatchPlayers returns the removed IDs of the "match_players" edge to the MatchPlayer entity.
-func (m *PlayerMutation) RemovedMatchPlayersIDs() (ids []int32) {
+func (m *PlayerMutation) RemovedMatchPlayersIDs() (ids []int) {
 	for id := range m.removedmatch_players {
 		ids = append(ids, id)
 	}
@@ -3882,7 +3884,7 @@ func (m *PlayerMutation) RemovedMatchPlayersIDs() (ids []int32) {
 }
 
 // MatchPlayersIDs returns the "match_players" edge IDs in the mutation.
-func (m *PlayerMutation) MatchPlayersIDs() (ids []int32) {
+func (m *PlayerMutation) MatchPlayersIDs() (ids []int) {
 	for id := range m.match_players {
 		ids = append(ids, id)
 	}
@@ -3897,7 +3899,7 @@ func (m *PlayerMutation) ResetMatchPlayers() {
 }
 
 // SetPlayerStatisticID sets the "player_statistic" edge to the PlayerStatistic entity by id.
-func (m *PlayerMutation) SetPlayerStatisticID(id int32) {
+func (m *PlayerMutation) SetPlayerStatisticID(id int) {
 	m.player_statistic = &id
 }
 
@@ -3912,7 +3914,7 @@ func (m *PlayerMutation) PlayerStatisticCleared() bool {
 }
 
 // PlayerStatisticID returns the "player_statistic" edge ID in the mutation.
-func (m *PlayerMutation) PlayerStatisticID() (id int32, exists bool) {
+func (m *PlayerMutation) PlayerStatisticID() (id int, exists bool) {
 	if m.player_statistic != nil {
 		return *m.player_statistic, true
 	}
@@ -3922,7 +3924,7 @@ func (m *PlayerMutation) PlayerStatisticID() (id int32, exists bool) {
 // PlayerStatisticIDs returns the "player_statistic" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // PlayerStatisticID instead. It exists only for internal usage by the builders.
-func (m *PlayerMutation) PlayerStatisticIDs() (ids []int32) {
+func (m *PlayerMutation) PlayerStatisticIDs() (ids []int) {
 	if id := m.player_statistic; id != nil {
 		ids = append(ids, *id)
 	}
@@ -3949,7 +3951,7 @@ func (m *PlayerMutation) DepartmentCleared() bool {
 // DepartmentIDs returns the "department" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // DepartmentID instead. It exists only for internal usage by the builders.
-func (m *PlayerMutation) DepartmentIDs() (ids []int32) {
+func (m *PlayerMutation) DepartmentIDs() (ids []int) {
 	if id := m.department; id != nil {
 		ids = append(ids, *id)
 	}
@@ -4108,7 +4110,7 @@ func (m *PlayerMutation) OldField(ctx context.Context, name string) (ent.Value, 
 func (m *PlayerMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case player.FieldDepartmentID:
-		v, ok := value.(int32)
+		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -4507,7 +4509,7 @@ type PlayerStatisticMutation struct {
 	config
 	op                      Op
 	typ                     string
-	id                      *int32
+	id                      *int
 	total_matches           *int32
 	addtotal_matches        *int32
 	total_minutes_played    *int32
@@ -4523,7 +4525,7 @@ type PlayerStatisticMutation struct {
 	created_at              *time.Time
 	updated_at              *time.Time
 	clearedFields           map[string]struct{}
-	player                  *int32
+	player                  *int
 	clearedplayer           bool
 	done                    bool
 	oldValue                func(context.Context) (*PlayerStatistic, error)
@@ -4550,7 +4552,7 @@ func newPlayerStatisticMutation(c config, op Op, opts ...playerstatisticOption) 
 }
 
 // withPlayerStatisticID sets the ID field of the mutation.
-func withPlayerStatisticID(id int32) playerstatisticOption {
+func withPlayerStatisticID(id int) playerstatisticOption {
 	return func(m *PlayerStatisticMutation) {
 		var (
 			err   error
@@ -4602,13 +4604,13 @@ func (m PlayerStatisticMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of PlayerStatistic entities.
-func (m *PlayerStatisticMutation) SetID(id int32) {
+func (m *PlayerStatisticMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *PlayerStatisticMutation) ID() (id int32, exists bool) {
+func (m *PlayerStatisticMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -4619,12 +4621,12 @@ func (m *PlayerStatisticMutation) ID() (id int32, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *PlayerStatisticMutation) IDs(ctx context.Context) ([]int32, error) {
+func (m *PlayerStatisticMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int32{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -4635,12 +4637,12 @@ func (m *PlayerStatisticMutation) IDs(ctx context.Context) ([]int32, error) {
 }
 
 // SetPlayerID sets the "player_id" field.
-func (m *PlayerStatisticMutation) SetPlayerID(i int32) {
+func (m *PlayerStatisticMutation) SetPlayerID(i int) {
 	m.player = &i
 }
 
 // PlayerID returns the value of the "player_id" field in the mutation.
-func (m *PlayerStatisticMutation) PlayerID() (r int32, exists bool) {
+func (m *PlayerStatisticMutation) PlayerID() (r int, exists bool) {
 	v := m.player
 	if v == nil {
 		return
@@ -4651,7 +4653,7 @@ func (m *PlayerStatisticMutation) PlayerID() (r int32, exists bool) {
 // OldPlayerID returns the old "player_id" field's value of the PlayerStatistic entity.
 // If the PlayerStatistic object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PlayerStatisticMutation) OldPlayerID(ctx context.Context) (v int32, err error) {
+func (m *PlayerStatisticMutation) OldPlayerID(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPlayerID is only allowed on UpdateOne operations")
 	}
@@ -5215,7 +5217,7 @@ func (m *PlayerStatisticMutation) PlayerCleared() bool {
 // PlayerIDs returns the "player" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // PlayerID instead. It exists only for internal usage by the builders.
-func (m *PlayerStatisticMutation) PlayerIDs() (ids []int32) {
+func (m *PlayerStatisticMutation) PlayerIDs() (ids []int) {
 	if id := m.player; id != nil {
 		ids = append(ids, *id)
 	}
@@ -5353,7 +5355,7 @@ func (m *PlayerStatisticMutation) OldField(ctx context.Context, name string) (en
 func (m *PlayerStatisticMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case playerstatistic.FieldPlayerID:
-		v, ok := value.(int32)
+		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -5701,12 +5703,344 @@ func (m *PlayerStatisticMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown PlayerStatistic edge %s", name)
 }
 
+// SchemaMigrationMutation represents an operation that mutates the SchemaMigration nodes in the graph.
+type SchemaMigrationMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	dirty         *bool
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*SchemaMigration, error)
+	predicates    []predicate.SchemaMigration
+}
+
+var _ ent.Mutation = (*SchemaMigrationMutation)(nil)
+
+// schemamigrationOption allows management of the mutation configuration using functional options.
+type schemamigrationOption func(*SchemaMigrationMutation)
+
+// newSchemaMigrationMutation creates new mutation for the SchemaMigration entity.
+func newSchemaMigrationMutation(c config, op Op, opts ...schemamigrationOption) *SchemaMigrationMutation {
+	m := &SchemaMigrationMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSchemaMigration,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSchemaMigrationID sets the ID field of the mutation.
+func withSchemaMigrationID(id int) schemamigrationOption {
+	return func(m *SchemaMigrationMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *SchemaMigration
+		)
+		m.oldValue = func(ctx context.Context) (*SchemaMigration, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().SchemaMigration.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSchemaMigration sets the old SchemaMigration of the mutation.
+func withSchemaMigration(node *SchemaMigration) schemamigrationOption {
+	return func(m *SchemaMigrationMutation) {
+		m.oldValue = func(context.Context) (*SchemaMigration, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SchemaMigrationMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SchemaMigrationMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of SchemaMigration entities.
+func (m *SchemaMigrationMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SchemaMigrationMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SchemaMigrationMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().SchemaMigration.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetDirty sets the "dirty" field.
+func (m *SchemaMigrationMutation) SetDirty(b bool) {
+	m.dirty = &b
+}
+
+// Dirty returns the value of the "dirty" field in the mutation.
+func (m *SchemaMigrationMutation) Dirty() (r bool, exists bool) {
+	v := m.dirty
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDirty returns the old "dirty" field's value of the SchemaMigration entity.
+// If the SchemaMigration object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SchemaMigrationMutation) OldDirty(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDirty is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDirty requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDirty: %w", err)
+	}
+	return oldValue.Dirty, nil
+}
+
+// ResetDirty resets all changes to the "dirty" field.
+func (m *SchemaMigrationMutation) ResetDirty() {
+	m.dirty = nil
+}
+
+// Where appends a list predicates to the SchemaMigrationMutation builder.
+func (m *SchemaMigrationMutation) Where(ps ...predicate.SchemaMigration) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the SchemaMigrationMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *SchemaMigrationMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.SchemaMigration, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *SchemaMigrationMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *SchemaMigrationMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (SchemaMigration).
+func (m *SchemaMigrationMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SchemaMigrationMutation) Fields() []string {
+	fields := make([]string, 0, 1)
+	if m.dirty != nil {
+		fields = append(fields, schemamigration.FieldDirty)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SchemaMigrationMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case schemamigration.FieldDirty:
+		return m.Dirty()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SchemaMigrationMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case schemamigration.FieldDirty:
+		return m.OldDirty(ctx)
+	}
+	return nil, fmt.Errorf("unknown SchemaMigration field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SchemaMigrationMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case schemamigration.FieldDirty:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDirty(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SchemaMigration field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SchemaMigrationMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SchemaMigrationMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SchemaMigrationMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown SchemaMigration numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SchemaMigrationMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SchemaMigrationMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SchemaMigrationMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown SchemaMigration nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SchemaMigrationMutation) ResetField(name string) error {
+	switch name {
+	case schemamigration.FieldDirty:
+		m.ResetDirty()
+		return nil
+	}
+	return fmt.Errorf("unknown SchemaMigration field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SchemaMigrationMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SchemaMigrationMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SchemaMigrationMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SchemaMigrationMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SchemaMigrationMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SchemaMigrationMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SchemaMigrationMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown SchemaMigration unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SchemaMigrationMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown SchemaMigration edge %s", name)
+}
+
 // TeamMutation represents an operation that mutates the Team nodes in the graph.
 type TeamMutation struct {
 	config
 	op             Op
 	typ            string
-	id             *int32
+	id             *int
 	name           *string
 	company_name   *string
 	contact_person *string
@@ -5715,8 +6049,8 @@ type TeamMutation struct {
 	created_at     *time.Time
 	updated_at     *time.Time
 	clearedFields  map[string]struct{}
-	matches        map[int32]struct{}
-	removedmatches map[int32]struct{}
+	matches        map[int]struct{}
+	removedmatches map[int]struct{}
 	clearedmatches bool
 	done           bool
 	oldValue       func(context.Context) (*Team, error)
@@ -5743,7 +6077,7 @@ func newTeamMutation(c config, op Op, opts ...teamOption) *TeamMutation {
 }
 
 // withTeamID sets the ID field of the mutation.
-func withTeamID(id int32) teamOption {
+func withTeamID(id int) teamOption {
 	return func(m *TeamMutation) {
 		var (
 			err   error
@@ -5795,13 +6129,13 @@ func (m TeamMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Team entities.
-func (m *TeamMutation) SetID(id int32) {
+func (m *TeamMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *TeamMutation) ID() (id int32, exists bool) {
+func (m *TeamMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -5812,12 +6146,12 @@ func (m *TeamMutation) ID() (id int32, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *TeamMutation) IDs(ctx context.Context) ([]int32, error) {
+func (m *TeamMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int32{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -6158,9 +6492,9 @@ func (m *TeamMutation) ResetUpdatedAt() {
 }
 
 // AddMatchIDs adds the "matches" edge to the Match entity by ids.
-func (m *TeamMutation) AddMatchIDs(ids ...int32) {
+func (m *TeamMutation) AddMatchIDs(ids ...int) {
 	if m.matches == nil {
-		m.matches = make(map[int32]struct{})
+		m.matches = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.matches[ids[i]] = struct{}{}
@@ -6178,9 +6512,9 @@ func (m *TeamMutation) MatchesCleared() bool {
 }
 
 // RemoveMatchIDs removes the "matches" edge to the Match entity by IDs.
-func (m *TeamMutation) RemoveMatchIDs(ids ...int32) {
+func (m *TeamMutation) RemoveMatchIDs(ids ...int) {
 	if m.removedmatches == nil {
-		m.removedmatches = make(map[int32]struct{})
+		m.removedmatches = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.matches, ids[i])
@@ -6189,7 +6523,7 @@ func (m *TeamMutation) RemoveMatchIDs(ids ...int32) {
 }
 
 // RemovedMatches returns the removed IDs of the "matches" edge to the Match entity.
-func (m *TeamMutation) RemovedMatchesIDs() (ids []int32) {
+func (m *TeamMutation) RemovedMatchesIDs() (ids []int) {
 	for id := range m.removedmatches {
 		ids = append(ids, id)
 	}
@@ -6197,7 +6531,7 @@ func (m *TeamMutation) RemovedMatchesIDs() (ids []int32) {
 }
 
 // MatchesIDs returns the "matches" edge IDs in the mutation.
-func (m *TeamMutation) MatchesIDs() (ids []int32) {
+func (m *TeamMutation) MatchesIDs() (ids []int) {
 	for id := range m.matches {
 		ids = append(ids, id)
 	}
@@ -6572,7 +6906,7 @@ type TeamFeeMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int32
+	id            *int
 	amount        *float64
 	addamount     *float64
 	payment_date  *time.Time
@@ -6605,7 +6939,7 @@ func newTeamFeeMutation(c config, op Op, opts ...teamfeeOption) *TeamFeeMutation
 }
 
 // withTeamFeeID sets the ID field of the mutation.
-func withTeamFeeID(id int32) teamfeeOption {
+func withTeamFeeID(id int) teamfeeOption {
 	return func(m *TeamFeeMutation) {
 		var (
 			err   error
@@ -6657,13 +6991,13 @@ func (m TeamFeeMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of TeamFee entities.
-func (m *TeamFeeMutation) SetID(id int32) {
+func (m *TeamFeeMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *TeamFeeMutation) ID() (id int32, exists bool) {
+func (m *TeamFeeMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -6674,12 +7008,12 @@ func (m *TeamFeeMutation) ID() (id int32, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *TeamFeeMutation) IDs(ctx context.Context) ([]int32, error) {
+func (m *TeamFeeMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int32{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -7216,7 +7550,7 @@ type UserMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int32
+	id            *int
 	username      *string
 	password      *string
 	email         *string
@@ -7249,7 +7583,7 @@ func newUserMutation(c config, op Op, opts ...userOption) *UserMutation {
 }
 
 // withUserID sets the ID field of the mutation.
-func withUserID(id int32) userOption {
+func withUserID(id int) userOption {
 	return func(m *UserMutation) {
 		var (
 			err   error
@@ -7301,13 +7635,13 @@ func (m UserMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of User entities.
-func (m *UserMutation) SetID(id int32) {
+func (m *UserMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *UserMutation) ID() (id int32, exists bool) {
+func (m *UserMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -7318,12 +7652,12 @@ func (m *UserMutation) ID() (id int32, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *UserMutation) IDs(ctx context.Context) ([]int32, error) {
+func (m *UserMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int32{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):

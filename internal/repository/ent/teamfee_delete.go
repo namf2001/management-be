@@ -40,7 +40,7 @@ func (tfd *TeamFeeDelete) ExecX(ctx context.Context) int {
 }
 
 func (tfd *TeamFeeDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(teamfee.Table, sqlgraph.NewFieldSpec(teamfee.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewDeleteSpec(teamfee.Table, sqlgraph.NewFieldSpec(teamfee.FieldID, field.TypeInt))
 	if ps := tfd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

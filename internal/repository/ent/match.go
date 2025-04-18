@@ -17,9 +17,9 @@ import (
 type Match struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int32 `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// OpponentTeamID holds the value of the "opponent_team_id" field.
-	OpponentTeamID int32 `json:"opponent_team_id,omitempty"`
+	OpponentTeamID int `json:"opponent_team_id,omitempty"`
 	// MatchDate holds the value of the "match_date" field.
 	MatchDate time.Time `json:"match_date,omitempty"`
 	// Venue holds the value of the "venue" field.
@@ -108,12 +108,12 @@ func (m *Match) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			m.ID = int32(value.Int64)
+			m.ID = int(value.Int64)
 		case match.FieldOpponentTeamID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field opponent_team_id", values[i])
 			} else if value.Valid {
-				m.OpponentTeamID = int32(value.Int64)
+				m.OpponentTeamID = int(value.Int64)
 			}
 		case match.FieldMatchDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {

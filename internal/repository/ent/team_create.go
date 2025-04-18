@@ -112,20 +112,20 @@ func (tc *TeamCreate) SetNillableUpdatedAt(t *time.Time) *TeamCreate {
 }
 
 // SetID sets the "id" field.
-func (tc *TeamCreate) SetID(i int32) *TeamCreate {
+func (tc *TeamCreate) SetID(i int) *TeamCreate {
 	tc.mutation.SetID(i)
 	return tc
 }
 
 // AddMatchIDs adds the "matches" edge to the Match entity by IDs.
-func (tc *TeamCreate) AddMatchIDs(ids ...int32) *TeamCreate {
+func (tc *TeamCreate) AddMatchIDs(ids ...int) *TeamCreate {
 	tc.mutation.AddMatchIDs(ids...)
 	return tc
 }
 
 // AddMatches adds the "matches" edges to the Match entity.
 func (tc *TeamCreate) AddMatches(m ...*Match) *TeamCreate {
-	ids := make([]int32, len(m))
+	ids := make([]int, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
@@ -185,7 +185,7 @@ func (tc *TeamCreate) sqlSave(ctx context.Context) (*Team, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int32(id)
+		_node.ID = int(id)
 	}
 	tc.mutation.id = &_node.ID
 	tc.mutation.done = true
@@ -195,7 +195,7 @@ func (tc *TeamCreate) sqlSave(ctx context.Context) (*Team, error) {
 func (tc *TeamCreate) createSpec() (*Team, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Team{config: tc.config}
-		_spec = sqlgraph.NewCreateSpec(team.Table, sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt32))
+		_spec = sqlgraph.NewCreateSpec(team.Table, sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt))
 	)
 	if id, ok := tc.mutation.ID(); ok {
 		_node.ID = id
@@ -237,7 +237,7 @@ func (tc *TeamCreate) createSpec() (*Team, *sqlgraph.CreateSpec) {
 			Columns: []string{team.MatchesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -294,7 +294,7 @@ func (tcb *TeamCreateBulk) Save(ctx context.Context) ([]*Team, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int32(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

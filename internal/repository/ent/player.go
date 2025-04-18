@@ -18,9 +18,9 @@ import (
 type Player struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int32 `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// DepartmentID holds the value of the "department_id" field.
-	DepartmentID int32 `json:"department_id,omitempty"`
+	DepartmentID int `json:"department_id,omitempty"`
 	// FullName holds the value of the "full_name" field.
 	FullName string `json:"full_name,omitempty"`
 	// JerseyNumber holds the value of the "jersey_number" field.
@@ -126,12 +126,12 @@ func (pl *Player) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			pl.ID = int32(value.Int64)
+			pl.ID = int(value.Int64)
 		case player.FieldDepartmentID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field department_id", values[i])
 			} else if value.Valid {
-				pl.DepartmentID = int32(value.Int64)
+				pl.DepartmentID = int(value.Int64)
 			}
 		case player.FieldFullName:
 			if value, ok := values[i].(*sql.NullString); !ok {

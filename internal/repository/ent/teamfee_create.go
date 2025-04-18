@@ -75,7 +75,7 @@ func (tfc *TeamFeeCreate) SetNillableUpdatedAt(t *time.Time) *TeamFeeCreate {
 }
 
 // SetID sets the "id" field.
-func (tfc *TeamFeeCreate) SetID(i int32) *TeamFeeCreate {
+func (tfc *TeamFeeCreate) SetID(i int) *TeamFeeCreate {
 	tfc.mutation.SetID(i)
 	return tfc
 }
@@ -136,7 +136,7 @@ func (tfc *TeamFeeCreate) sqlSave(ctx context.Context) (*TeamFee, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int32(id)
+		_node.ID = int(id)
 	}
 	tfc.mutation.id = &_node.ID
 	tfc.mutation.done = true
@@ -146,7 +146,7 @@ func (tfc *TeamFeeCreate) sqlSave(ctx context.Context) (*TeamFee, error) {
 func (tfc *TeamFeeCreate) createSpec() (*TeamFee, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TeamFee{config: tfc.config}
-		_spec = sqlgraph.NewCreateSpec(teamfee.Table, sqlgraph.NewFieldSpec(teamfee.FieldID, field.TypeInt32))
+		_spec = sqlgraph.NewCreateSpec(teamfee.Table, sqlgraph.NewFieldSpec(teamfee.FieldID, field.TypeInt))
 	)
 	if id, ok := tfc.mutation.ID(); ok {
 		_node.ID = id
@@ -221,7 +221,7 @@ func (tfcb *TeamFeeCreateBulk) Save(ctx context.Context) ([]*TeamFee, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int32(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

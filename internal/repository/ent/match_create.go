@@ -23,13 +23,13 @@ type MatchCreate struct {
 }
 
 // SetOpponentTeamID sets the "opponent_team_id" field.
-func (mc *MatchCreate) SetOpponentTeamID(i int32) *MatchCreate {
+func (mc *MatchCreate) SetOpponentTeamID(i int) *MatchCreate {
 	mc.mutation.SetOpponentTeamID(i)
 	return mc
 }
 
 // SetNillableOpponentTeamID sets the "opponent_team_id" field if the given value is not nil.
-func (mc *MatchCreate) SetNillableOpponentTeamID(i *int32) *MatchCreate {
+func (mc *MatchCreate) SetNillableOpponentTeamID(i *int) *MatchCreate {
 	if i != nil {
 		mc.SetOpponentTeamID(*i)
 	}
@@ -155,20 +155,20 @@ func (mc *MatchCreate) SetNillableUpdatedAt(t *time.Time) *MatchCreate {
 }
 
 // SetID sets the "id" field.
-func (mc *MatchCreate) SetID(i int32) *MatchCreate {
+func (mc *MatchCreate) SetID(i int) *MatchCreate {
 	mc.mutation.SetID(i)
 	return mc
 }
 
 // AddMatchPlayerIDs adds the "match_players" edge to the MatchPlayer entity by IDs.
-func (mc *MatchCreate) AddMatchPlayerIDs(ids ...int32) *MatchCreate {
+func (mc *MatchCreate) AddMatchPlayerIDs(ids ...int) *MatchCreate {
 	mc.mutation.AddMatchPlayerIDs(ids...)
 	return mc
 }
 
 // AddMatchPlayers adds the "match_players" edges to the MatchPlayer entity.
 func (mc *MatchCreate) AddMatchPlayers(m ...*MatchPlayer) *MatchCreate {
-	ids := make([]int32, len(m))
+	ids := make([]int, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
@@ -176,13 +176,13 @@ func (mc *MatchCreate) AddMatchPlayers(m ...*MatchPlayer) *MatchCreate {
 }
 
 // SetTeamID sets the "team" edge to the Team entity by ID.
-func (mc *MatchCreate) SetTeamID(id int32) *MatchCreate {
+func (mc *MatchCreate) SetTeamID(id int) *MatchCreate {
 	mc.mutation.SetTeamID(id)
 	return mc
 }
 
 // SetNillableTeamID sets the "team" edge to the Team entity by ID if the given value is not nil.
-func (mc *MatchCreate) SetNillableTeamID(id *int32) *MatchCreate {
+func (mc *MatchCreate) SetNillableTeamID(id *int) *MatchCreate {
 	if id != nil {
 		mc = mc.SetTeamID(*id)
 	}
@@ -247,7 +247,7 @@ func (mc *MatchCreate) sqlSave(ctx context.Context) (*Match, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int32(id)
+		_node.ID = int(id)
 	}
 	mc.mutation.id = &_node.ID
 	mc.mutation.done = true
@@ -257,7 +257,7 @@ func (mc *MatchCreate) sqlSave(ctx context.Context) (*Match, error) {
 func (mc *MatchCreate) createSpec() (*Match, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Match{config: mc.config}
-		_spec = sqlgraph.NewCreateSpec(match.Table, sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt32))
+		_spec = sqlgraph.NewCreateSpec(match.Table, sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt))
 	)
 	if id, ok := mc.mutation.ID(); ok {
 		_node.ID = id
@@ -307,7 +307,7 @@ func (mc *MatchCreate) createSpec() (*Match, *sqlgraph.CreateSpec) {
 			Columns: []string{match.MatchPlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -323,7 +323,7 @@ func (mc *MatchCreate) createSpec() (*Match, *sqlgraph.CreateSpec) {
 			Columns: []string{match.TeamColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -381,7 +381,7 @@ func (mcb *MatchCreateBulk) Save(ctx context.Context) ([]*Match, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int32(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

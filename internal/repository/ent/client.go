@@ -16,6 +16,7 @@ import (
 	"management-be/internal/repository/ent/matchplayer"
 	"management-be/internal/repository/ent/player"
 	"management-be/internal/repository/ent/playerstatistic"
+	"management-be/internal/repository/ent/schemamigration"
 	"management-be/internal/repository/ent/team"
 	"management-be/internal/repository/ent/teamfee"
 	"management-be/internal/repository/ent/user"
@@ -24,6 +25,8 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+
+	stdsql "database/sql"
 )
 
 // Client is the client that holds all ent builders.
@@ -41,6 +44,8 @@ type Client struct {
 	Player *PlayerClient
 	// PlayerStatistic is the client for interacting with the PlayerStatistic builders.
 	PlayerStatistic *PlayerStatisticClient
+	// SchemaMigration is the client for interacting with the SchemaMigration builders.
+	SchemaMigration *SchemaMigrationClient
 	// Team is the client for interacting with the Team builders.
 	Team *TeamClient
 	// TeamFee is the client for interacting with the TeamFee builders.
@@ -63,6 +68,7 @@ func (c *Client) init() {
 	c.MatchPlayer = NewMatchPlayerClient(c.config)
 	c.Player = NewPlayerClient(c.config)
 	c.PlayerStatistic = NewPlayerStatisticClient(c.config)
+	c.SchemaMigration = NewSchemaMigrationClient(c.config)
 	c.Team = NewTeamClient(c.config)
 	c.TeamFee = NewTeamFeeClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -163,6 +169,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MatchPlayer:     NewMatchPlayerClient(cfg),
 		Player:          NewPlayerClient(cfg),
 		PlayerStatistic: NewPlayerStatisticClient(cfg),
+		SchemaMigration: NewSchemaMigrationClient(cfg),
 		Team:            NewTeamClient(cfg),
 		TeamFee:         NewTeamFeeClient(cfg),
 		User:            NewUserClient(cfg),
@@ -190,6 +197,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MatchPlayer:     NewMatchPlayerClient(cfg),
 		Player:          NewPlayerClient(cfg),
 		PlayerStatistic: NewPlayerStatisticClient(cfg),
+		SchemaMigration: NewSchemaMigrationClient(cfg),
 		Team:            NewTeamClient(cfg),
 		TeamFee:         NewTeamFeeClient(cfg),
 		User:            NewUserClient(cfg),
@@ -222,8 +230,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Department, c.Match, c.MatchPlayer, c.Player, c.PlayerStatistic, c.Team,
-		c.TeamFee, c.User,
+		c.Department, c.Match, c.MatchPlayer, c.Player, c.PlayerStatistic,
+		c.SchemaMigration, c.Team, c.TeamFee, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -233,8 +241,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Department, c.Match, c.MatchPlayer, c.Player, c.PlayerStatistic, c.Team,
-		c.TeamFee, c.User,
+		c.Department, c.Match, c.MatchPlayer, c.Player, c.PlayerStatistic,
+		c.SchemaMigration, c.Team, c.TeamFee, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -253,6 +261,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Player.mutate(ctx, m)
 	case *PlayerStatisticMutation:
 		return c.PlayerStatistic.mutate(ctx, m)
+	case *SchemaMigrationMutation:
+		return c.SchemaMigration.mutate(ctx, m)
 	case *TeamMutation:
 		return c.Team.mutate(ctx, m)
 	case *TeamFeeMutation:
@@ -325,7 +335,7 @@ func (c *DepartmentClient) UpdateOne(d *Department) *DepartmentUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *DepartmentClient) UpdateOneID(id int32) *DepartmentUpdateOne {
+func (c *DepartmentClient) UpdateOneID(id int) *DepartmentUpdateOne {
 	mutation := newDepartmentMutation(c.config, OpUpdateOne, withDepartmentID(id))
 	return &DepartmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -342,7 +352,7 @@ func (c *DepartmentClient) DeleteOne(d *Department) *DepartmentDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *DepartmentClient) DeleteOneID(id int32) *DepartmentDeleteOne {
+func (c *DepartmentClient) DeleteOneID(id int) *DepartmentDeleteOne {
 	builder := c.Delete().Where(department.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -359,12 +369,12 @@ func (c *DepartmentClient) Query() *DepartmentQuery {
 }
 
 // Get returns a Department entity by its id.
-func (c *DepartmentClient) Get(ctx context.Context, id int32) (*Department, error) {
+func (c *DepartmentClient) Get(ctx context.Context, id int) (*Department, error) {
 	return c.Query().Where(department.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *DepartmentClient) GetX(ctx context.Context, id int32) *Department {
+func (c *DepartmentClient) GetX(ctx context.Context, id int) *Department {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -474,7 +484,7 @@ func (c *MatchClient) UpdateOne(m *Match) *MatchUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *MatchClient) UpdateOneID(id int32) *MatchUpdateOne {
+func (c *MatchClient) UpdateOneID(id int) *MatchUpdateOne {
 	mutation := newMatchMutation(c.config, OpUpdateOne, withMatchID(id))
 	return &MatchUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -491,7 +501,7 @@ func (c *MatchClient) DeleteOne(m *Match) *MatchDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *MatchClient) DeleteOneID(id int32) *MatchDeleteOne {
+func (c *MatchClient) DeleteOneID(id int) *MatchDeleteOne {
 	builder := c.Delete().Where(match.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -508,12 +518,12 @@ func (c *MatchClient) Query() *MatchQuery {
 }
 
 // Get returns a Match entity by its id.
-func (c *MatchClient) Get(ctx context.Context, id int32) (*Match, error) {
+func (c *MatchClient) Get(ctx context.Context, id int) (*Match, error) {
 	return c.Query().Where(match.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *MatchClient) GetX(ctx context.Context, id int32) *Match {
+func (c *MatchClient) GetX(ctx context.Context, id int) *Match {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -639,7 +649,7 @@ func (c *MatchPlayerClient) UpdateOne(mp *MatchPlayer) *MatchPlayerUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *MatchPlayerClient) UpdateOneID(id int32) *MatchPlayerUpdateOne {
+func (c *MatchPlayerClient) UpdateOneID(id int) *MatchPlayerUpdateOne {
 	mutation := newMatchPlayerMutation(c.config, OpUpdateOne, withMatchPlayerID(id))
 	return &MatchPlayerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -656,7 +666,7 @@ func (c *MatchPlayerClient) DeleteOne(mp *MatchPlayer) *MatchPlayerDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *MatchPlayerClient) DeleteOneID(id int32) *MatchPlayerDeleteOne {
+func (c *MatchPlayerClient) DeleteOneID(id int) *MatchPlayerDeleteOne {
 	builder := c.Delete().Where(matchplayer.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -673,12 +683,12 @@ func (c *MatchPlayerClient) Query() *MatchPlayerQuery {
 }
 
 // Get returns a MatchPlayer entity by its id.
-func (c *MatchPlayerClient) Get(ctx context.Context, id int32) (*MatchPlayer, error) {
+func (c *MatchPlayerClient) Get(ctx context.Context, id int) (*MatchPlayer, error) {
 	return c.Query().Where(matchplayer.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *MatchPlayerClient) GetX(ctx context.Context, id int32) *MatchPlayer {
+func (c *MatchPlayerClient) GetX(ctx context.Context, id int) *MatchPlayer {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -804,7 +814,7 @@ func (c *PlayerClient) UpdateOne(pl *Player) *PlayerUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *PlayerClient) UpdateOneID(id int32) *PlayerUpdateOne {
+func (c *PlayerClient) UpdateOneID(id int) *PlayerUpdateOne {
 	mutation := newPlayerMutation(c.config, OpUpdateOne, withPlayerID(id))
 	return &PlayerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -821,7 +831,7 @@ func (c *PlayerClient) DeleteOne(pl *Player) *PlayerDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *PlayerClient) DeleteOneID(id int32) *PlayerDeleteOne {
+func (c *PlayerClient) DeleteOneID(id int) *PlayerDeleteOne {
 	builder := c.Delete().Where(player.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -838,12 +848,12 @@ func (c *PlayerClient) Query() *PlayerQuery {
 }
 
 // Get returns a Player entity by its id.
-func (c *PlayerClient) Get(ctx context.Context, id int32) (*Player, error) {
+func (c *PlayerClient) Get(ctx context.Context, id int) (*Player, error) {
 	return c.Query().Where(player.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *PlayerClient) GetX(ctx context.Context, id int32) *Player {
+func (c *PlayerClient) GetX(ctx context.Context, id int) *Player {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -985,7 +995,7 @@ func (c *PlayerStatisticClient) UpdateOne(ps *PlayerStatistic) *PlayerStatisticU
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *PlayerStatisticClient) UpdateOneID(id int32) *PlayerStatisticUpdateOne {
+func (c *PlayerStatisticClient) UpdateOneID(id int) *PlayerStatisticUpdateOne {
 	mutation := newPlayerStatisticMutation(c.config, OpUpdateOne, withPlayerStatisticID(id))
 	return &PlayerStatisticUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1002,7 +1012,7 @@ func (c *PlayerStatisticClient) DeleteOne(ps *PlayerStatistic) *PlayerStatisticD
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *PlayerStatisticClient) DeleteOneID(id int32) *PlayerStatisticDeleteOne {
+func (c *PlayerStatisticClient) DeleteOneID(id int) *PlayerStatisticDeleteOne {
 	builder := c.Delete().Where(playerstatistic.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1019,12 +1029,12 @@ func (c *PlayerStatisticClient) Query() *PlayerStatisticQuery {
 }
 
 // Get returns a PlayerStatistic entity by its id.
-func (c *PlayerStatisticClient) Get(ctx context.Context, id int32) (*PlayerStatistic, error) {
+func (c *PlayerStatisticClient) Get(ctx context.Context, id int) (*PlayerStatistic, error) {
 	return c.Query().Where(playerstatistic.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *PlayerStatisticClient) GetX(ctx context.Context, id int32) *PlayerStatistic {
+func (c *PlayerStatisticClient) GetX(ctx context.Context, id int) *PlayerStatistic {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1070,6 +1080,139 @@ func (c *PlayerStatisticClient) mutate(ctx context.Context, m *PlayerStatisticMu
 		return (&PlayerStatisticDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown PlayerStatistic mutation op: %q", m.Op())
+	}
+}
+
+// SchemaMigrationClient is a client for the SchemaMigration schema.
+type SchemaMigrationClient struct {
+	config
+}
+
+// NewSchemaMigrationClient returns a client for the SchemaMigration from the given config.
+func NewSchemaMigrationClient(c config) *SchemaMigrationClient {
+	return &SchemaMigrationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `schemamigration.Hooks(f(g(h())))`.
+func (c *SchemaMigrationClient) Use(hooks ...Hook) {
+	c.hooks.SchemaMigration = append(c.hooks.SchemaMigration, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `schemamigration.Intercept(f(g(h())))`.
+func (c *SchemaMigrationClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SchemaMigration = append(c.inters.SchemaMigration, interceptors...)
+}
+
+// Create returns a builder for creating a SchemaMigration entity.
+func (c *SchemaMigrationClient) Create() *SchemaMigrationCreate {
+	mutation := newSchemaMigrationMutation(c.config, OpCreate)
+	return &SchemaMigrationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SchemaMigration entities.
+func (c *SchemaMigrationClient) CreateBulk(builders ...*SchemaMigrationCreate) *SchemaMigrationCreateBulk {
+	return &SchemaMigrationCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SchemaMigrationClient) MapCreateBulk(slice any, setFunc func(*SchemaMigrationCreate, int)) *SchemaMigrationCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SchemaMigrationCreateBulk{err: fmt.Errorf("calling to SchemaMigrationClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SchemaMigrationCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SchemaMigrationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SchemaMigration.
+func (c *SchemaMigrationClient) Update() *SchemaMigrationUpdate {
+	mutation := newSchemaMigrationMutation(c.config, OpUpdate)
+	return &SchemaMigrationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SchemaMigrationClient) UpdateOne(sm *SchemaMigration) *SchemaMigrationUpdateOne {
+	mutation := newSchemaMigrationMutation(c.config, OpUpdateOne, withSchemaMigration(sm))
+	return &SchemaMigrationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SchemaMigrationClient) UpdateOneID(id int) *SchemaMigrationUpdateOne {
+	mutation := newSchemaMigrationMutation(c.config, OpUpdateOne, withSchemaMigrationID(id))
+	return &SchemaMigrationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SchemaMigration.
+func (c *SchemaMigrationClient) Delete() *SchemaMigrationDelete {
+	mutation := newSchemaMigrationMutation(c.config, OpDelete)
+	return &SchemaMigrationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SchemaMigrationClient) DeleteOne(sm *SchemaMigration) *SchemaMigrationDeleteOne {
+	return c.DeleteOneID(sm.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SchemaMigrationClient) DeleteOneID(id int) *SchemaMigrationDeleteOne {
+	builder := c.Delete().Where(schemamigration.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SchemaMigrationDeleteOne{builder}
+}
+
+// Query returns a query builder for SchemaMigration.
+func (c *SchemaMigrationClient) Query() *SchemaMigrationQuery {
+	return &SchemaMigrationQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSchemaMigration},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SchemaMigration entity by its id.
+func (c *SchemaMigrationClient) Get(ctx context.Context, id int) (*SchemaMigration, error) {
+	return c.Query().Where(schemamigration.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SchemaMigrationClient) GetX(ctx context.Context, id int) *SchemaMigration {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SchemaMigrationClient) Hooks() []Hook {
+	return c.hooks.SchemaMigration
+}
+
+// Interceptors returns the client interceptors.
+func (c *SchemaMigrationClient) Interceptors() []Interceptor {
+	return c.inters.SchemaMigration
+}
+
+func (c *SchemaMigrationClient) mutate(ctx context.Context, m *SchemaMigrationMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SchemaMigrationCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SchemaMigrationUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SchemaMigrationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SchemaMigrationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SchemaMigration mutation op: %q", m.Op())
 	}
 }
 
@@ -1134,7 +1277,7 @@ func (c *TeamClient) UpdateOne(t *Team) *TeamUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TeamClient) UpdateOneID(id int32) *TeamUpdateOne {
+func (c *TeamClient) UpdateOneID(id int) *TeamUpdateOne {
 	mutation := newTeamMutation(c.config, OpUpdateOne, withTeamID(id))
 	return &TeamUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1151,7 +1294,7 @@ func (c *TeamClient) DeleteOne(t *Team) *TeamDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TeamClient) DeleteOneID(id int32) *TeamDeleteOne {
+func (c *TeamClient) DeleteOneID(id int) *TeamDeleteOne {
 	builder := c.Delete().Where(team.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1168,12 +1311,12 @@ func (c *TeamClient) Query() *TeamQuery {
 }
 
 // Get returns a Team entity by its id.
-func (c *TeamClient) Get(ctx context.Context, id int32) (*Team, error) {
+func (c *TeamClient) Get(ctx context.Context, id int) (*Team, error) {
 	return c.Query().Where(team.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TeamClient) GetX(ctx context.Context, id int32) *Team {
+func (c *TeamClient) GetX(ctx context.Context, id int) *Team {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1283,7 +1426,7 @@ func (c *TeamFeeClient) UpdateOne(tf *TeamFee) *TeamFeeUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TeamFeeClient) UpdateOneID(id int32) *TeamFeeUpdateOne {
+func (c *TeamFeeClient) UpdateOneID(id int) *TeamFeeUpdateOne {
 	mutation := newTeamFeeMutation(c.config, OpUpdateOne, withTeamFeeID(id))
 	return &TeamFeeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1300,7 +1443,7 @@ func (c *TeamFeeClient) DeleteOne(tf *TeamFee) *TeamFeeDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TeamFeeClient) DeleteOneID(id int32) *TeamFeeDeleteOne {
+func (c *TeamFeeClient) DeleteOneID(id int) *TeamFeeDeleteOne {
 	builder := c.Delete().Where(teamfee.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1317,12 +1460,12 @@ func (c *TeamFeeClient) Query() *TeamFeeQuery {
 }
 
 // Get returns a TeamFee entity by its id.
-func (c *TeamFeeClient) Get(ctx context.Context, id int32) (*TeamFee, error) {
+func (c *TeamFeeClient) Get(ctx context.Context, id int) (*TeamFee, error) {
 	return c.Query().Where(teamfee.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TeamFeeClient) GetX(ctx context.Context, id int32) *TeamFee {
+func (c *TeamFeeClient) GetX(ctx context.Context, id int) *TeamFee {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1416,7 +1559,7 @@ func (c *UserClient) UpdateOne(u *User) *UserUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *UserClient) UpdateOneID(id int32) *UserUpdateOne {
+func (c *UserClient) UpdateOneID(id int) *UserUpdateOne {
 	mutation := newUserMutation(c.config, OpUpdateOne, withUserID(id))
 	return &UserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1433,7 +1576,7 @@ func (c *UserClient) DeleteOne(u *User) *UserDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *UserClient) DeleteOneID(id int32) *UserDeleteOne {
+func (c *UserClient) DeleteOneID(id int) *UserDeleteOne {
 	builder := c.Delete().Where(user.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1450,12 +1593,12 @@ func (c *UserClient) Query() *UserQuery {
 }
 
 // Get returns a User entity by its id.
-func (c *UserClient) Get(ctx context.Context, id int32) (*User, error) {
+func (c *UserClient) Get(ctx context.Context, id int) (*User, error) {
 	return c.Query().Where(user.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *UserClient) GetX(ctx context.Context, id int32) *User {
+func (c *UserClient) GetX(ctx context.Context, id int) *User {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1491,11 +1634,35 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Department, Match, MatchPlayer, Player, PlayerStatistic, Team, TeamFee,
-		User []ent.Hook
+		Department, Match, MatchPlayer, Player, PlayerStatistic, SchemaMigration, Team,
+		TeamFee, User []ent.Hook
 	}
 	inters struct {
-		Department, Match, MatchPlayer, Player, PlayerStatistic, Team, TeamFee,
-		User []ent.Interceptor
+		Department, Match, MatchPlayer, Player, PlayerStatistic, SchemaMigration, Team,
+		TeamFee, User []ent.Interceptor
 	}
 )
+
+// ExecContext allows calling the underlying ExecContext method of the driver if it is supported by it.
+// See, database/sql#DB.ExecContext for more information.
+func (c *config) ExecContext(ctx context.Context, query string, args ...any) (stdsql.Result, error) {
+	ex, ok := c.driver.(interface {
+		ExecContext(context.Context, string, ...any) (stdsql.Result, error)
+	})
+	if !ok {
+		return nil, fmt.Errorf("Driver.ExecContext is not supported")
+	}
+	return ex.ExecContext(ctx, query, args...)
+}
+
+// QueryContext allows calling the underlying QueryContext method of the driver if it is supported by it.
+// See, database/sql#DB.QueryContext for more information.
+func (c *config) QueryContext(ctx context.Context, query string, args ...any) (*stdsql.Rows, error) {
+	q, ok := c.driver.(interface {
+		QueryContext(context.Context, string, ...any) (*stdsql.Rows, error)
+	})
+	if !ok {
+		return nil, fmt.Errorf("Driver.QueryContext is not supported")
+	}
+	return q.QueryContext(ctx, query, args...)
+}

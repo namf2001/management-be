@@ -17,13 +17,13 @@ api-setup: pg api-pg-migrate-up
 api-run:
 	${API_COMPOSE} sh -c "go run -mod=vendor cmd/api/main.go server -c configs/.env"
 api-down:
-	${COMPOSE} down
+	${COMPOSE} down --remove-orphans
 api-pg-migrate-up:
 	${COMPOSE} run --rm pg-migrate -path=/api-migrations -database="postgres://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable" up
 api-pg-migrate-down:
 	${COMPOSE} run --rm pg-migrate -path=/api-migrations -database="postgres://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable" drop
 api-gen-models:
-	${API_COMPOSE} sh -c 'cd ./internal/repository && entimport -dsn "postgres://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable" && go run entgo.io/ent/cmd/ent generate --feature sql/execquery ./ent/schema'
+		${API_COMPOSE} sh -c 'cd ./internal/repository && go run ariga.io/entimport/cmd/entimport -dsn "postgres://${PROJECT_NAME}:@pg:5432/${PROJECT_NAME}?sslmode=disable" && go run entgo.io/ent/cmd/ent generate --feature sql/execquery ./ent/schema'
 api-go-generate:
 	${API_COMPOSE} sh -c "go generate ./..."
 api-gen-mocks:

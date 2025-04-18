@@ -130,8 +130,8 @@ func (mpq *MatchPlayerQuery) FirstX(ctx context.Context) *MatchPlayer {
 
 // FirstID returns the first MatchPlayer ID from the query.
 // Returns a *NotFoundError when no MatchPlayer ID was found.
-func (mpq *MatchPlayerQuery) FirstID(ctx context.Context) (id int32, err error) {
-	var ids []int32
+func (mpq *MatchPlayerQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = mpq.Limit(1).IDs(setContextOp(ctx, mpq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -143,7 +143,7 @@ func (mpq *MatchPlayerQuery) FirstID(ctx context.Context) (id int32, err error) 
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (mpq *MatchPlayerQuery) FirstIDX(ctx context.Context) int32 {
+func (mpq *MatchPlayerQuery) FirstIDX(ctx context.Context) int {
 	id, err := mpq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -181,8 +181,8 @@ func (mpq *MatchPlayerQuery) OnlyX(ctx context.Context) *MatchPlayer {
 // OnlyID is like Only, but returns the only MatchPlayer ID in the query.
 // Returns a *NotSingularError when more than one MatchPlayer ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (mpq *MatchPlayerQuery) OnlyID(ctx context.Context) (id int32, err error) {
-	var ids []int32
+func (mpq *MatchPlayerQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = mpq.Limit(2).IDs(setContextOp(ctx, mpq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -198,7 +198,7 @@ func (mpq *MatchPlayerQuery) OnlyID(ctx context.Context) (id int32, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (mpq *MatchPlayerQuery) OnlyIDX(ctx context.Context) int32 {
+func (mpq *MatchPlayerQuery) OnlyIDX(ctx context.Context) int {
 	id, err := mpq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -226,7 +226,7 @@ func (mpq *MatchPlayerQuery) AllX(ctx context.Context) []*MatchPlayer {
 }
 
 // IDs executes the query and returns a list of MatchPlayer IDs.
-func (mpq *MatchPlayerQuery) IDs(ctx context.Context) (ids []int32, err error) {
+func (mpq *MatchPlayerQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if mpq.ctx.Unique == nil && mpq.path != nil {
 		mpq.Unique(true)
 	}
@@ -238,7 +238,7 @@ func (mpq *MatchPlayerQuery) IDs(ctx context.Context) (ids []int32, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (mpq *MatchPlayerQuery) IDsX(ctx context.Context) []int32 {
+func (mpq *MatchPlayerQuery) IDsX(ctx context.Context) []int {
 	ids, err := mpq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -334,7 +334,7 @@ func (mpq *MatchPlayerQuery) WithPlayer(opts ...func(*PlayerQuery)) *MatchPlayer
 // Example:
 //
 //	var v []struct {
-//		MatchID int32 `json:"match_id,omitempty"`
+//		MatchID int `json:"match_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -357,7 +357,7 @@ func (mpq *MatchPlayerQuery) GroupBy(field string, fields ...string) *MatchPlaye
 // Example:
 //
 //	var v []struct {
-//		MatchID int32 `json:"match_id,omitempty"`
+//		MatchID int `json:"match_id,omitempty"`
 //	}
 //
 //	client.MatchPlayer.Query().
@@ -445,8 +445,8 @@ func (mpq *MatchPlayerQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 }
 
 func (mpq *MatchPlayerQuery) loadMatch(ctx context.Context, query *MatchQuery, nodes []*MatchPlayer, init func(*MatchPlayer), assign func(*MatchPlayer, *Match)) error {
-	ids := make([]int32, 0, len(nodes))
-	nodeids := make(map[int32][]*MatchPlayer)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*MatchPlayer)
 	for i := range nodes {
 		fk := nodes[i].MatchID
 		if _, ok := nodeids[fk]; !ok {
@@ -474,8 +474,8 @@ func (mpq *MatchPlayerQuery) loadMatch(ctx context.Context, query *MatchQuery, n
 	return nil
 }
 func (mpq *MatchPlayerQuery) loadPlayer(ctx context.Context, query *PlayerQuery, nodes []*MatchPlayer, init func(*MatchPlayer), assign func(*MatchPlayer, *Player)) error {
-	ids := make([]int32, 0, len(nodes))
-	nodeids := make(map[int32][]*MatchPlayer)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*MatchPlayer)
 	for i := range nodes {
 		fk := nodes[i].PlayerID
 		if _, ok := nodeids[fk]; !ok {
@@ -513,7 +513,7 @@ func (mpq *MatchPlayerQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (mpq *MatchPlayerQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(matchplayer.Table, matchplayer.Columns, sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewQuerySpec(matchplayer.Table, matchplayer.Columns, sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt))
 	_spec.From = mpq.sql
 	if unique := mpq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

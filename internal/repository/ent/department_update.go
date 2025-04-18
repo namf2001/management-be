@@ -104,14 +104,14 @@ func (du *DepartmentUpdate) ClearUpdatedAt() *DepartmentUpdate {
 }
 
 // AddPlayerIDs adds the "players" edge to the Player entity by IDs.
-func (du *DepartmentUpdate) AddPlayerIDs(ids ...int32) *DepartmentUpdate {
+func (du *DepartmentUpdate) AddPlayerIDs(ids ...int) *DepartmentUpdate {
 	du.mutation.AddPlayerIDs(ids...)
 	return du
 }
 
 // AddPlayers adds the "players" edges to the Player entity.
 func (du *DepartmentUpdate) AddPlayers(p ...*Player) *DepartmentUpdate {
-	ids := make([]int32, len(p))
+	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -130,14 +130,14 @@ func (du *DepartmentUpdate) ClearPlayers() *DepartmentUpdate {
 }
 
 // RemovePlayerIDs removes the "players" edge to Player entities by IDs.
-func (du *DepartmentUpdate) RemovePlayerIDs(ids ...int32) *DepartmentUpdate {
+func (du *DepartmentUpdate) RemovePlayerIDs(ids ...int) *DepartmentUpdate {
 	du.mutation.RemovePlayerIDs(ids...)
 	return du
 }
 
 // RemovePlayers removes "players" edges to Player entities.
 func (du *DepartmentUpdate) RemovePlayers(p ...*Player) *DepartmentUpdate {
-	ids := make([]int32, len(p))
+	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -172,7 +172,7 @@ func (du *DepartmentUpdate) ExecX(ctx context.Context) {
 }
 
 func (du *DepartmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(department.Table, department.Columns, sqlgraph.NewFieldSpec(department.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(department.Table, department.Columns, sqlgraph.NewFieldSpec(department.FieldID, field.TypeInt))
 	if ps := du.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -209,7 +209,7 @@ func (du *DepartmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{department.PlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -222,7 +222,7 @@ func (du *DepartmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{department.PlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -238,7 +238,7 @@ func (du *DepartmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{department.PlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -341,14 +341,14 @@ func (duo *DepartmentUpdateOne) ClearUpdatedAt() *DepartmentUpdateOne {
 }
 
 // AddPlayerIDs adds the "players" edge to the Player entity by IDs.
-func (duo *DepartmentUpdateOne) AddPlayerIDs(ids ...int32) *DepartmentUpdateOne {
+func (duo *DepartmentUpdateOne) AddPlayerIDs(ids ...int) *DepartmentUpdateOne {
 	duo.mutation.AddPlayerIDs(ids...)
 	return duo
 }
 
 // AddPlayers adds the "players" edges to the Player entity.
 func (duo *DepartmentUpdateOne) AddPlayers(p ...*Player) *DepartmentUpdateOne {
-	ids := make([]int32, len(p))
+	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -367,14 +367,14 @@ func (duo *DepartmentUpdateOne) ClearPlayers() *DepartmentUpdateOne {
 }
 
 // RemovePlayerIDs removes the "players" edge to Player entities by IDs.
-func (duo *DepartmentUpdateOne) RemovePlayerIDs(ids ...int32) *DepartmentUpdateOne {
+func (duo *DepartmentUpdateOne) RemovePlayerIDs(ids ...int) *DepartmentUpdateOne {
 	duo.mutation.RemovePlayerIDs(ids...)
 	return duo
 }
 
 // RemovePlayers removes "players" edges to Player entities.
 func (duo *DepartmentUpdateOne) RemovePlayers(p ...*Player) *DepartmentUpdateOne {
-	ids := make([]int32, len(p))
+	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -422,7 +422,7 @@ func (duo *DepartmentUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (duo *DepartmentUpdateOne) sqlSave(ctx context.Context) (_node *Department, err error) {
-	_spec := sqlgraph.NewUpdateSpec(department.Table, department.Columns, sqlgraph.NewFieldSpec(department.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(department.Table, department.Columns, sqlgraph.NewFieldSpec(department.FieldID, field.TypeInt))
 	id, ok := duo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Department.id" for update`)}
@@ -476,7 +476,7 @@ func (duo *DepartmentUpdateOne) sqlSave(ctx context.Context) (_node *Department,
 			Columns: []string{department.PlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -489,7 +489,7 @@ func (duo *DepartmentUpdateOne) sqlSave(ctx context.Context) (_node *Department,
 			Columns: []string{department.PlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -505,7 +505,7 @@ func (duo *DepartmentUpdateOne) sqlSave(ctx context.Context) (_node *Department,
 			Columns: []string{department.PlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

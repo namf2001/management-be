@@ -21,7 +21,7 @@ CREATE TABLE departments (
 -- Create players table
 CREATE TABLE players (
     id BIGINT PRIMARY KEY,
-    department_id INTEGER REFERENCES departments(id),
+    department_id BIGINT REFERENCES departments(id),
     full_name VARCHAR(100) NOT NULL,
     jersey_number INTEGER UNIQUE,
     position VARCHAR(50) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE teams (
 -- Create matches table
 CREATE TABLE matches (
     id BIGINT PRIMARY KEY,
-    opponent_team_id INTEGER REFERENCES teams(id),
+    opponent_team_id BIGINT REFERENCES teams(id),
     match_date TIMESTAMP WITH TIME ZONE NOT NULL,
     venue VARCHAR(200),
     is_home_game BOOLEAN DEFAULT true,
@@ -65,8 +65,8 @@ CREATE TABLE matches (
 -- Create match_players table (players who participated in matches)
 CREATE TABLE match_players (
     id BIGINT PRIMARY KEY,
-    match_id INTEGER REFERENCES matches(id),
-    player_id INTEGER REFERENCES players(id),
+    match_id BIGINT REFERENCES matches(id),
+    player_id BIGINT REFERENCES players(id),
     minutes_played INTEGER DEFAULT 0,
     goals_scored INTEGER DEFAULT 0,
     assists INTEGER DEFAULT 0,
@@ -90,7 +90,7 @@ CREATE TABLE team_fees (
 -- Create player_statistics table (aggregated statistics)
 CREATE TABLE player_statistics (
     id BIGINT PRIMARY KEY,
-    player_id INTEGER REFERENCES players(id),
+    player_id BIGINT REFERENCES players(id),
     total_matches INTEGER DEFAULT 0,
     total_minutes_played INTEGER DEFAULT 0,
     total_goals INTEGER DEFAULT 0,

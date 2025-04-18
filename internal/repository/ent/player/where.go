@@ -11,52 +11,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int32) predicate.Player {
+func ID(id int) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int32) predicate.Player {
+func IDEQ(id int) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int32) predicate.Player {
+func IDNEQ(id int) predicate.Player {
 	return predicate.Player(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int32) predicate.Player {
+func IDIn(ids ...int) predicate.Player {
 	return predicate.Player(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int32) predicate.Player {
+func IDNotIn(ids ...int) predicate.Player {
 	return predicate.Player(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int32) predicate.Player {
+func IDGT(id int) predicate.Player {
 	return predicate.Player(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int32) predicate.Player {
+func IDGTE(id int) predicate.Player {
 	return predicate.Player(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int32) predicate.Player {
+func IDLT(id int) predicate.Player {
 	return predicate.Player(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int32) predicate.Player {
+func IDLTE(id int) predicate.Player {
 	return predicate.Player(sql.FieldLTE(FieldID, id))
 }
 
 // DepartmentID applies equality check predicate on the "department_id" field. It's identical to DepartmentIDEQ.
-func DepartmentID(v int32) predicate.Player {
+func DepartmentID(v int) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldDepartmentID, v))
 }
 
@@ -116,22 +116,22 @@ func UpdatedAt(v time.Time) predicate.Player {
 }
 
 // DepartmentIDEQ applies the EQ predicate on the "department_id" field.
-func DepartmentIDEQ(v int32) predicate.Player {
+func DepartmentIDEQ(v int) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldDepartmentID, v))
 }
 
 // DepartmentIDNEQ applies the NEQ predicate on the "department_id" field.
-func DepartmentIDNEQ(v int32) predicate.Player {
+func DepartmentIDNEQ(v int) predicate.Player {
 	return predicate.Player(sql.FieldNEQ(FieldDepartmentID, v))
 }
 
 // DepartmentIDIn applies the In predicate on the "department_id" field.
-func DepartmentIDIn(vs ...int32) predicate.Player {
+func DepartmentIDIn(vs ...int) predicate.Player {
 	return predicate.Player(sql.FieldIn(FieldDepartmentID, vs...))
 }
 
 // DepartmentIDNotIn applies the NotIn predicate on the "department_id" field.
-func DepartmentIDNotIn(vs ...int32) predicate.Player {
+func DepartmentIDNotIn(vs ...int) predicate.Player {
 	return predicate.Player(sql.FieldNotIn(FieldDepartmentID, vs...))
 }
 

@@ -22,13 +22,13 @@ type MatchPlayerCreate struct {
 }
 
 // SetMatchID sets the "match_id" field.
-func (mpc *MatchPlayerCreate) SetMatchID(i int32) *MatchPlayerCreate {
+func (mpc *MatchPlayerCreate) SetMatchID(i int) *MatchPlayerCreate {
 	mpc.mutation.SetMatchID(i)
 	return mpc
 }
 
 // SetNillableMatchID sets the "match_id" field if the given value is not nil.
-func (mpc *MatchPlayerCreate) SetNillableMatchID(i *int32) *MatchPlayerCreate {
+func (mpc *MatchPlayerCreate) SetNillableMatchID(i *int) *MatchPlayerCreate {
 	if i != nil {
 		mpc.SetMatchID(*i)
 	}
@@ -36,13 +36,13 @@ func (mpc *MatchPlayerCreate) SetNillableMatchID(i *int32) *MatchPlayerCreate {
 }
 
 // SetPlayerID sets the "player_id" field.
-func (mpc *MatchPlayerCreate) SetPlayerID(i int32) *MatchPlayerCreate {
+func (mpc *MatchPlayerCreate) SetPlayerID(i int) *MatchPlayerCreate {
 	mpc.mutation.SetPlayerID(i)
 	return mpc
 }
 
 // SetNillablePlayerID sets the "player_id" field if the given value is not nil.
-func (mpc *MatchPlayerCreate) SetNillablePlayerID(i *int32) *MatchPlayerCreate {
+func (mpc *MatchPlayerCreate) SetNillablePlayerID(i *int) *MatchPlayerCreate {
 	if i != nil {
 		mpc.SetPlayerID(*i)
 	}
@@ -148,7 +148,7 @@ func (mpc *MatchPlayerCreate) SetNillableUpdatedAt(t *time.Time) *MatchPlayerCre
 }
 
 // SetID sets the "id" field.
-func (mpc *MatchPlayerCreate) SetID(i int32) *MatchPlayerCreate {
+func (mpc *MatchPlayerCreate) SetID(i int) *MatchPlayerCreate {
 	mpc.mutation.SetID(i)
 	return mpc
 }
@@ -213,7 +213,7 @@ func (mpc *MatchPlayerCreate) sqlSave(ctx context.Context) (*MatchPlayer, error)
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int32(id)
+		_node.ID = int(id)
 	}
 	mpc.mutation.id = &_node.ID
 	mpc.mutation.done = true
@@ -223,7 +223,7 @@ func (mpc *MatchPlayerCreate) sqlSave(ctx context.Context) (*MatchPlayer, error)
 func (mpc *MatchPlayerCreate) createSpec() (*MatchPlayer, *sqlgraph.CreateSpec) {
 	var (
 		_node = &MatchPlayer{config: mpc.config}
-		_spec = sqlgraph.NewCreateSpec(matchplayer.Table, sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt32))
+		_spec = sqlgraph.NewCreateSpec(matchplayer.Table, sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt))
 	)
 	if id, ok := mpc.mutation.ID(); ok {
 		_node.ID = id
@@ -265,7 +265,7 @@ func (mpc *MatchPlayerCreate) createSpec() (*MatchPlayer, *sqlgraph.CreateSpec) 
 			Columns: []string{matchplayer.MatchColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -282,7 +282,7 @@ func (mpc *MatchPlayerCreate) createSpec() (*MatchPlayer, *sqlgraph.CreateSpec) 
 			Columns: []string{matchplayer.PlayerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(player.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -340,7 +340,7 @@ func (mpcb *MatchPlayerCreateBulk) Save(ctx context.Context) ([]*MatchPlayer, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int32(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

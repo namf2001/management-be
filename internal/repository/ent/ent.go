@@ -11,6 +11,7 @@ import (
 	"management-be/internal/repository/ent/matchplayer"
 	"management-be/internal/repository/ent/player"
 	"management-be/internal/repository/ent/playerstatistic"
+	"management-be/internal/repository/ent/schemamigration"
 	"management-be/internal/repository/ent/team"
 	"management-be/internal/repository/ent/teamfee"
 	"management-be/internal/repository/ent/user"
@@ -85,6 +86,7 @@ func checkColumn(table, column string) error {
 			matchplayer.Table:     matchplayer.ValidColumn,
 			player.Table:          player.ValidColumn,
 			playerstatistic.Table: playerstatistic.ValidColumn,
+			schemamigration.Table: schemamigration.ValidColumn,
 			team.Table:            team.ValidColumn,
 			teamfee.Table:         teamfee.ValidColumn,
 			user.Table:            user.ValidColumn,

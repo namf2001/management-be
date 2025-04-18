@@ -11,57 +11,57 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int32) predicate.MatchPlayer {
+func ID(id int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int32) predicate.MatchPlayer {
+func IDEQ(id int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int32) predicate.MatchPlayer {
+func IDNEQ(id int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int32) predicate.MatchPlayer {
+func IDIn(ids ...int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int32) predicate.MatchPlayer {
+func IDNotIn(ids ...int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int32) predicate.MatchPlayer {
+func IDGT(id int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int32) predicate.MatchPlayer {
+func IDGTE(id int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int32) predicate.MatchPlayer {
+func IDLT(id int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int32) predicate.MatchPlayer {
+func IDLTE(id int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldLTE(FieldID, id))
 }
 
 // MatchID applies equality check predicate on the "match_id" field. It's identical to MatchIDEQ.
-func MatchID(v int32) predicate.MatchPlayer {
+func MatchID(v int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldEQ(FieldMatchID, v))
 }
 
 // PlayerID applies equality check predicate on the "player_id" field. It's identical to PlayerIDEQ.
-func PlayerID(v int32) predicate.MatchPlayer {
+func PlayerID(v int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldEQ(FieldPlayerID, v))
 }
 
@@ -101,22 +101,22 @@ func UpdatedAt(v time.Time) predicate.MatchPlayer {
 }
 
 // MatchIDEQ applies the EQ predicate on the "match_id" field.
-func MatchIDEQ(v int32) predicate.MatchPlayer {
+func MatchIDEQ(v int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldEQ(FieldMatchID, v))
 }
 
 // MatchIDNEQ applies the NEQ predicate on the "match_id" field.
-func MatchIDNEQ(v int32) predicate.MatchPlayer {
+func MatchIDNEQ(v int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldNEQ(FieldMatchID, v))
 }
 
 // MatchIDIn applies the In predicate on the "match_id" field.
-func MatchIDIn(vs ...int32) predicate.MatchPlayer {
+func MatchIDIn(vs ...int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldIn(FieldMatchID, vs...))
 }
 
 // MatchIDNotIn applies the NotIn predicate on the "match_id" field.
-func MatchIDNotIn(vs ...int32) predicate.MatchPlayer {
+func MatchIDNotIn(vs ...int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldNotIn(FieldMatchID, vs...))
 }
 
@@ -131,22 +131,22 @@ func MatchIDNotNil() predicate.MatchPlayer {
 }
 
 // PlayerIDEQ applies the EQ predicate on the "player_id" field.
-func PlayerIDEQ(v int32) predicate.MatchPlayer {
+func PlayerIDEQ(v int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldEQ(FieldPlayerID, v))
 }
 
 // PlayerIDNEQ applies the NEQ predicate on the "player_id" field.
-func PlayerIDNEQ(v int32) predicate.MatchPlayer {
+func PlayerIDNEQ(v int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldNEQ(FieldPlayerID, v))
 }
 
 // PlayerIDIn applies the In predicate on the "player_id" field.
-func PlayerIDIn(vs ...int32) predicate.MatchPlayer {
+func PlayerIDIn(vs ...int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldIn(FieldPlayerID, vs...))
 }
 
 // PlayerIDNotIn applies the NotIn predicate on the "player_id" field.
-func PlayerIDNotIn(vs ...int32) predicate.MatchPlayer {
+func PlayerIDNotIn(vs ...int) predicate.MatchPlayer {
 	return predicate.MatchPlayer(sql.FieldNotIn(FieldPlayerID, vs...))
 }
 

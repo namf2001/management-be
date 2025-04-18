@@ -31,13 +31,13 @@ func (mu *MatchUpdate) Where(ps ...predicate.Match) *MatchUpdate {
 }
 
 // SetOpponentTeamID sets the "opponent_team_id" field.
-func (mu *MatchUpdate) SetOpponentTeamID(i int32) *MatchUpdate {
+func (mu *MatchUpdate) SetOpponentTeamID(i int) *MatchUpdate {
 	mu.mutation.SetOpponentTeamID(i)
 	return mu
 }
 
 // SetNillableOpponentTeamID sets the "opponent_team_id" field if the given value is not nil.
-func (mu *MatchUpdate) SetNillableOpponentTeamID(i *int32) *MatchUpdate {
+func (mu *MatchUpdate) SetNillableOpponentTeamID(i *int) *MatchUpdate {
 	if i != nil {
 		mu.SetOpponentTeamID(*i)
 	}
@@ -239,14 +239,14 @@ func (mu *MatchUpdate) ClearUpdatedAt() *MatchUpdate {
 }
 
 // AddMatchPlayerIDs adds the "match_players" edge to the MatchPlayer entity by IDs.
-func (mu *MatchUpdate) AddMatchPlayerIDs(ids ...int32) *MatchUpdate {
+func (mu *MatchUpdate) AddMatchPlayerIDs(ids ...int) *MatchUpdate {
 	mu.mutation.AddMatchPlayerIDs(ids...)
 	return mu
 }
 
 // AddMatchPlayers adds the "match_players" edges to the MatchPlayer entity.
 func (mu *MatchUpdate) AddMatchPlayers(m ...*MatchPlayer) *MatchUpdate {
-	ids := make([]int32, len(m))
+	ids := make([]int, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
@@ -254,13 +254,13 @@ func (mu *MatchUpdate) AddMatchPlayers(m ...*MatchPlayer) *MatchUpdate {
 }
 
 // SetTeamID sets the "team" edge to the Team entity by ID.
-func (mu *MatchUpdate) SetTeamID(id int32) *MatchUpdate {
+func (mu *MatchUpdate) SetTeamID(id int) *MatchUpdate {
 	mu.mutation.SetTeamID(id)
 	return mu
 }
 
 // SetNillableTeamID sets the "team" edge to the Team entity by ID if the given value is not nil.
-func (mu *MatchUpdate) SetNillableTeamID(id *int32) *MatchUpdate {
+func (mu *MatchUpdate) SetNillableTeamID(id *int) *MatchUpdate {
 	if id != nil {
 		mu = mu.SetTeamID(*id)
 	}
@@ -284,14 +284,14 @@ func (mu *MatchUpdate) ClearMatchPlayers() *MatchUpdate {
 }
 
 // RemoveMatchPlayerIDs removes the "match_players" edge to MatchPlayer entities by IDs.
-func (mu *MatchUpdate) RemoveMatchPlayerIDs(ids ...int32) *MatchUpdate {
+func (mu *MatchUpdate) RemoveMatchPlayerIDs(ids ...int) *MatchUpdate {
 	mu.mutation.RemoveMatchPlayerIDs(ids...)
 	return mu
 }
 
 // RemoveMatchPlayers removes "match_players" edges to MatchPlayer entities.
 func (mu *MatchUpdate) RemoveMatchPlayers(m ...*MatchPlayer) *MatchUpdate {
-	ids := make([]int32, len(m))
+	ids := make([]int, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
@@ -332,7 +332,7 @@ func (mu *MatchUpdate) ExecX(ctx context.Context) {
 }
 
 func (mu *MatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(match.Table, match.Columns, sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(match.Table, match.Columns, sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt))
 	if ps := mu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -405,7 +405,7 @@ func (mu *MatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{match.MatchPlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -418,7 +418,7 @@ func (mu *MatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{match.MatchPlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -434,7 +434,7 @@ func (mu *MatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{match.MatchPlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -450,7 +450,7 @@ func (mu *MatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{match.TeamColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -463,7 +463,7 @@ func (mu *MatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{match.TeamColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -492,13 +492,13 @@ type MatchUpdateOne struct {
 }
 
 // SetOpponentTeamID sets the "opponent_team_id" field.
-func (muo *MatchUpdateOne) SetOpponentTeamID(i int32) *MatchUpdateOne {
+func (muo *MatchUpdateOne) SetOpponentTeamID(i int) *MatchUpdateOne {
 	muo.mutation.SetOpponentTeamID(i)
 	return muo
 }
 
 // SetNillableOpponentTeamID sets the "opponent_team_id" field if the given value is not nil.
-func (muo *MatchUpdateOne) SetNillableOpponentTeamID(i *int32) *MatchUpdateOne {
+func (muo *MatchUpdateOne) SetNillableOpponentTeamID(i *int) *MatchUpdateOne {
 	if i != nil {
 		muo.SetOpponentTeamID(*i)
 	}
@@ -700,14 +700,14 @@ func (muo *MatchUpdateOne) ClearUpdatedAt() *MatchUpdateOne {
 }
 
 // AddMatchPlayerIDs adds the "match_players" edge to the MatchPlayer entity by IDs.
-func (muo *MatchUpdateOne) AddMatchPlayerIDs(ids ...int32) *MatchUpdateOne {
+func (muo *MatchUpdateOne) AddMatchPlayerIDs(ids ...int) *MatchUpdateOne {
 	muo.mutation.AddMatchPlayerIDs(ids...)
 	return muo
 }
 
 // AddMatchPlayers adds the "match_players" edges to the MatchPlayer entity.
 func (muo *MatchUpdateOne) AddMatchPlayers(m ...*MatchPlayer) *MatchUpdateOne {
-	ids := make([]int32, len(m))
+	ids := make([]int, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
@@ -715,13 +715,13 @@ func (muo *MatchUpdateOne) AddMatchPlayers(m ...*MatchPlayer) *MatchUpdateOne {
 }
 
 // SetTeamID sets the "team" edge to the Team entity by ID.
-func (muo *MatchUpdateOne) SetTeamID(id int32) *MatchUpdateOne {
+func (muo *MatchUpdateOne) SetTeamID(id int) *MatchUpdateOne {
 	muo.mutation.SetTeamID(id)
 	return muo
 }
 
 // SetNillableTeamID sets the "team" edge to the Team entity by ID if the given value is not nil.
-func (muo *MatchUpdateOne) SetNillableTeamID(id *int32) *MatchUpdateOne {
+func (muo *MatchUpdateOne) SetNillableTeamID(id *int) *MatchUpdateOne {
 	if id != nil {
 		muo = muo.SetTeamID(*id)
 	}
@@ -745,14 +745,14 @@ func (muo *MatchUpdateOne) ClearMatchPlayers() *MatchUpdateOne {
 }
 
 // RemoveMatchPlayerIDs removes the "match_players" edge to MatchPlayer entities by IDs.
-func (muo *MatchUpdateOne) RemoveMatchPlayerIDs(ids ...int32) *MatchUpdateOne {
+func (muo *MatchUpdateOne) RemoveMatchPlayerIDs(ids ...int) *MatchUpdateOne {
 	muo.mutation.RemoveMatchPlayerIDs(ids...)
 	return muo
 }
 
 // RemoveMatchPlayers removes "match_players" edges to MatchPlayer entities.
 func (muo *MatchUpdateOne) RemoveMatchPlayers(m ...*MatchPlayer) *MatchUpdateOne {
-	ids := make([]int32, len(m))
+	ids := make([]int, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
@@ -806,7 +806,7 @@ func (muo *MatchUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (muo *MatchUpdateOne) sqlSave(ctx context.Context) (_node *Match, err error) {
-	_spec := sqlgraph.NewUpdateSpec(match.Table, match.Columns, sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(match.Table, match.Columns, sqlgraph.NewFieldSpec(match.FieldID, field.TypeInt))
 	id, ok := muo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Match.id" for update`)}
@@ -896,7 +896,7 @@ func (muo *MatchUpdateOne) sqlSave(ctx context.Context) (_node *Match, err error
 			Columns: []string{match.MatchPlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -909,7 +909,7 @@ func (muo *MatchUpdateOne) sqlSave(ctx context.Context) (_node *Match, err error
 			Columns: []string{match.MatchPlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -925,7 +925,7 @@ func (muo *MatchUpdateOne) sqlSave(ctx context.Context) (_node *Match, err error
 			Columns: []string{match.MatchPlayersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(matchplayer.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -941,7 +941,7 @@ func (muo *MatchUpdateOne) sqlSave(ctx context.Context) (_node *Match, err error
 			Columns: []string{match.TeamColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -954,7 +954,7 @@ func (muo *MatchUpdateOne) sqlSave(ctx context.Context) (_node *Match, err error
 			Columns: []string{match.TeamColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt32),
+				IDSpec: sqlgraph.NewFieldSpec(team.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

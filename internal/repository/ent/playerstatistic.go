@@ -17,9 +17,9 @@ import (
 type PlayerStatistic struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int32 `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// PlayerID holds the value of the "player_id" field.
-	PlayerID int32 `json:"player_id,omitempty"`
+	PlayerID int `json:"player_id,omitempty"`
 	// TotalMatches holds the value of the "total_matches" field.
 	TotalMatches int32 `json:"total_matches,omitempty"`
 	// TotalMinutesPlayed holds the value of the "total_minutes_played" field.
@@ -91,12 +91,12 @@ func (ps *PlayerStatistic) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			ps.ID = int32(value.Int64)
+			ps.ID = int(value.Int64)
 		case playerstatistic.FieldPlayerID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field player_id", values[i])
 			} else if value.Valid {
-				ps.PlayerID = int32(value.Int64)
+				ps.PlayerID = int(value.Int64)
 			}
 		case playerstatistic.FieldTotalMatches:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

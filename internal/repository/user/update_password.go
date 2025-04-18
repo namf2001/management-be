@@ -9,7 +9,7 @@ import (
 )
 
 // UpdatePassword updates a user's password
-func (i impl) UpdatePassword(ctx context.Context, userID int32, hashedPassword string) error {
+func (i impl) UpdatePassword(ctx context.Context, userID int, hashedPassword string) error {
 	_, err := i.entClient.User.UpdateOneID(userID).
 		SetPassword(hashedPassword).
 		Save(ctx)

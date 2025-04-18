@@ -106,8 +106,8 @@ func (psq *PlayerStatisticQuery) FirstX(ctx context.Context) *PlayerStatistic {
 
 // FirstID returns the first PlayerStatistic ID from the query.
 // Returns a *NotFoundError when no PlayerStatistic ID was found.
-func (psq *PlayerStatisticQuery) FirstID(ctx context.Context) (id int32, err error) {
-	var ids []int32
+func (psq *PlayerStatisticQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = psq.Limit(1).IDs(setContextOp(ctx, psq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -119,7 +119,7 @@ func (psq *PlayerStatisticQuery) FirstID(ctx context.Context) (id int32, err err
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (psq *PlayerStatisticQuery) FirstIDX(ctx context.Context) int32 {
+func (psq *PlayerStatisticQuery) FirstIDX(ctx context.Context) int {
 	id, err := psq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -157,8 +157,8 @@ func (psq *PlayerStatisticQuery) OnlyX(ctx context.Context) *PlayerStatistic {
 // OnlyID is like Only, but returns the only PlayerStatistic ID in the query.
 // Returns a *NotSingularError when more than one PlayerStatistic ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (psq *PlayerStatisticQuery) OnlyID(ctx context.Context) (id int32, err error) {
-	var ids []int32
+func (psq *PlayerStatisticQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = psq.Limit(2).IDs(setContextOp(ctx, psq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -174,7 +174,7 @@ func (psq *PlayerStatisticQuery) OnlyID(ctx context.Context) (id int32, err erro
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (psq *PlayerStatisticQuery) OnlyIDX(ctx context.Context) int32 {
+func (psq *PlayerStatisticQuery) OnlyIDX(ctx context.Context) int {
 	id, err := psq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -202,7 +202,7 @@ func (psq *PlayerStatisticQuery) AllX(ctx context.Context) []*PlayerStatistic {
 }
 
 // IDs executes the query and returns a list of PlayerStatistic IDs.
-func (psq *PlayerStatisticQuery) IDs(ctx context.Context) (ids []int32, err error) {
+func (psq *PlayerStatisticQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if psq.ctx.Unique == nil && psq.path != nil {
 		psq.Unique(true)
 	}
@@ -214,7 +214,7 @@ func (psq *PlayerStatisticQuery) IDs(ctx context.Context) (ids []int32, err erro
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (psq *PlayerStatisticQuery) IDsX(ctx context.Context) []int32 {
+func (psq *PlayerStatisticQuery) IDsX(ctx context.Context) []int {
 	ids, err := psq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -298,7 +298,7 @@ func (psq *PlayerStatisticQuery) WithPlayer(opts ...func(*PlayerQuery)) *PlayerS
 // Example:
 //
 //	var v []struct {
-//		PlayerID int32 `json:"player_id,omitempty"`
+//		PlayerID int `json:"player_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -321,7 +321,7 @@ func (psq *PlayerStatisticQuery) GroupBy(field string, fields ...string) *Player
 // Example:
 //
 //	var v []struct {
-//		PlayerID int32 `json:"player_id,omitempty"`
+//		PlayerID int `json:"player_id,omitempty"`
 //	}
 //
 //	client.PlayerStatistic.Query().
@@ -402,8 +402,8 @@ func (psq *PlayerStatisticQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 }
 
 func (psq *PlayerStatisticQuery) loadPlayer(ctx context.Context, query *PlayerQuery, nodes []*PlayerStatistic, init func(*PlayerStatistic), assign func(*PlayerStatistic, *Player)) error {
-	ids := make([]int32, 0, len(nodes))
-	nodeids := make(map[int32][]*PlayerStatistic)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*PlayerStatistic)
 	for i := range nodes {
 		fk := nodes[i].PlayerID
 		if _, ok := nodeids[fk]; !ok {
@@ -441,7 +441,7 @@ func (psq *PlayerStatisticQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (psq *PlayerStatisticQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(playerstatistic.Table, playerstatistic.Columns, sqlgraph.NewFieldSpec(playerstatistic.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewQuerySpec(playerstatistic.Table, playerstatistic.Columns, sqlgraph.NewFieldSpec(playerstatistic.FieldID, field.TypeInt))
 	_spec.From = psq.sql
 	if unique := psq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

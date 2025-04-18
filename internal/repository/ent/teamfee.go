@@ -16,7 +16,7 @@ import (
 type TeamFee struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int32 `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// Amount holds the value of the "amount" field.
 	Amount float64 `json:"amount,omitempty"`
 	// PaymentDate holds the value of the "payment_date" field.
@@ -63,7 +63,7 @@ func (tf *TeamFee) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			tf.ID = int32(value.Int64)
+			tf.ID = int(value.Int64)
 		case teamfee.FieldAmount:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
