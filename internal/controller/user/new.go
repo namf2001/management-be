@@ -7,8 +7,8 @@ import (
 )
 
 type Controller interface {
-	CreateUser(ctx context.Context, username, email, password string) (int, error)
-	GetUserByID(ctx context.Context, id int) (model.User, error)
+	CreateUser(ctx context.Context, username, email, password string) (int32, error)
+	GetUserByID(ctx context.Context, id int32) (model.User, error)
 }
 
 type impl struct {
