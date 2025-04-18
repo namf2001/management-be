@@ -1,0 +1,33 @@
+services:
+  pg:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: ${PROJECT_NAME}
+      POSTGRES_PASSWORD: ${PROJECT_NAME}
+      POSTGRES_DB: ${PROJECT_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PROJECT_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pg-migrate:
+    image: migrate/migrate:v4.15.2
+    depends_on:
+      - pg
+    volumes:
+      - ../data/migrations:/api-migrations
+    environment:
+      PG_URL: postgres://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable
+
+  mockery:
+    image: vektra/mockery:v2.20
+    volumes:
+      - ../:/api
+
+volumes:
+  pg-data:

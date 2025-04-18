@@ -13,7 +13,7 @@ type User struct {
 }
 
 func (User) Fields() []ent.Field {
-	return []ent.Field{field.Int32("id"), field.String("username").Unique(), field.String("password"), field.String("email").Unique(), field.String("full_name"), field.Time("created_at").Optional(), field.Time("updated_at").Optional()}
+	return []ent.Field{field.Int("id"), field.String("username").Unique(), field.String("password"), field.String("email").Unique(), field.String("full_name"), field.Time("created_at").Optional(), field.Time("updated_at").Optional()}
 }
 func (User) Edges() []ent.Edge {
 	return nil

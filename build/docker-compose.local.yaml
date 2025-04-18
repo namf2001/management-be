@@ -1,0 +1,12 @@
+services:
+  api:
+    image: ${PROJECT_NAME}-api-local:latest
+    depends_on:
+      - pg
+    environment:
+      - PG_URL=postgres://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable
+    volumes:
+      - ../:/api
+    ports:
+      - "8000:8000"
+    command: ["sh", "-c", "tail -f /dev/null"]

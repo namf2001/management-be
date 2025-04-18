@@ -14,7 +14,7 @@ type Match struct {
 }
 
 func (Match) Fields() []ent.Field {
-	return []ent.Field{field.Int32("id"), field.Int32("opponent_team_id").Optional(), field.Time("match_date"), field.String("venue").Optional(), field.Bool("is_home_game").Optional(), field.Int32("our_score").Optional(), field.Int32("opponent_score").Optional(), field.String("status").Optional(), field.String("notes").Optional(), field.Time("created_at").Optional(), field.Time("updated_at").Optional()}
+	return []ent.Field{field.Int("id"), field.Int32("opponent_team_id").Optional(), field.Time("match_date"), field.String("venue").Optional(), field.Bool("is_home_game").Optional(), field.Int32("our_score").Optional(), field.Int32("opponent_score").Optional(), field.String("status").Optional(), field.String("notes").Optional(), field.Time("created_at").Optional(), field.Time("updated_at").Optional()}
 }
 func (Match) Edges() []ent.Edge {
 	return []ent.Edge{edge.To("match_players", MatchPlayer.Type), edge.From("team", Team.Type).Ref("matches").Unique().Field("opponent_team_id")}

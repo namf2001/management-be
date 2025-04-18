@@ -24,22 +24,21 @@ func (h Handler) Register(ctx *gin.Context) {
 		return
 	}
 
-	userID, err := h.userCtrl.CreateUser(ctx.Request.Context(), req.Username, req.Email, req.Password)
+	user, err := h.userCtrl.CreateUser(ctx.Request.Context(), req.Username, req.Email, req.Password)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
 		return
 	}
-
-	user, err := h.userCtrl.GetUserByID(ctx.Request.Context(), userID)
+	userFound, err := h.userCtrl.GetUserByID(ctx.Request.Context(), user.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user details"})
 		return
 	}
 
 	response := RegisterResponse{
-		ID:       user.ID,
-		Username: user.Username,
-		Email:    user.Email,
+		ID:       userFound.ID,
+		Username: userFound.Username,
+		Email:    userFound.Email,
 	}
 
 	ctx.JSON(http.StatusCreated, response)

@@ -1,12 +1,26 @@
 package user
 
-import "context"
+import (
+	"context"
+	"management-be/internal/model"
 
-func (i impl) CreateUser(ctx context.Context, username, email, password string) (int32, error) {
-	user, err := i.repo.User().CreateUser(ctx, username, email, password)
+	"golang.org/x/crypto/bcrypt"
+)
+
+// CreateUser creates a new user account
+func (i impl) CreateUser(ctx context.Context, username, email, password string) (model.User, error) {
+	// Hash the password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return 0, err
+		return model.User{}, err
 	}
 
-	return user.ID, nil
+	// Create the user
+	userRepo := i.repo.User()
+	user, err := userRepo.CreateUser(ctx, username, email, string(hashedPassword))
+	if err != nil {
+		return model.User{}, err
+	}
+
+	return user, nil
 }

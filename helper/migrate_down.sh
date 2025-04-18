@@ -4,11 +4,11 @@
 export $(grep -v '^#' .env | xargs)
 
 # Check if schema_migrations table exists
-migrations_exist=$(PGPASSWORD=$BLUEPRINT_DB_PASSWORD psql -h $BLUEPRINT_DB_HOST -p $BLUEPRINT_DB_PORT -U $BLUEPRINT_DB_USERNAME -d $BLUEPRINT_DB_DATABASE -t -c "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'schema_migrations');")
+migrations_exist=$(PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -p $DB_POST -U $DB_USER -d $DB_NAME -t -c "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'schema_migrations');")
 
 if [ "$migrations_exist" = " t" ]; then
     # Check if there are any rows in the schema_migrations table
-    row_count=$(PGPASSWORD=$BLUEPRINT_DB_PASSWORD psql -h $BLUEPRINT_DB_HOST -p $BLUEPRINT_DB_PORT -U $BLUEPRINT_DB_USERNAME -d $BLUEPRINT_DB_DATABASE -t -c "SELECT COUNT(*) FROM schema_migrations;")
+    row_count=$(PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -p $DB_POST -U $DB_USER -d $DB_NAME -t -c "SELECT COUNT(*) FROM schema_migrations;")
     
     # Trim spaces from row_count
     row_count_trimmed=$(echo "$row_count" | tr -d '[:space:]')
@@ -19,7 +19,7 @@ if [ "$migrations_exist" = " t" ]; then
         echo "Schema_migrations table exists but has no rows. Nothing to roll back."
     else
         # Check if version is greater than 0
-        version=$(PGPASSWORD=$BLUEPRINT_DB_PASSWORD psql -h $BLUEPRINT_DB_HOST -p $BLUEPRINT_DB_PORT -U $BLUEPRINT_DB_USERNAME -d $BLUEPRINT_DB_DATABASE -t -c "SELECT version FROM schema_migrations LIMIT 1;")
+        version=$(PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -p $DB_POST -U $DB_USER -d $DB_NAME -t -c "SELECT version FROM schema_migrations LIMIT 1;")
         
         # Trim spaces from version
         version_trimmed=$(echo "$version" | tr -d '[:space:]')
@@ -30,7 +30,7 @@ if [ "$migrations_exist" = " t" ]; then
             echo "Current version is 0. Nothing to roll back."
         else
             echo "Rolling back migration from version $version_trimmed..."
-            migrate -path=./data/migrations -database "postgres://${BLUEPRINT_DB_USERNAME}:${BLUEPRINT_DB_PASSWORD}@${BLUEPRINT_DB_HOST}:${BLUEPRINT_DB_PORT}/${BLUEPRINT_DB_DATABASE}?sslmode=disable" down 1
+            migrate -path=./data/migrations -database "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_POST}/${DB_NAME}?sslmode=disable" down 1
         fi
     fi
 else

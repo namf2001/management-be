@@ -6,109 +6,81 @@ One Paragraph of project description goes here
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-## MakeFile
+## Docker-based Development Environment
 
-Run build make command with tests
+This project uses Docker for development to ensure a consistent environment across all developers' machines. The following Makefile commands are available for working with the Docker-based development environment:
+
+### Build the API Docker Image
+
 ```bash
-make all
+make build-local-go-image
 ```
 
-Build the application
+This command builds the Docker image for the API service using the Dockerfile in the `build` directory.
+
+### Setup the API Environment
+
 ```bash
-make build
+make api-setup
 ```
 
-Run the application
-```bash
-make run
-```
-Create DB container
-```bash
-make docker-run
-```
+This command sets up the API environment by starting the PostgreSQL database, running migrations, and building the API Docker image if it doesn't exist.
 
-Shutdown DB Container
+### Run the API
+
 ```bash
-make docker-down
+make api-run
 ```
 
-DB Integrations Test:
+This command runs the API service in the Docker container.
+
+### Stop the API Environment
+
 ```bash
-make itest
+make api-down
 ```
 
-Live reload the application:
+This command stops and removes all containers, networks, and volumes defined in the Docker Compose files.
+
+### Database Management
+
+Start the PostgreSQL database:
 ```bash
-make watch
-```
-
-Run the test suite:
-```bash
-make test
-```
-
-Clean up binary from the last build:
-```bash
-make clean
-```
-
-## Database Schema Management
-
-This project uses a workflow for managing database schema changes and generating ent code from the database schema.
-
-Install the golang-migrate tool (if not already installed):
-```bash
-make install-migrate
+make pg
 ```
 
 Run database migrations:
 ```bash
-make migrate-up
+make api-pg-migrate-up
 ```
 
 Rollback database migrations:
 ```bash
-make migrate-down
+make api-pg-migrate-down
 ```
 
-Force migration version (useful for fixing dirty database state):
+### Code Generation
+
+Generate models from the database:
 ```bash
-make migrate-force
+make api-gen-models
 ```
 
-Generate ent schema from database:
+Generate Go code:
 ```bash
-make ent-import
+make api-go-generate
 ```
 
-Generate ent code from schema:
+Generate mocks for testing:
 ```bash
-make ent-generate
+make api-gen-mocks
 ```
-
-Run the complete workflow (migrations, import schema, generate code):
-```bash
-make workflow
-```
-
-### Helper Scripts
-
-The project includes several helper scripts to assist with database management:
-
-- `fix_migration_version.sh`: Fixes issues with the schema_migrations table when it's in an inconsistent state. This script is automatically called by the `migrate-up` command.
-- `migrate_down.sh`: Handles rolling back migrations safely, checking if there are any migrations to roll back before attempting to do so.
-- `check_migration_state.sh`: Checks the current state of the schema_migrations table.
-- `check_table.sh`: Checks if a specific table exists in the database.
-- `drop_table.sh`: Drops specified tables from the database, useful for resetting the database state.
-
-These scripts help ensure that the database is in a consistent state and that migrations can be applied and rolled back safely.
 
 ### Workflow Steps
 
 1. Create or modify migration files in `data/migrations/`
-2. Run `make docker-run` to start the database container
-3. Run `make install-migrate` to install the golang-migrate tool (if not already installed)
-4. Run `make migrate-up` to apply the migrations to the database
-5. Run `make ent-import` to generate ent schema from the database
-6. Run `make ent-generate` to generate ent code from the schema
-7. Alternatively, run `make workflow` to execute steps 3-6 in sequence
+2. Run `make api-setup` to set up the API environment
+3. Run `make api-pg-migrate-up` to apply the migrations to the database
+4. Run `make api-gen-models` to generate models from the database
+5. Run `make api-go-generate` to generate Go code
+6. Run `make api-run` to run the API service
