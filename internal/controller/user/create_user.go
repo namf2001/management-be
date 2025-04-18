@@ -1,10 +1,8 @@
 package user
 
-import (
-	"net/http"
-)
+import "context"
 
-func (i impl) CreateUser(w http.ResponseWriter, r *http.Request) error {
+func (i impl) CreateUser(ctx context.Context, username, email, password string) error {
 	//TODO implement me
 	panic("implement me")
 }

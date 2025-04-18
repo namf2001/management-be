@@ -9,6 +9,7 @@ import (
 type Repository interface {
 	CreateUser(ctx context.Context, username, email, password string) (int, error)
 	GetUserByID(ctx context.Context, id int) (model.User, error)
+	GetUserByEmail(ctx context.Context, email string) (model.User, error)
 }
 
 type impl struct {

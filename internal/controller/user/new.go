@@ -1,12 +1,12 @@
 package user
 
 import (
+	"context"
 	"management-be/internal/repository"
-	"net/http"
 )
 
 type Controller interface {
-	CreateUser(w http.ResponseWriter, r *http.Request) error
+	CreateUser(ctx context.Context, username, email, password string) error
 }
 
 type impl struct {
