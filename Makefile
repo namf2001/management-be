@@ -56,12 +56,12 @@ migrate-down:
 		echo "Error: .env file not found"; \
 		exit 1; \
 	fi
-	@if [ ! -f ./migrate_down.sh ]; then \
+	@if [ ! -f ./helper/migrate_down.sh ]; then \
 		echo "Error: migrate_down.sh not found"; \
 		exit 1; \
 	fi
-	@chmod +x ./migrate_down.sh
-	@./migrate_down.sh
+	@chmod +x ./helper/migrate_down.sh
+	@./helper/migrate_down.sh
 
 # Force migration version (useful for fixing dirty database state)
 migrate-force:
@@ -92,7 +92,7 @@ ent-import:
 		exit 1; \
 	fi
 	@export $$(grep -v '^#' .env | xargs) && \
-	go run -mod=mod ariga.io/entimport/cmd/entimport -dsn "postgres://$${BLUEPRINT_DB_USERNAME}:$${BLUEPRINT_DB_PASSWORD}@$${BLUEPRINT_DB_HOST}:$${BLUEPRINT_DB_PORT}/$${BLUEPRINT_DB_DATABASE}?sslmode=disable" -tables users -schema-path ./internal/repository/ent/schema
+	go run -mod=mod ariga.io/entimport/cmd/entimport -dsn "postgres://$${BLUEPRINT_DB_USERNAME}:$${BLUEPRINT_DB_PASSWORD}@$${BLUEPRINT_DB_HOST}:$${BLUEPRINT_DB_PORT}/$${BLUEPRINT_DB_DATABASE}?sslmode=disable" -tables users,departments,players,teams,matches,match_players,team_fees,player_statistics -schema-path ./internal/repository/ent/schema
 
 # Generate ent code from schema
 ent-generate:
