@@ -1,7 +1,11 @@
 package commands
 
 import (
+	v1 "management-be/internal/handler/rest/v1"
 	"net/http"
+
+	"management-be/internal/controller/user"
+	"management-be/internal/repository"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -20,6 +24,17 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/", s.HelloWorldHandler)
 
 	r.GET("/health", s.healthHandler)
+
+	// Initialize repositories and controllers
+	repoRegistry := repository.NewRegistry(s.db.Client())
+	userController := user.NewController(repoRegistry)
+	handler := v1.NewHandler(userController)
+
+	// User routes
+	userGroup := r.Group("/api/users")
+	{
+		userGroup.POST("/register", handler.Register)
+	}
 
 	return r
 }

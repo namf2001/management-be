@@ -1,12 +1,46 @@
 package v1
 
-import "net/http"
+import (
+	"github.com/gin-gonic/gin"
+	"net/http"
+)
 
-// Register is a handler function that handles the registration of a new user.
-func (h Handler) Register() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// Implement the upload logic here
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Upload successful"))
+type RegisterRequest struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+}
+
+type RegisterResponse struct {
+	ID       int64  `json:"id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}
+
+func (h Handler) Register(ctx *gin.Context) {
+	var req RegisterRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+
+	userID, err := h.userCtrl.CreateUser(ctx.Request.Context(), req.Username, req.Email, req.Password)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
+		return
+	}
+
+	user, err := h.userCtrl.GetUserByID(ctx.Request.Context(), userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user details"})
+		return
+	}
+
+	response := RegisterResponse{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+	}
+
+	ctx.JSON(http.StatusCreated, response)
 }

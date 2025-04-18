@@ -9,6 +9,10 @@ import (
 	"strconv"
 	"time"
 
+	"management-be/internal/repository/ent"
+
+	"entgo.io/ent/dialect"
+	entsql "entgo.io/ent/dialect/sql"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -22,10 +26,14 @@ type Service interface {
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
 	Close() error
+
+	// Client returns the ent client
+	Client() *ent.Client
 }
 
 type service struct {
-	db *sql.DB
+	db     *sql.DB
+	client *ent.Client
 }
 
 var (
@@ -48,8 +56,14 @@ func New() Service {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Create ent client
+	drv := entsql.OpenDB(dialect.Postgres, db)
+	client := ent.NewClient(ent.Driver(drv))
+
 	dbInstance = &service{
-		db: db,
+		db:     db,
+		client: client,
 	}
 	return dbInstance
 }
@@ -112,4 +126,8 @@ func (s *service) Health() map[string]string {
 func (s *service) Close() error {
 	log.Printf("Disconnected from database: %s", database)
 	return s.db.Close()
+}
+
+func (s *service) Client() *ent.Client {
+	return s.client
 }
