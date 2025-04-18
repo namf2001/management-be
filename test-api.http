@@ -8,8 +8,24 @@ field-value
 --WebAppBoundary--
 
 ###
-### GET request to example server
-POST localhost:8000/api/users/register
+### Register a new user
+POST http://localhost:8000/api/users/register
+Content-Type: application/json
 
+{
+  "username": "testuser",
+  "password": "password123",
+  "email": "test@example.com"
+}
+
+###
+### Login with user credentials
+POST http://localhost:8000/api/users/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password123"
+}
 
 ###
