@@ -97,12 +97,6 @@ func (tfu *TeamFeeUpdate) SetNillableCreatedAt(t *time.Time) *TeamFeeUpdate {
 	return tfu
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (tfu *TeamFeeUpdate) ClearCreatedAt() *TeamFeeUpdate {
-	tfu.mutation.ClearCreatedAt()
-	return tfu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (tfu *TeamFeeUpdate) SetUpdatedAt(t time.Time) *TeamFeeUpdate {
 	tfu.mutation.SetUpdatedAt(t)
@@ -117,9 +111,23 @@ func (tfu *TeamFeeUpdate) SetNillableUpdatedAt(t *time.Time) *TeamFeeUpdate {
 	return tfu
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (tfu *TeamFeeUpdate) ClearUpdatedAt() *TeamFeeUpdate {
-	tfu.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (tfu *TeamFeeUpdate) SetDeletedAt(t time.Time) *TeamFeeUpdate {
+	tfu.mutation.SetDeletedAt(t)
+	return tfu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (tfu *TeamFeeUpdate) SetNillableDeletedAt(t *time.Time) *TeamFeeUpdate {
+	if t != nil {
+		tfu.SetDeletedAt(*t)
+	}
+	return tfu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (tfu *TeamFeeUpdate) ClearDeletedAt() *TeamFeeUpdate {
+	tfu.mutation.ClearDeletedAt()
 	return tfu
 }
 
@@ -182,14 +190,14 @@ func (tfu *TeamFeeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tfu.mutation.CreatedAt(); ok {
 		_spec.SetField(teamfee.FieldCreatedAt, field.TypeTime, value)
 	}
-	if tfu.mutation.CreatedAtCleared() {
-		_spec.ClearField(teamfee.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := tfu.mutation.UpdatedAt(); ok {
 		_spec.SetField(teamfee.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if tfu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(teamfee.FieldUpdatedAt, field.TypeTime)
+	if value, ok := tfu.mutation.DeletedAt(); ok {
+		_spec.SetField(teamfee.FieldDeletedAt, field.TypeTime, value)
+	}
+	if tfu.mutation.DeletedAtCleared() {
+		_spec.ClearField(teamfee.FieldDeletedAt, field.TypeTime)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tfu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -280,12 +288,6 @@ func (tfuo *TeamFeeUpdateOne) SetNillableCreatedAt(t *time.Time) *TeamFeeUpdateO
 	return tfuo
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (tfuo *TeamFeeUpdateOne) ClearCreatedAt() *TeamFeeUpdateOne {
-	tfuo.mutation.ClearCreatedAt()
-	return tfuo
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (tfuo *TeamFeeUpdateOne) SetUpdatedAt(t time.Time) *TeamFeeUpdateOne {
 	tfuo.mutation.SetUpdatedAt(t)
@@ -300,9 +302,23 @@ func (tfuo *TeamFeeUpdateOne) SetNillableUpdatedAt(t *time.Time) *TeamFeeUpdateO
 	return tfuo
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (tfuo *TeamFeeUpdateOne) ClearUpdatedAt() *TeamFeeUpdateOne {
-	tfuo.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (tfuo *TeamFeeUpdateOne) SetDeletedAt(t time.Time) *TeamFeeUpdateOne {
+	tfuo.mutation.SetDeletedAt(t)
+	return tfuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (tfuo *TeamFeeUpdateOne) SetNillableDeletedAt(t *time.Time) *TeamFeeUpdateOne {
+	if t != nil {
+		tfuo.SetDeletedAt(*t)
+	}
+	return tfuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (tfuo *TeamFeeUpdateOne) ClearDeletedAt() *TeamFeeUpdateOne {
+	tfuo.mutation.ClearDeletedAt()
 	return tfuo
 }
 
@@ -395,14 +411,14 @@ func (tfuo *TeamFeeUpdateOne) sqlSave(ctx context.Context) (_node *TeamFee, err 
 	if value, ok := tfuo.mutation.CreatedAt(); ok {
 		_spec.SetField(teamfee.FieldCreatedAt, field.TypeTime, value)
 	}
-	if tfuo.mutation.CreatedAtCleared() {
-		_spec.ClearField(teamfee.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := tfuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(teamfee.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if tfuo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(teamfee.FieldUpdatedAt, field.TypeTime)
+	if value, ok := tfuo.mutation.DeletedAt(); ok {
+		_spec.SetField(teamfee.FieldDeletedAt, field.TypeTime, value)
+	}
+	if tfuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(teamfee.FieldDeletedAt, field.TypeTime)
 	}
 	_node = &TeamFee{config: tfuo.config}
 	_spec.Assign = _node.assignValues

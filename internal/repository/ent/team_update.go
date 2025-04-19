@@ -137,12 +137,6 @@ func (tu *TeamUpdate) SetNillableCreatedAt(t *time.Time) *TeamUpdate {
 	return tu
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (tu *TeamUpdate) ClearCreatedAt() *TeamUpdate {
-	tu.mutation.ClearCreatedAt()
-	return tu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (tu *TeamUpdate) SetUpdatedAt(t time.Time) *TeamUpdate {
 	tu.mutation.SetUpdatedAt(t)
@@ -157,9 +151,23 @@ func (tu *TeamUpdate) SetNillableUpdatedAt(t *time.Time) *TeamUpdate {
 	return tu
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (tu *TeamUpdate) ClearUpdatedAt() *TeamUpdate {
-	tu.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (tu *TeamUpdate) SetDeletedAt(t time.Time) *TeamUpdate {
+	tu.mutation.SetDeletedAt(t)
+	return tu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (tu *TeamUpdate) SetNillableDeletedAt(t *time.Time) *TeamUpdate {
+	if t != nil {
+		tu.SetDeletedAt(*t)
+	}
+	return tu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (tu *TeamUpdate) ClearDeletedAt() *TeamUpdate {
+	tu.mutation.ClearDeletedAt()
 	return tu
 }
 
@@ -270,14 +278,14 @@ func (tu *TeamUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.CreatedAt(); ok {
 		_spec.SetField(team.FieldCreatedAt, field.TypeTime, value)
 	}
-	if tu.mutation.CreatedAtCleared() {
-		_spec.ClearField(team.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := tu.mutation.UpdatedAt(); ok {
 		_spec.SetField(team.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if tu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(team.FieldUpdatedAt, field.TypeTime)
+	if value, ok := tu.mutation.DeletedAt(); ok {
+		_spec.SetField(team.FieldDeletedAt, field.TypeTime, value)
+	}
+	if tu.mutation.DeletedAtCleared() {
+		_spec.ClearField(team.FieldDeletedAt, field.TypeTime)
 	}
 	if tu.mutation.MatchesCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -452,12 +460,6 @@ func (tuo *TeamUpdateOne) SetNillableCreatedAt(t *time.Time) *TeamUpdateOne {
 	return tuo
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (tuo *TeamUpdateOne) ClearCreatedAt() *TeamUpdateOne {
-	tuo.mutation.ClearCreatedAt()
-	return tuo
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (tuo *TeamUpdateOne) SetUpdatedAt(t time.Time) *TeamUpdateOne {
 	tuo.mutation.SetUpdatedAt(t)
@@ -472,9 +474,23 @@ func (tuo *TeamUpdateOne) SetNillableUpdatedAt(t *time.Time) *TeamUpdateOne {
 	return tuo
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (tuo *TeamUpdateOne) ClearUpdatedAt() *TeamUpdateOne {
-	tuo.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (tuo *TeamUpdateOne) SetDeletedAt(t time.Time) *TeamUpdateOne {
+	tuo.mutation.SetDeletedAt(t)
+	return tuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (tuo *TeamUpdateOne) SetNillableDeletedAt(t *time.Time) *TeamUpdateOne {
+	if t != nil {
+		tuo.SetDeletedAt(*t)
+	}
+	return tuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (tuo *TeamUpdateOne) ClearDeletedAt() *TeamUpdateOne {
+	tuo.mutation.ClearDeletedAt()
 	return tuo
 }
 
@@ -615,14 +631,14 @@ func (tuo *TeamUpdateOne) sqlSave(ctx context.Context) (_node *Team, err error) 
 	if value, ok := tuo.mutation.CreatedAt(); ok {
 		_spec.SetField(team.FieldCreatedAt, field.TypeTime, value)
 	}
-	if tuo.mutation.CreatedAtCleared() {
-		_spec.ClearField(team.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := tuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(team.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if tuo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(team.FieldUpdatedAt, field.TypeTime)
+	if value, ok := tuo.mutation.DeletedAt(); ok {
+		_spec.SetField(team.FieldDeletedAt, field.TypeTime, value)
+	}
+	if tuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(team.FieldDeletedAt, field.TypeTime)
 	}
 	if tuo.mutation.MatchesCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -38,6 +38,8 @@ type Match struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MatchQuery when eager-loading is set.
 	Edges        MatchEdges `json:"edges"`
@@ -86,7 +88,7 @@ func (*Match) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case match.FieldVenue, match.FieldStatus, match.FieldNotes:
 			values[i] = new(sql.NullString)
-		case match.FieldMatchDate, match.FieldCreatedAt, match.FieldUpdatedAt:
+		case match.FieldMatchDate, match.FieldCreatedAt, match.FieldUpdatedAt, match.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -169,6 +171,12 @@ func (m *Match) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.UpdatedAt = value.Time
 			}
+		case match.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				m.DeletedAt = value.Time
+			}
 		default:
 			m.selectValues.Set(columns[i], values[i])
 		}
@@ -244,6 +252,9 @@ func (m *Match) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(m.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(m.DeletedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -15,6 +15,7 @@ api-setup: pg api-pg-migrate-up
 	sleep 5
 	${DOCKER_BIN} image inspect ${PROJECT_NAME}-api-local:latest >/dev/null 2>&1 || make build-local-go-image
 api-run:
+	-${DOCKER_BIN} rm -f ${PROJECT_NAME}-api-local 2>/dev/null || true
 	${API_COMPOSE} sh -c "go run -mod=vendor cmd/api/main.go server -c configs/.env"
 api-down:
 	${COMPOSE} down --remove-orphans
@@ -23,10 +24,13 @@ api-pg-migrate-up:
 api-pg-migrate-down:
 	${COMPOSE} run --rm pg-migrate -path=/api-migrations -database="postgres://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable" drop
 api-gen-models:
-		${API_COMPOSE} sh -c 'cd ./internal/repository && go run ariga.io/entimport/cmd/entimport -dsn "postgres://${PROJECT_NAME}:@pg:5432/${PROJECT_NAME}?sslmode=disable" && go run entgo.io/ent/cmd/ent generate --feature sql/execquery ./ent/schema'
+	-${DOCKER_BIN} rm -f ${PROJECT_NAME}-api-local 2>/dev/null || true
+	${API_COMPOSE} sh -c 'cd ./internal/repository && entimport -dsn "postgres://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable" && ent generate --feature sql/execquery ./ent/schema'
 api-go-generate:
+	-${DOCKER_BIN} rm -f ${PROJECT_NAME}-api-local 2>/dev/null || true
 	${API_COMPOSE} sh -c "go generate ./..."
 api-gen-mocks:
+	-${DOCKER_BIN} rm -f ${PROJECT_NAME}-mockery-local 2>/dev/null || true
 	${COMPOSE} run --name ${PROJECT_NAME}-mockery-local --rm -w /api --entrypoint '' mockery /bin/sh -c "\
 		mockery --dir internal/controller --all --recursive --inpackage && \
 		mockery --dir internal/repository --all --recursive --inpackage"

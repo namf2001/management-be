@@ -53,6 +53,7 @@ type DepartmentMutation struct {
 	description    *string
 	created_at     *time.Time
 	updated_at     *time.Time
+	deleted_at     *time.Time
 	clearedFields  map[string]struct{}
 	players        map[int]struct{}
 	removedplayers map[int]struct{}
@@ -233,22 +234,9 @@ func (m *DepartmentMutation) OldDescription(ctx context.Context) (v string, err 
 	return oldValue.Description, nil
 }
 
-// ClearDescription clears the value of the "description" field.
-func (m *DepartmentMutation) ClearDescription() {
-	m.description = nil
-	m.clearedFields[department.FieldDescription] = struct{}{}
-}
-
-// DescriptionCleared returns if the "description" field was cleared in this mutation.
-func (m *DepartmentMutation) DescriptionCleared() bool {
-	_, ok := m.clearedFields[department.FieldDescription]
-	return ok
-}
-
 // ResetDescription resets all changes to the "description" field.
 func (m *DepartmentMutation) ResetDescription() {
 	m.description = nil
-	delete(m.clearedFields, department.FieldDescription)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -282,22 +270,9 @@ func (m *DepartmentMutation) OldCreatedAt(ctx context.Context) (v time.Time, err
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *DepartmentMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[department.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *DepartmentMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[department.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *DepartmentMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, department.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -331,22 +306,58 @@ func (m *DepartmentMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err
 	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *DepartmentMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[department.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *DepartmentMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[department.FieldUpdatedAt]
-	return ok
-}
-
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *DepartmentMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, department.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *DepartmentMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *DepartmentMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Department entity.
+// If the Department object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DepartmentMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *DepartmentMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[department.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *DepartmentMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[department.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *DepartmentMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, department.FieldDeletedAt)
 }
 
 // AddPlayerIDs adds the "players" edge to the Player entity by ids.
@@ -437,7 +448,7 @@ func (m *DepartmentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DepartmentMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.name != nil {
 		fields = append(fields, department.FieldName)
 	}
@@ -449,6 +460,9 @@ func (m *DepartmentMutation) Fields() []string {
 	}
 	if m.updated_at != nil {
 		fields = append(fields, department.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, department.FieldDeletedAt)
 	}
 	return fields
 }
@@ -466,6 +480,8 @@ func (m *DepartmentMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case department.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case department.FieldDeletedAt:
+		return m.DeletedAt()
 	}
 	return nil, false
 }
@@ -483,6 +499,8 @@ func (m *DepartmentMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldCreatedAt(ctx)
 	case department.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case department.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Department field %s", name)
 }
@@ -520,6 +538,13 @@ func (m *DepartmentMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdatedAt(v)
 		return nil
+	case department.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Department field %s", name)
 }
@@ -550,14 +575,8 @@ func (m *DepartmentMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *DepartmentMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(department.FieldDescription) {
-		fields = append(fields, department.FieldDescription)
-	}
-	if m.FieldCleared(department.FieldCreatedAt) {
-		fields = append(fields, department.FieldCreatedAt)
-	}
-	if m.FieldCleared(department.FieldUpdatedAt) {
-		fields = append(fields, department.FieldUpdatedAt)
+	if m.FieldCleared(department.FieldDeletedAt) {
+		fields = append(fields, department.FieldDeletedAt)
 	}
 	return fields
 }
@@ -573,14 +592,8 @@ func (m *DepartmentMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *DepartmentMutation) ClearField(name string) error {
 	switch name {
-	case department.FieldDescription:
-		m.ClearDescription()
-		return nil
-	case department.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case department.FieldUpdatedAt:
-		m.ClearUpdatedAt()
+	case department.FieldDeletedAt:
+		m.ClearDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Department nullable field %s", name)
@@ -601,6 +614,9 @@ func (m *DepartmentMutation) ResetField(name string) error {
 		return nil
 	case department.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case department.FieldDeletedAt:
+		m.ResetDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Department field %s", name)
@@ -707,6 +723,7 @@ type MatchMutation struct {
 	notes                *string
 	created_at           *time.Time
 	updated_at           *time.Time
+	deleted_at           *time.Time
 	clearedFields        map[string]struct{}
 	match_players        map[int]struct{}
 	removedmatch_players map[int]struct{}
@@ -987,22 +1004,9 @@ func (m *MatchMutation) OldIsHomeGame(ctx context.Context) (v bool, err error) {
 	return oldValue.IsHomeGame, nil
 }
 
-// ClearIsHomeGame clears the value of the "is_home_game" field.
-func (m *MatchMutation) ClearIsHomeGame() {
-	m.is_home_game = nil
-	m.clearedFields[match.FieldIsHomeGame] = struct{}{}
-}
-
-// IsHomeGameCleared returns if the "is_home_game" field was cleared in this mutation.
-func (m *MatchMutation) IsHomeGameCleared() bool {
-	_, ok := m.clearedFields[match.FieldIsHomeGame]
-	return ok
-}
-
 // ResetIsHomeGame resets all changes to the "is_home_game" field.
 func (m *MatchMutation) ResetIsHomeGame() {
 	m.is_home_game = nil
-	delete(m.clearedFields, match.FieldIsHomeGame)
 }
 
 // SetOurScore sets the "our_score" field.
@@ -1176,22 +1180,9 @@ func (m *MatchMutation) OldStatus(ctx context.Context) (v string, err error) {
 	return oldValue.Status, nil
 }
 
-// ClearStatus clears the value of the "status" field.
-func (m *MatchMutation) ClearStatus() {
-	m.status = nil
-	m.clearedFields[match.FieldStatus] = struct{}{}
-}
-
-// StatusCleared returns if the "status" field was cleared in this mutation.
-func (m *MatchMutation) StatusCleared() bool {
-	_, ok := m.clearedFields[match.FieldStatus]
-	return ok
-}
-
 // ResetStatus resets all changes to the "status" field.
 func (m *MatchMutation) ResetStatus() {
 	m.status = nil
-	delete(m.clearedFields, match.FieldStatus)
 }
 
 // SetNotes sets the "notes" field.
@@ -1274,22 +1265,9 @@ func (m *MatchMutation) OldCreatedAt(ctx context.Context) (v time.Time, err erro
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *MatchMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[match.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *MatchMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[match.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *MatchMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, match.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -1323,22 +1301,58 @@ func (m *MatchMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err erro
 	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *MatchMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[match.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *MatchMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[match.FieldUpdatedAt]
-	return ok
-}
-
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *MatchMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, match.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *MatchMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *MatchMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Match entity.
+// If the Match object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *MatchMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[match.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *MatchMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[match.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *MatchMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, match.FieldDeletedAt)
 }
 
 // AddMatchPlayerIDs adds the "match_players" edge to the MatchPlayer entity by ids.
@@ -1469,7 +1483,7 @@ func (m *MatchMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MatchMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.team != nil {
 		fields = append(fields, match.FieldOpponentTeamID)
 	}
@@ -1500,6 +1514,9 @@ func (m *MatchMutation) Fields() []string {
 	if m.updated_at != nil {
 		fields = append(fields, match.FieldUpdatedAt)
 	}
+	if m.deleted_at != nil {
+		fields = append(fields, match.FieldDeletedAt)
+	}
 	return fields
 }
 
@@ -1528,6 +1545,8 @@ func (m *MatchMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case match.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case match.FieldDeletedAt:
+		return m.DeletedAt()
 	}
 	return nil, false
 }
@@ -1557,6 +1576,8 @@ func (m *MatchMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldCreatedAt(ctx)
 	case match.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case match.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Match field %s", name)
 }
@@ -1636,6 +1657,13 @@ func (m *MatchMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdatedAt(v)
 		return nil
+	case match.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Match field %s", name)
 }
@@ -1699,26 +1727,17 @@ func (m *MatchMutation) ClearedFields() []string {
 	if m.FieldCleared(match.FieldVenue) {
 		fields = append(fields, match.FieldVenue)
 	}
-	if m.FieldCleared(match.FieldIsHomeGame) {
-		fields = append(fields, match.FieldIsHomeGame)
-	}
 	if m.FieldCleared(match.FieldOurScore) {
 		fields = append(fields, match.FieldOurScore)
 	}
 	if m.FieldCleared(match.FieldOpponentScore) {
 		fields = append(fields, match.FieldOpponentScore)
 	}
-	if m.FieldCleared(match.FieldStatus) {
-		fields = append(fields, match.FieldStatus)
-	}
 	if m.FieldCleared(match.FieldNotes) {
 		fields = append(fields, match.FieldNotes)
 	}
-	if m.FieldCleared(match.FieldCreatedAt) {
-		fields = append(fields, match.FieldCreatedAt)
-	}
-	if m.FieldCleared(match.FieldUpdatedAt) {
-		fields = append(fields, match.FieldUpdatedAt)
+	if m.FieldCleared(match.FieldDeletedAt) {
+		fields = append(fields, match.FieldDeletedAt)
 	}
 	return fields
 }
@@ -1740,26 +1759,17 @@ func (m *MatchMutation) ClearField(name string) error {
 	case match.FieldVenue:
 		m.ClearVenue()
 		return nil
-	case match.FieldIsHomeGame:
-		m.ClearIsHomeGame()
-		return nil
 	case match.FieldOurScore:
 		m.ClearOurScore()
 		return nil
 	case match.FieldOpponentScore:
 		m.ClearOpponentScore()
 		return nil
-	case match.FieldStatus:
-		m.ClearStatus()
-		return nil
 	case match.FieldNotes:
 		m.ClearNotes()
 		return nil
-	case match.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case match.FieldUpdatedAt:
-		m.ClearUpdatedAt()
+	case match.FieldDeletedAt:
+		m.ClearDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Match nullable field %s", name)
@@ -1798,6 +1808,9 @@ func (m *MatchMutation) ResetField(name string) error {
 		return nil
 	case match.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case match.FieldDeletedAt:
+		m.ResetDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Match field %s", name)
@@ -1922,6 +1935,7 @@ type MatchPlayerMutation struct {
 	red_card          *bool
 	created_at        *time.Time
 	updated_at        *time.Time
+	deleted_at        *time.Time
 	clearedFields     map[string]struct{}
 	match             *int
 	clearedmatch      bool
@@ -2184,24 +2198,10 @@ func (m *MatchPlayerMutation) AddedMinutesPlayed() (r int32, exists bool) {
 	return *v, true
 }
 
-// ClearMinutesPlayed clears the value of the "minutes_played" field.
-func (m *MatchPlayerMutation) ClearMinutesPlayed() {
-	m.minutes_played = nil
-	m.addminutes_played = nil
-	m.clearedFields[matchplayer.FieldMinutesPlayed] = struct{}{}
-}
-
-// MinutesPlayedCleared returns if the "minutes_played" field was cleared in this mutation.
-func (m *MatchPlayerMutation) MinutesPlayedCleared() bool {
-	_, ok := m.clearedFields[matchplayer.FieldMinutesPlayed]
-	return ok
-}
-
 // ResetMinutesPlayed resets all changes to the "minutes_played" field.
 func (m *MatchPlayerMutation) ResetMinutesPlayed() {
 	m.minutes_played = nil
 	m.addminutes_played = nil
-	delete(m.clearedFields, matchplayer.FieldMinutesPlayed)
 }
 
 // SetGoalsScored sets the "goals_scored" field.
@@ -2254,24 +2254,10 @@ func (m *MatchPlayerMutation) AddedGoalsScored() (r int32, exists bool) {
 	return *v, true
 }
 
-// ClearGoalsScored clears the value of the "goals_scored" field.
-func (m *MatchPlayerMutation) ClearGoalsScored() {
-	m.goals_scored = nil
-	m.addgoals_scored = nil
-	m.clearedFields[matchplayer.FieldGoalsScored] = struct{}{}
-}
-
-// GoalsScoredCleared returns if the "goals_scored" field was cleared in this mutation.
-func (m *MatchPlayerMutation) GoalsScoredCleared() bool {
-	_, ok := m.clearedFields[matchplayer.FieldGoalsScored]
-	return ok
-}
-
 // ResetGoalsScored resets all changes to the "goals_scored" field.
 func (m *MatchPlayerMutation) ResetGoalsScored() {
 	m.goals_scored = nil
 	m.addgoals_scored = nil
-	delete(m.clearedFields, matchplayer.FieldGoalsScored)
 }
 
 // SetAssists sets the "assists" field.
@@ -2324,24 +2310,10 @@ func (m *MatchPlayerMutation) AddedAssists() (r int32, exists bool) {
 	return *v, true
 }
 
-// ClearAssists clears the value of the "assists" field.
-func (m *MatchPlayerMutation) ClearAssists() {
-	m.assists = nil
-	m.addassists = nil
-	m.clearedFields[matchplayer.FieldAssists] = struct{}{}
-}
-
-// AssistsCleared returns if the "assists" field was cleared in this mutation.
-func (m *MatchPlayerMutation) AssistsCleared() bool {
-	_, ok := m.clearedFields[matchplayer.FieldAssists]
-	return ok
-}
-
 // ResetAssists resets all changes to the "assists" field.
 func (m *MatchPlayerMutation) ResetAssists() {
 	m.assists = nil
 	m.addassists = nil
-	delete(m.clearedFields, matchplayer.FieldAssists)
 }
 
 // SetYellowCards sets the "yellow_cards" field.
@@ -2394,24 +2366,10 @@ func (m *MatchPlayerMutation) AddedYellowCards() (r int32, exists bool) {
 	return *v, true
 }
 
-// ClearYellowCards clears the value of the "yellow_cards" field.
-func (m *MatchPlayerMutation) ClearYellowCards() {
-	m.yellow_cards = nil
-	m.addyellow_cards = nil
-	m.clearedFields[matchplayer.FieldYellowCards] = struct{}{}
-}
-
-// YellowCardsCleared returns if the "yellow_cards" field was cleared in this mutation.
-func (m *MatchPlayerMutation) YellowCardsCleared() bool {
-	_, ok := m.clearedFields[matchplayer.FieldYellowCards]
-	return ok
-}
-
 // ResetYellowCards resets all changes to the "yellow_cards" field.
 func (m *MatchPlayerMutation) ResetYellowCards() {
 	m.yellow_cards = nil
 	m.addyellow_cards = nil
-	delete(m.clearedFields, matchplayer.FieldYellowCards)
 }
 
 // SetRedCard sets the "red_card" field.
@@ -2445,22 +2403,9 @@ func (m *MatchPlayerMutation) OldRedCard(ctx context.Context) (v bool, err error
 	return oldValue.RedCard, nil
 }
 
-// ClearRedCard clears the value of the "red_card" field.
-func (m *MatchPlayerMutation) ClearRedCard() {
-	m.red_card = nil
-	m.clearedFields[matchplayer.FieldRedCard] = struct{}{}
-}
-
-// RedCardCleared returns if the "red_card" field was cleared in this mutation.
-func (m *MatchPlayerMutation) RedCardCleared() bool {
-	_, ok := m.clearedFields[matchplayer.FieldRedCard]
-	return ok
-}
-
 // ResetRedCard resets all changes to the "red_card" field.
 func (m *MatchPlayerMutation) ResetRedCard() {
 	m.red_card = nil
-	delete(m.clearedFields, matchplayer.FieldRedCard)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -2494,22 +2439,9 @@ func (m *MatchPlayerMutation) OldCreatedAt(ctx context.Context) (v time.Time, er
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *MatchPlayerMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[matchplayer.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *MatchPlayerMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[matchplayer.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *MatchPlayerMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, matchplayer.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -2543,22 +2475,58 @@ func (m *MatchPlayerMutation) OldUpdatedAt(ctx context.Context) (v time.Time, er
 	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *MatchPlayerMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[matchplayer.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *MatchPlayerMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[matchplayer.FieldUpdatedAt]
-	return ok
-}
-
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *MatchPlayerMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, matchplayer.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *MatchPlayerMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *MatchPlayerMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the MatchPlayer entity.
+// If the MatchPlayer object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchPlayerMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *MatchPlayerMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[matchplayer.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *MatchPlayerMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[matchplayer.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *MatchPlayerMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, matchplayer.FieldDeletedAt)
 }
 
 // ClearMatch clears the "match" edge to the Match entity.
@@ -2649,7 +2617,7 @@ func (m *MatchPlayerMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MatchPlayerMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.match != nil {
 		fields = append(fields, matchplayer.FieldMatchID)
 	}
@@ -2677,6 +2645,9 @@ func (m *MatchPlayerMutation) Fields() []string {
 	if m.updated_at != nil {
 		fields = append(fields, matchplayer.FieldUpdatedAt)
 	}
+	if m.deleted_at != nil {
+		fields = append(fields, matchplayer.FieldDeletedAt)
+	}
 	return fields
 }
 
@@ -2703,6 +2674,8 @@ func (m *MatchPlayerMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case matchplayer.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case matchplayer.FieldDeletedAt:
+		return m.DeletedAt()
 	}
 	return nil, false
 }
@@ -2730,6 +2703,8 @@ func (m *MatchPlayerMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldCreatedAt(ctx)
 	case matchplayer.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case matchplayer.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown MatchPlayer field %s", name)
 }
@@ -2801,6 +2776,13 @@ func (m *MatchPlayerMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case matchplayer.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown MatchPlayer field %s", name)
@@ -2889,26 +2871,8 @@ func (m *MatchPlayerMutation) ClearedFields() []string {
 	if m.FieldCleared(matchplayer.FieldPlayerID) {
 		fields = append(fields, matchplayer.FieldPlayerID)
 	}
-	if m.FieldCleared(matchplayer.FieldMinutesPlayed) {
-		fields = append(fields, matchplayer.FieldMinutesPlayed)
-	}
-	if m.FieldCleared(matchplayer.FieldGoalsScored) {
-		fields = append(fields, matchplayer.FieldGoalsScored)
-	}
-	if m.FieldCleared(matchplayer.FieldAssists) {
-		fields = append(fields, matchplayer.FieldAssists)
-	}
-	if m.FieldCleared(matchplayer.FieldYellowCards) {
-		fields = append(fields, matchplayer.FieldYellowCards)
-	}
-	if m.FieldCleared(matchplayer.FieldRedCard) {
-		fields = append(fields, matchplayer.FieldRedCard)
-	}
-	if m.FieldCleared(matchplayer.FieldCreatedAt) {
-		fields = append(fields, matchplayer.FieldCreatedAt)
-	}
-	if m.FieldCleared(matchplayer.FieldUpdatedAt) {
-		fields = append(fields, matchplayer.FieldUpdatedAt)
+	if m.FieldCleared(matchplayer.FieldDeletedAt) {
+		fields = append(fields, matchplayer.FieldDeletedAt)
 	}
 	return fields
 }
@@ -2930,26 +2894,8 @@ func (m *MatchPlayerMutation) ClearField(name string) error {
 	case matchplayer.FieldPlayerID:
 		m.ClearPlayerID()
 		return nil
-	case matchplayer.FieldMinutesPlayed:
-		m.ClearMinutesPlayed()
-		return nil
-	case matchplayer.FieldGoalsScored:
-		m.ClearGoalsScored()
-		return nil
-	case matchplayer.FieldAssists:
-		m.ClearAssists()
-		return nil
-	case matchplayer.FieldYellowCards:
-		m.ClearYellowCards()
-		return nil
-	case matchplayer.FieldRedCard:
-		m.ClearRedCard()
-		return nil
-	case matchplayer.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case matchplayer.FieldUpdatedAt:
-		m.ClearUpdatedAt()
+	case matchplayer.FieldDeletedAt:
+		m.ClearDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown MatchPlayer nullable field %s", name)
@@ -2985,6 +2931,9 @@ func (m *MatchPlayerMutation) ResetField(name string) error {
 		return nil
 	case matchplayer.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case matchplayer.FieldDeletedAt:
+		m.ResetDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown MatchPlayer field %s", name)
@@ -3102,6 +3051,7 @@ type PlayerMutation struct {
 	is_active               *bool
 	created_at              *time.Time
 	updated_at              *time.Time
+	deleted_at              *time.Time
 	clearedFields           map[string]struct{}
 	match_players           map[int]struct{}
 	removedmatch_players    map[int]struct{}
@@ -3728,22 +3678,9 @@ func (m *PlayerMutation) OldIsActive(ctx context.Context) (v bool, err error) {
 	return oldValue.IsActive, nil
 }
 
-// ClearIsActive clears the value of the "is_active" field.
-func (m *PlayerMutation) ClearIsActive() {
-	m.is_active = nil
-	m.clearedFields[player.FieldIsActive] = struct{}{}
-}
-
-// IsActiveCleared returns if the "is_active" field was cleared in this mutation.
-func (m *PlayerMutation) IsActiveCleared() bool {
-	_, ok := m.clearedFields[player.FieldIsActive]
-	return ok
-}
-
 // ResetIsActive resets all changes to the "is_active" field.
 func (m *PlayerMutation) ResetIsActive() {
 	m.is_active = nil
-	delete(m.clearedFields, player.FieldIsActive)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -3777,22 +3714,9 @@ func (m *PlayerMutation) OldCreatedAt(ctx context.Context) (v time.Time, err err
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *PlayerMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[player.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *PlayerMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[player.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *PlayerMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, player.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -3826,22 +3750,58 @@ func (m *PlayerMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err err
 	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *PlayerMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[player.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *PlayerMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[player.FieldUpdatedAt]
-	return ok
-}
-
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *PlayerMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, player.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *PlayerMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *PlayerMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *PlayerMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[player.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *PlayerMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[player.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *PlayerMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, player.FieldDeletedAt)
 }
 
 // AddMatchPlayerIDs adds the "match_players" edge to the MatchPlayer entity by ids.
@@ -3998,7 +3958,7 @@ func (m *PlayerMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PlayerMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.department != nil {
 		fields = append(fields, player.FieldDepartmentID)
 	}
@@ -4035,6 +3995,9 @@ func (m *PlayerMutation) Fields() []string {
 	if m.updated_at != nil {
 		fields = append(fields, player.FieldUpdatedAt)
 	}
+	if m.deleted_at != nil {
+		fields = append(fields, player.FieldDeletedAt)
+	}
 	return fields
 }
 
@@ -4067,6 +4030,8 @@ func (m *PlayerMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case player.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case player.FieldDeletedAt:
+		return m.DeletedAt()
 	}
 	return nil, false
 }
@@ -4100,6 +4065,8 @@ func (m *PlayerMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldCreatedAt(ctx)
 	case player.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case player.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Player field %s", name)
 }
@@ -4193,6 +4160,13 @@ func (m *PlayerMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdatedAt(v)
 		return nil
+	case player.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Player field %s", name)
 }
@@ -4283,14 +4257,8 @@ func (m *PlayerMutation) ClearedFields() []string {
 	if m.FieldCleared(player.FieldEmail) {
 		fields = append(fields, player.FieldEmail)
 	}
-	if m.FieldCleared(player.FieldIsActive) {
-		fields = append(fields, player.FieldIsActive)
-	}
-	if m.FieldCleared(player.FieldCreatedAt) {
-		fields = append(fields, player.FieldCreatedAt)
-	}
-	if m.FieldCleared(player.FieldUpdatedAt) {
-		fields = append(fields, player.FieldUpdatedAt)
+	if m.FieldCleared(player.FieldDeletedAt) {
+		fields = append(fields, player.FieldDeletedAt)
 	}
 	return fields
 }
@@ -4327,14 +4295,8 @@ func (m *PlayerMutation) ClearField(name string) error {
 	case player.FieldEmail:
 		m.ClearEmail()
 		return nil
-	case player.FieldIsActive:
-		m.ClearIsActive()
-		return nil
-	case player.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case player.FieldUpdatedAt:
-		m.ClearUpdatedAt()
+	case player.FieldDeletedAt:
+		m.ClearDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Player nullable field %s", name)
@@ -4379,6 +4341,9 @@ func (m *PlayerMutation) ResetField(name string) error {
 		return nil
 	case player.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case player.FieldDeletedAt:
+		m.ResetDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Player field %s", name)
@@ -4524,6 +4489,7 @@ type PlayerStatisticMutation struct {
 	addtotal_red_cards      *int32
 	created_at              *time.Time
 	updated_at              *time.Time
+	deleted_at              *time.Time
 	clearedFields           map[string]struct{}
 	player                  *int
 	clearedplayer           bool
@@ -4735,24 +4701,10 @@ func (m *PlayerStatisticMutation) AddedTotalMatches() (r int32, exists bool) {
 	return *v, true
 }
 
-// ClearTotalMatches clears the value of the "total_matches" field.
-func (m *PlayerStatisticMutation) ClearTotalMatches() {
-	m.total_matches = nil
-	m.addtotal_matches = nil
-	m.clearedFields[playerstatistic.FieldTotalMatches] = struct{}{}
-}
-
-// TotalMatchesCleared returns if the "total_matches" field was cleared in this mutation.
-func (m *PlayerStatisticMutation) TotalMatchesCleared() bool {
-	_, ok := m.clearedFields[playerstatistic.FieldTotalMatches]
-	return ok
-}
-
 // ResetTotalMatches resets all changes to the "total_matches" field.
 func (m *PlayerStatisticMutation) ResetTotalMatches() {
 	m.total_matches = nil
 	m.addtotal_matches = nil
-	delete(m.clearedFields, playerstatistic.FieldTotalMatches)
 }
 
 // SetTotalMinutesPlayed sets the "total_minutes_played" field.
@@ -4805,24 +4757,10 @@ func (m *PlayerStatisticMutation) AddedTotalMinutesPlayed() (r int32, exists boo
 	return *v, true
 }
 
-// ClearTotalMinutesPlayed clears the value of the "total_minutes_played" field.
-func (m *PlayerStatisticMutation) ClearTotalMinutesPlayed() {
-	m.total_minutes_played = nil
-	m.addtotal_minutes_played = nil
-	m.clearedFields[playerstatistic.FieldTotalMinutesPlayed] = struct{}{}
-}
-
-// TotalMinutesPlayedCleared returns if the "total_minutes_played" field was cleared in this mutation.
-func (m *PlayerStatisticMutation) TotalMinutesPlayedCleared() bool {
-	_, ok := m.clearedFields[playerstatistic.FieldTotalMinutesPlayed]
-	return ok
-}
-
 // ResetTotalMinutesPlayed resets all changes to the "total_minutes_played" field.
 func (m *PlayerStatisticMutation) ResetTotalMinutesPlayed() {
 	m.total_minutes_played = nil
 	m.addtotal_minutes_played = nil
-	delete(m.clearedFields, playerstatistic.FieldTotalMinutesPlayed)
 }
 
 // SetTotalGoals sets the "total_goals" field.
@@ -4875,24 +4813,10 @@ func (m *PlayerStatisticMutation) AddedTotalGoals() (r int32, exists bool) {
 	return *v, true
 }
 
-// ClearTotalGoals clears the value of the "total_goals" field.
-func (m *PlayerStatisticMutation) ClearTotalGoals() {
-	m.total_goals = nil
-	m.addtotal_goals = nil
-	m.clearedFields[playerstatistic.FieldTotalGoals] = struct{}{}
-}
-
-// TotalGoalsCleared returns if the "total_goals" field was cleared in this mutation.
-func (m *PlayerStatisticMutation) TotalGoalsCleared() bool {
-	_, ok := m.clearedFields[playerstatistic.FieldTotalGoals]
-	return ok
-}
-
 // ResetTotalGoals resets all changes to the "total_goals" field.
 func (m *PlayerStatisticMutation) ResetTotalGoals() {
 	m.total_goals = nil
 	m.addtotal_goals = nil
-	delete(m.clearedFields, playerstatistic.FieldTotalGoals)
 }
 
 // SetTotalAssists sets the "total_assists" field.
@@ -4945,24 +4869,10 @@ func (m *PlayerStatisticMutation) AddedTotalAssists() (r int32, exists bool) {
 	return *v, true
 }
 
-// ClearTotalAssists clears the value of the "total_assists" field.
-func (m *PlayerStatisticMutation) ClearTotalAssists() {
-	m.total_assists = nil
-	m.addtotal_assists = nil
-	m.clearedFields[playerstatistic.FieldTotalAssists] = struct{}{}
-}
-
-// TotalAssistsCleared returns if the "total_assists" field was cleared in this mutation.
-func (m *PlayerStatisticMutation) TotalAssistsCleared() bool {
-	_, ok := m.clearedFields[playerstatistic.FieldTotalAssists]
-	return ok
-}
-
 // ResetTotalAssists resets all changes to the "total_assists" field.
 func (m *PlayerStatisticMutation) ResetTotalAssists() {
 	m.total_assists = nil
 	m.addtotal_assists = nil
-	delete(m.clearedFields, playerstatistic.FieldTotalAssists)
 }
 
 // SetTotalYellowCards sets the "total_yellow_cards" field.
@@ -5015,24 +4925,10 @@ func (m *PlayerStatisticMutation) AddedTotalYellowCards() (r int32, exists bool)
 	return *v, true
 }
 
-// ClearTotalYellowCards clears the value of the "total_yellow_cards" field.
-func (m *PlayerStatisticMutation) ClearTotalYellowCards() {
-	m.total_yellow_cards = nil
-	m.addtotal_yellow_cards = nil
-	m.clearedFields[playerstatistic.FieldTotalYellowCards] = struct{}{}
-}
-
-// TotalYellowCardsCleared returns if the "total_yellow_cards" field was cleared in this mutation.
-func (m *PlayerStatisticMutation) TotalYellowCardsCleared() bool {
-	_, ok := m.clearedFields[playerstatistic.FieldTotalYellowCards]
-	return ok
-}
-
 // ResetTotalYellowCards resets all changes to the "total_yellow_cards" field.
 func (m *PlayerStatisticMutation) ResetTotalYellowCards() {
 	m.total_yellow_cards = nil
 	m.addtotal_yellow_cards = nil
-	delete(m.clearedFields, playerstatistic.FieldTotalYellowCards)
 }
 
 // SetTotalRedCards sets the "total_red_cards" field.
@@ -5085,24 +4981,10 @@ func (m *PlayerStatisticMutation) AddedTotalRedCards() (r int32, exists bool) {
 	return *v, true
 }
 
-// ClearTotalRedCards clears the value of the "total_red_cards" field.
-func (m *PlayerStatisticMutation) ClearTotalRedCards() {
-	m.total_red_cards = nil
-	m.addtotal_red_cards = nil
-	m.clearedFields[playerstatistic.FieldTotalRedCards] = struct{}{}
-}
-
-// TotalRedCardsCleared returns if the "total_red_cards" field was cleared in this mutation.
-func (m *PlayerStatisticMutation) TotalRedCardsCleared() bool {
-	_, ok := m.clearedFields[playerstatistic.FieldTotalRedCards]
-	return ok
-}
-
 // ResetTotalRedCards resets all changes to the "total_red_cards" field.
 func (m *PlayerStatisticMutation) ResetTotalRedCards() {
 	m.total_red_cards = nil
 	m.addtotal_red_cards = nil
-	delete(m.clearedFields, playerstatistic.FieldTotalRedCards)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -5136,22 +5018,9 @@ func (m *PlayerStatisticMutation) OldCreatedAt(ctx context.Context) (v time.Time
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *PlayerStatisticMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[playerstatistic.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *PlayerStatisticMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[playerstatistic.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *PlayerStatisticMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, playerstatistic.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -5185,22 +5054,58 @@ func (m *PlayerStatisticMutation) OldUpdatedAt(ctx context.Context) (v time.Time
 	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *PlayerStatisticMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[playerstatistic.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *PlayerStatisticMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[playerstatistic.FieldUpdatedAt]
-	return ok
-}
-
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *PlayerStatisticMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, playerstatistic.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *PlayerStatisticMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *PlayerStatisticMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the PlayerStatistic entity.
+// If the PlayerStatistic object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerStatisticMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *PlayerStatisticMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[playerstatistic.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *PlayerStatisticMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[playerstatistic.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *PlayerStatisticMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, playerstatistic.FieldDeletedAt)
 }
 
 // ClearPlayer clears the "player" edge to the Player entity.
@@ -5264,7 +5169,7 @@ func (m *PlayerStatisticMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PlayerStatisticMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.player != nil {
 		fields = append(fields, playerstatistic.FieldPlayerID)
 	}
@@ -5292,6 +5197,9 @@ func (m *PlayerStatisticMutation) Fields() []string {
 	if m.updated_at != nil {
 		fields = append(fields, playerstatistic.FieldUpdatedAt)
 	}
+	if m.deleted_at != nil {
+		fields = append(fields, playerstatistic.FieldDeletedAt)
+	}
 	return fields
 }
 
@@ -5318,6 +5226,8 @@ func (m *PlayerStatisticMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case playerstatistic.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case playerstatistic.FieldDeletedAt:
+		return m.DeletedAt()
 	}
 	return nil, false
 }
@@ -5345,6 +5255,8 @@ func (m *PlayerStatisticMutation) OldField(ctx context.Context, name string) (en
 		return m.OldCreatedAt(ctx)
 	case playerstatistic.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case playerstatistic.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown PlayerStatistic field %s", name)
 }
@@ -5416,6 +5328,13 @@ func (m *PlayerStatisticMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case playerstatistic.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown PlayerStatistic field %s", name)
@@ -5525,29 +5444,8 @@ func (m *PlayerStatisticMutation) ClearedFields() []string {
 	if m.FieldCleared(playerstatistic.FieldPlayerID) {
 		fields = append(fields, playerstatistic.FieldPlayerID)
 	}
-	if m.FieldCleared(playerstatistic.FieldTotalMatches) {
-		fields = append(fields, playerstatistic.FieldTotalMatches)
-	}
-	if m.FieldCleared(playerstatistic.FieldTotalMinutesPlayed) {
-		fields = append(fields, playerstatistic.FieldTotalMinutesPlayed)
-	}
-	if m.FieldCleared(playerstatistic.FieldTotalGoals) {
-		fields = append(fields, playerstatistic.FieldTotalGoals)
-	}
-	if m.FieldCleared(playerstatistic.FieldTotalAssists) {
-		fields = append(fields, playerstatistic.FieldTotalAssists)
-	}
-	if m.FieldCleared(playerstatistic.FieldTotalYellowCards) {
-		fields = append(fields, playerstatistic.FieldTotalYellowCards)
-	}
-	if m.FieldCleared(playerstatistic.FieldTotalRedCards) {
-		fields = append(fields, playerstatistic.FieldTotalRedCards)
-	}
-	if m.FieldCleared(playerstatistic.FieldCreatedAt) {
-		fields = append(fields, playerstatistic.FieldCreatedAt)
-	}
-	if m.FieldCleared(playerstatistic.FieldUpdatedAt) {
-		fields = append(fields, playerstatistic.FieldUpdatedAt)
+	if m.FieldCleared(playerstatistic.FieldDeletedAt) {
+		fields = append(fields, playerstatistic.FieldDeletedAt)
 	}
 	return fields
 }
@@ -5566,29 +5464,8 @@ func (m *PlayerStatisticMutation) ClearField(name string) error {
 	case playerstatistic.FieldPlayerID:
 		m.ClearPlayerID()
 		return nil
-	case playerstatistic.FieldTotalMatches:
-		m.ClearTotalMatches()
-		return nil
-	case playerstatistic.FieldTotalMinutesPlayed:
-		m.ClearTotalMinutesPlayed()
-		return nil
-	case playerstatistic.FieldTotalGoals:
-		m.ClearTotalGoals()
-		return nil
-	case playerstatistic.FieldTotalAssists:
-		m.ClearTotalAssists()
-		return nil
-	case playerstatistic.FieldTotalYellowCards:
-		m.ClearTotalYellowCards()
-		return nil
-	case playerstatistic.FieldTotalRedCards:
-		m.ClearTotalRedCards()
-		return nil
-	case playerstatistic.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case playerstatistic.FieldUpdatedAt:
-		m.ClearUpdatedAt()
+	case playerstatistic.FieldDeletedAt:
+		m.ClearDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown PlayerStatistic nullable field %s", name)
@@ -5624,6 +5501,9 @@ func (m *PlayerStatisticMutation) ResetField(name string) error {
 		return nil
 	case playerstatistic.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case playerstatistic.FieldDeletedAt:
+		m.ResetDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown PlayerStatistic field %s", name)
@@ -6048,6 +5928,7 @@ type TeamMutation struct {
 	contact_email  *string
 	created_at     *time.Time
 	updated_at     *time.Time
+	deleted_at     *time.Time
 	clearedFields  map[string]struct{}
 	matches        map[int]struct{}
 	removedmatches map[int]struct{}
@@ -6424,22 +6305,9 @@ func (m *TeamMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *TeamMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[team.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *TeamMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[team.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *TeamMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, team.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -6473,22 +6341,58 @@ func (m *TeamMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error
 	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *TeamMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[team.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *TeamMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[team.FieldUpdatedAt]
-	return ok
-}
-
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *TeamMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, team.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *TeamMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *TeamMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Team entity.
+// If the Team object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TeamMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *TeamMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[team.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *TeamMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[team.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *TeamMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, team.FieldDeletedAt)
 }
 
 // AddMatchIDs adds the "matches" edge to the Match entity by ids.
@@ -6579,7 +6483,7 @@ func (m *TeamMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TeamMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.name != nil {
 		fields = append(fields, team.FieldName)
 	}
@@ -6600,6 +6504,9 @@ func (m *TeamMutation) Fields() []string {
 	}
 	if m.updated_at != nil {
 		fields = append(fields, team.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, team.FieldDeletedAt)
 	}
 	return fields
 }
@@ -6623,6 +6530,8 @@ func (m *TeamMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case team.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case team.FieldDeletedAt:
+		return m.DeletedAt()
 	}
 	return nil, false
 }
@@ -6646,6 +6555,8 @@ func (m *TeamMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCreatedAt(ctx)
 	case team.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case team.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Team field %s", name)
 }
@@ -6704,6 +6615,13 @@ func (m *TeamMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdatedAt(v)
 		return nil
+	case team.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Team field %s", name)
 }
@@ -6746,11 +6664,8 @@ func (m *TeamMutation) ClearedFields() []string {
 	if m.FieldCleared(team.FieldContactEmail) {
 		fields = append(fields, team.FieldContactEmail)
 	}
-	if m.FieldCleared(team.FieldCreatedAt) {
-		fields = append(fields, team.FieldCreatedAt)
-	}
-	if m.FieldCleared(team.FieldUpdatedAt) {
-		fields = append(fields, team.FieldUpdatedAt)
+	if m.FieldCleared(team.FieldDeletedAt) {
+		fields = append(fields, team.FieldDeletedAt)
 	}
 	return fields
 }
@@ -6778,11 +6693,8 @@ func (m *TeamMutation) ClearField(name string) error {
 	case team.FieldContactEmail:
 		m.ClearContactEmail()
 		return nil
-	case team.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case team.FieldUpdatedAt:
-		m.ClearUpdatedAt()
+	case team.FieldDeletedAt:
+		m.ClearDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Team nullable field %s", name)
@@ -6812,6 +6724,9 @@ func (m *TeamMutation) ResetField(name string) error {
 		return nil
 	case team.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case team.FieldDeletedAt:
+		m.ResetDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Team field %s", name)
@@ -6913,6 +6828,7 @@ type TeamFeeMutation struct {
 	description   *string
 	created_at    *time.Time
 	updated_at    *time.Time
+	deleted_at    *time.Time
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*TeamFee, error)
@@ -7195,22 +7111,9 @@ func (m *TeamFeeMutation) OldCreatedAt(ctx context.Context) (v time.Time, err er
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *TeamFeeMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[teamfee.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *TeamFeeMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[teamfee.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *TeamFeeMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, teamfee.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -7244,22 +7147,58 @@ func (m *TeamFeeMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err er
 	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *TeamFeeMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[teamfee.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *TeamFeeMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[teamfee.FieldUpdatedAt]
-	return ok
-}
-
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *TeamFeeMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, teamfee.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *TeamFeeMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *TeamFeeMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the TeamFee entity.
+// If the TeamFee object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TeamFeeMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *TeamFeeMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[teamfee.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *TeamFeeMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[teamfee.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *TeamFeeMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, teamfee.FieldDeletedAt)
 }
 
 // Where appends a list predicates to the TeamFeeMutation builder.
@@ -7296,7 +7235,7 @@ func (m *TeamFeeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TeamFeeMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.amount != nil {
 		fields = append(fields, teamfee.FieldAmount)
 	}
@@ -7311,6 +7250,9 @@ func (m *TeamFeeMutation) Fields() []string {
 	}
 	if m.updated_at != nil {
 		fields = append(fields, teamfee.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, teamfee.FieldDeletedAt)
 	}
 	return fields
 }
@@ -7330,6 +7272,8 @@ func (m *TeamFeeMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case teamfee.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case teamfee.FieldDeletedAt:
+		return m.DeletedAt()
 	}
 	return nil, false
 }
@@ -7349,6 +7293,8 @@ func (m *TeamFeeMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCreatedAt(ctx)
 	case teamfee.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case teamfee.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown TeamFee field %s", name)
 }
@@ -7392,6 +7338,13 @@ func (m *TeamFeeMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case teamfee.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TeamFee field %s", name)
@@ -7441,11 +7394,8 @@ func (m *TeamFeeMutation) ClearedFields() []string {
 	if m.FieldCleared(teamfee.FieldDescription) {
 		fields = append(fields, teamfee.FieldDescription)
 	}
-	if m.FieldCleared(teamfee.FieldCreatedAt) {
-		fields = append(fields, teamfee.FieldCreatedAt)
-	}
-	if m.FieldCleared(teamfee.FieldUpdatedAt) {
-		fields = append(fields, teamfee.FieldUpdatedAt)
+	if m.FieldCleared(teamfee.FieldDeletedAt) {
+		fields = append(fields, teamfee.FieldDeletedAt)
 	}
 	return fields
 }
@@ -7464,11 +7414,8 @@ func (m *TeamFeeMutation) ClearField(name string) error {
 	case teamfee.FieldDescription:
 		m.ClearDescription()
 		return nil
-	case teamfee.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case teamfee.FieldUpdatedAt:
-		m.ClearUpdatedAt()
+	case teamfee.FieldDeletedAt:
+		m.ClearDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown TeamFee nullable field %s", name)
@@ -7492,6 +7439,9 @@ func (m *TeamFeeMutation) ResetField(name string) error {
 		return nil
 	case teamfee.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case teamfee.FieldDeletedAt:
+		m.ResetDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown TeamFee field %s", name)
@@ -7557,6 +7507,7 @@ type UserMutation struct {
 	full_name     *string
 	created_at    *time.Time
 	updated_at    *time.Time
+	deleted_at    *time.Time
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*User, error)
@@ -7842,22 +7793,9 @@ func (m *UserMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *UserMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[user.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *UserMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[user.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *UserMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, user.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -7891,22 +7829,58 @@ func (m *UserMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error
 	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *UserMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[user.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *UserMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[user.FieldUpdatedAt]
-	return ok
-}
-
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *UserMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, user.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *UserMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *UserMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *UserMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[user.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *UserMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[user.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *UserMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, user.FieldDeletedAt)
 }
 
 // Where appends a list predicates to the UserMutation builder.
@@ -7943,7 +7917,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.username != nil {
 		fields = append(fields, user.FieldUsername)
 	}
@@ -7961,6 +7935,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.updated_at != nil {
 		fields = append(fields, user.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, user.FieldDeletedAt)
 	}
 	return fields
 }
@@ -7982,6 +7959,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case user.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case user.FieldDeletedAt:
+		return m.DeletedAt()
 	}
 	return nil, false
 }
@@ -8003,6 +7982,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCreatedAt(ctx)
 	case user.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case user.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -8054,6 +8035,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdatedAt(v)
 		return nil
+	case user.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -8084,11 +8072,8 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(user.FieldCreatedAt) {
-		fields = append(fields, user.FieldCreatedAt)
-	}
-	if m.FieldCleared(user.FieldUpdatedAt) {
-		fields = append(fields, user.FieldUpdatedAt)
+	if m.FieldCleared(user.FieldDeletedAt) {
+		fields = append(fields, user.FieldDeletedAt)
 	}
 	return fields
 }
@@ -8104,11 +8089,8 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
 	switch name {
-	case user.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case user.FieldUpdatedAt:
-		m.ClearUpdatedAt()
+	case user.FieldDeletedAt:
+		m.ClearDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -8135,6 +8117,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case user.FieldDeletedAt:
+		m.ResetDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

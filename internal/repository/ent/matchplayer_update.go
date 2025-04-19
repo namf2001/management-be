@@ -91,12 +91,6 @@ func (mpu *MatchPlayerUpdate) AddMinutesPlayed(i int32) *MatchPlayerUpdate {
 	return mpu
 }
 
-// ClearMinutesPlayed clears the value of the "minutes_played" field.
-func (mpu *MatchPlayerUpdate) ClearMinutesPlayed() *MatchPlayerUpdate {
-	mpu.mutation.ClearMinutesPlayed()
-	return mpu
-}
-
 // SetGoalsScored sets the "goals_scored" field.
 func (mpu *MatchPlayerUpdate) SetGoalsScored(i int32) *MatchPlayerUpdate {
 	mpu.mutation.ResetGoalsScored()
@@ -115,12 +109,6 @@ func (mpu *MatchPlayerUpdate) SetNillableGoalsScored(i *int32) *MatchPlayerUpdat
 // AddGoalsScored adds i to the "goals_scored" field.
 func (mpu *MatchPlayerUpdate) AddGoalsScored(i int32) *MatchPlayerUpdate {
 	mpu.mutation.AddGoalsScored(i)
-	return mpu
-}
-
-// ClearGoalsScored clears the value of the "goals_scored" field.
-func (mpu *MatchPlayerUpdate) ClearGoalsScored() *MatchPlayerUpdate {
-	mpu.mutation.ClearGoalsScored()
 	return mpu
 }
 
@@ -145,12 +133,6 @@ func (mpu *MatchPlayerUpdate) AddAssists(i int32) *MatchPlayerUpdate {
 	return mpu
 }
 
-// ClearAssists clears the value of the "assists" field.
-func (mpu *MatchPlayerUpdate) ClearAssists() *MatchPlayerUpdate {
-	mpu.mutation.ClearAssists()
-	return mpu
-}
-
 // SetYellowCards sets the "yellow_cards" field.
 func (mpu *MatchPlayerUpdate) SetYellowCards(i int32) *MatchPlayerUpdate {
 	mpu.mutation.ResetYellowCards()
@@ -172,12 +154,6 @@ func (mpu *MatchPlayerUpdate) AddYellowCards(i int32) *MatchPlayerUpdate {
 	return mpu
 }
 
-// ClearYellowCards clears the value of the "yellow_cards" field.
-func (mpu *MatchPlayerUpdate) ClearYellowCards() *MatchPlayerUpdate {
-	mpu.mutation.ClearYellowCards()
-	return mpu
-}
-
 // SetRedCard sets the "red_card" field.
 func (mpu *MatchPlayerUpdate) SetRedCard(b bool) *MatchPlayerUpdate {
 	mpu.mutation.SetRedCard(b)
@@ -189,12 +165,6 @@ func (mpu *MatchPlayerUpdate) SetNillableRedCard(b *bool) *MatchPlayerUpdate {
 	if b != nil {
 		mpu.SetRedCard(*b)
 	}
-	return mpu
-}
-
-// ClearRedCard clears the value of the "red_card" field.
-func (mpu *MatchPlayerUpdate) ClearRedCard() *MatchPlayerUpdate {
-	mpu.mutation.ClearRedCard()
 	return mpu
 }
 
@@ -212,12 +182,6 @@ func (mpu *MatchPlayerUpdate) SetNillableCreatedAt(t *time.Time) *MatchPlayerUpd
 	return mpu
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (mpu *MatchPlayerUpdate) ClearCreatedAt() *MatchPlayerUpdate {
-	mpu.mutation.ClearCreatedAt()
-	return mpu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (mpu *MatchPlayerUpdate) SetUpdatedAt(t time.Time) *MatchPlayerUpdate {
 	mpu.mutation.SetUpdatedAt(t)
@@ -232,9 +196,23 @@ func (mpu *MatchPlayerUpdate) SetNillableUpdatedAt(t *time.Time) *MatchPlayerUpd
 	return mpu
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (mpu *MatchPlayerUpdate) ClearUpdatedAt() *MatchPlayerUpdate {
-	mpu.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (mpu *MatchPlayerUpdate) SetDeletedAt(t time.Time) *MatchPlayerUpdate {
+	mpu.mutation.SetDeletedAt(t)
+	return mpu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (mpu *MatchPlayerUpdate) SetNillableDeletedAt(t *time.Time) *MatchPlayerUpdate {
+	if t != nil {
+		mpu.SetDeletedAt(*t)
+	}
+	return mpu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (mpu *MatchPlayerUpdate) ClearDeletedAt() *MatchPlayerUpdate {
+	mpu.mutation.ClearDeletedAt()
 	return mpu
 }
 
@@ -307,17 +285,11 @@ func (mpu *MatchPlayerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := mpu.mutation.AddedMinutesPlayed(); ok {
 		_spec.AddField(matchplayer.FieldMinutesPlayed, field.TypeInt32, value)
 	}
-	if mpu.mutation.MinutesPlayedCleared() {
-		_spec.ClearField(matchplayer.FieldMinutesPlayed, field.TypeInt32)
-	}
 	if value, ok := mpu.mutation.GoalsScored(); ok {
 		_spec.SetField(matchplayer.FieldGoalsScored, field.TypeInt32, value)
 	}
 	if value, ok := mpu.mutation.AddedGoalsScored(); ok {
 		_spec.AddField(matchplayer.FieldGoalsScored, field.TypeInt32, value)
-	}
-	if mpu.mutation.GoalsScoredCleared() {
-		_spec.ClearField(matchplayer.FieldGoalsScored, field.TypeInt32)
 	}
 	if value, ok := mpu.mutation.Assists(); ok {
 		_spec.SetField(matchplayer.FieldAssists, field.TypeInt32, value)
@@ -325,35 +297,26 @@ func (mpu *MatchPlayerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := mpu.mutation.AddedAssists(); ok {
 		_spec.AddField(matchplayer.FieldAssists, field.TypeInt32, value)
 	}
-	if mpu.mutation.AssistsCleared() {
-		_spec.ClearField(matchplayer.FieldAssists, field.TypeInt32)
-	}
 	if value, ok := mpu.mutation.YellowCards(); ok {
 		_spec.SetField(matchplayer.FieldYellowCards, field.TypeInt32, value)
 	}
 	if value, ok := mpu.mutation.AddedYellowCards(); ok {
 		_spec.AddField(matchplayer.FieldYellowCards, field.TypeInt32, value)
 	}
-	if mpu.mutation.YellowCardsCleared() {
-		_spec.ClearField(matchplayer.FieldYellowCards, field.TypeInt32)
-	}
 	if value, ok := mpu.mutation.RedCard(); ok {
 		_spec.SetField(matchplayer.FieldRedCard, field.TypeBool, value)
-	}
-	if mpu.mutation.RedCardCleared() {
-		_spec.ClearField(matchplayer.FieldRedCard, field.TypeBool)
 	}
 	if value, ok := mpu.mutation.CreatedAt(); ok {
 		_spec.SetField(matchplayer.FieldCreatedAt, field.TypeTime, value)
 	}
-	if mpu.mutation.CreatedAtCleared() {
-		_spec.ClearField(matchplayer.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := mpu.mutation.UpdatedAt(); ok {
 		_spec.SetField(matchplayer.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if mpu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(matchplayer.FieldUpdatedAt, field.TypeTime)
+	if value, ok := mpu.mutation.DeletedAt(); ok {
+		_spec.SetField(matchplayer.FieldDeletedAt, field.TypeTime, value)
+	}
+	if mpu.mutation.DeletedAtCleared() {
+		_spec.ClearField(matchplayer.FieldDeletedAt, field.TypeTime)
 	}
 	if mpu.mutation.MatchCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -494,12 +457,6 @@ func (mpuo *MatchPlayerUpdateOne) AddMinutesPlayed(i int32) *MatchPlayerUpdateOn
 	return mpuo
 }
 
-// ClearMinutesPlayed clears the value of the "minutes_played" field.
-func (mpuo *MatchPlayerUpdateOne) ClearMinutesPlayed() *MatchPlayerUpdateOne {
-	mpuo.mutation.ClearMinutesPlayed()
-	return mpuo
-}
-
 // SetGoalsScored sets the "goals_scored" field.
 func (mpuo *MatchPlayerUpdateOne) SetGoalsScored(i int32) *MatchPlayerUpdateOne {
 	mpuo.mutation.ResetGoalsScored()
@@ -518,12 +475,6 @@ func (mpuo *MatchPlayerUpdateOne) SetNillableGoalsScored(i *int32) *MatchPlayerU
 // AddGoalsScored adds i to the "goals_scored" field.
 func (mpuo *MatchPlayerUpdateOne) AddGoalsScored(i int32) *MatchPlayerUpdateOne {
 	mpuo.mutation.AddGoalsScored(i)
-	return mpuo
-}
-
-// ClearGoalsScored clears the value of the "goals_scored" field.
-func (mpuo *MatchPlayerUpdateOne) ClearGoalsScored() *MatchPlayerUpdateOne {
-	mpuo.mutation.ClearGoalsScored()
 	return mpuo
 }
 
@@ -548,12 +499,6 @@ func (mpuo *MatchPlayerUpdateOne) AddAssists(i int32) *MatchPlayerUpdateOne {
 	return mpuo
 }
 
-// ClearAssists clears the value of the "assists" field.
-func (mpuo *MatchPlayerUpdateOne) ClearAssists() *MatchPlayerUpdateOne {
-	mpuo.mutation.ClearAssists()
-	return mpuo
-}
-
 // SetYellowCards sets the "yellow_cards" field.
 func (mpuo *MatchPlayerUpdateOne) SetYellowCards(i int32) *MatchPlayerUpdateOne {
 	mpuo.mutation.ResetYellowCards()
@@ -575,12 +520,6 @@ func (mpuo *MatchPlayerUpdateOne) AddYellowCards(i int32) *MatchPlayerUpdateOne 
 	return mpuo
 }
 
-// ClearYellowCards clears the value of the "yellow_cards" field.
-func (mpuo *MatchPlayerUpdateOne) ClearYellowCards() *MatchPlayerUpdateOne {
-	mpuo.mutation.ClearYellowCards()
-	return mpuo
-}
-
 // SetRedCard sets the "red_card" field.
 func (mpuo *MatchPlayerUpdateOne) SetRedCard(b bool) *MatchPlayerUpdateOne {
 	mpuo.mutation.SetRedCard(b)
@@ -592,12 +531,6 @@ func (mpuo *MatchPlayerUpdateOne) SetNillableRedCard(b *bool) *MatchPlayerUpdate
 	if b != nil {
 		mpuo.SetRedCard(*b)
 	}
-	return mpuo
-}
-
-// ClearRedCard clears the value of the "red_card" field.
-func (mpuo *MatchPlayerUpdateOne) ClearRedCard() *MatchPlayerUpdateOne {
-	mpuo.mutation.ClearRedCard()
 	return mpuo
 }
 
@@ -615,12 +548,6 @@ func (mpuo *MatchPlayerUpdateOne) SetNillableCreatedAt(t *time.Time) *MatchPlaye
 	return mpuo
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (mpuo *MatchPlayerUpdateOne) ClearCreatedAt() *MatchPlayerUpdateOne {
-	mpuo.mutation.ClearCreatedAt()
-	return mpuo
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (mpuo *MatchPlayerUpdateOne) SetUpdatedAt(t time.Time) *MatchPlayerUpdateOne {
 	mpuo.mutation.SetUpdatedAt(t)
@@ -635,9 +562,23 @@ func (mpuo *MatchPlayerUpdateOne) SetNillableUpdatedAt(t *time.Time) *MatchPlaye
 	return mpuo
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (mpuo *MatchPlayerUpdateOne) ClearUpdatedAt() *MatchPlayerUpdateOne {
-	mpuo.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (mpuo *MatchPlayerUpdateOne) SetDeletedAt(t time.Time) *MatchPlayerUpdateOne {
+	mpuo.mutation.SetDeletedAt(t)
+	return mpuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (mpuo *MatchPlayerUpdateOne) SetNillableDeletedAt(t *time.Time) *MatchPlayerUpdateOne {
+	if t != nil {
+		mpuo.SetDeletedAt(*t)
+	}
+	return mpuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (mpuo *MatchPlayerUpdateOne) ClearDeletedAt() *MatchPlayerUpdateOne {
+	mpuo.mutation.ClearDeletedAt()
 	return mpuo
 }
 
@@ -740,17 +681,11 @@ func (mpuo *MatchPlayerUpdateOne) sqlSave(ctx context.Context) (_node *MatchPlay
 	if value, ok := mpuo.mutation.AddedMinutesPlayed(); ok {
 		_spec.AddField(matchplayer.FieldMinutesPlayed, field.TypeInt32, value)
 	}
-	if mpuo.mutation.MinutesPlayedCleared() {
-		_spec.ClearField(matchplayer.FieldMinutesPlayed, field.TypeInt32)
-	}
 	if value, ok := mpuo.mutation.GoalsScored(); ok {
 		_spec.SetField(matchplayer.FieldGoalsScored, field.TypeInt32, value)
 	}
 	if value, ok := mpuo.mutation.AddedGoalsScored(); ok {
 		_spec.AddField(matchplayer.FieldGoalsScored, field.TypeInt32, value)
-	}
-	if mpuo.mutation.GoalsScoredCleared() {
-		_spec.ClearField(matchplayer.FieldGoalsScored, field.TypeInt32)
 	}
 	if value, ok := mpuo.mutation.Assists(); ok {
 		_spec.SetField(matchplayer.FieldAssists, field.TypeInt32, value)
@@ -758,35 +693,26 @@ func (mpuo *MatchPlayerUpdateOne) sqlSave(ctx context.Context) (_node *MatchPlay
 	if value, ok := mpuo.mutation.AddedAssists(); ok {
 		_spec.AddField(matchplayer.FieldAssists, field.TypeInt32, value)
 	}
-	if mpuo.mutation.AssistsCleared() {
-		_spec.ClearField(matchplayer.FieldAssists, field.TypeInt32)
-	}
 	if value, ok := mpuo.mutation.YellowCards(); ok {
 		_spec.SetField(matchplayer.FieldYellowCards, field.TypeInt32, value)
 	}
 	if value, ok := mpuo.mutation.AddedYellowCards(); ok {
 		_spec.AddField(matchplayer.FieldYellowCards, field.TypeInt32, value)
 	}
-	if mpuo.mutation.YellowCardsCleared() {
-		_spec.ClearField(matchplayer.FieldYellowCards, field.TypeInt32)
-	}
 	if value, ok := mpuo.mutation.RedCard(); ok {
 		_spec.SetField(matchplayer.FieldRedCard, field.TypeBool, value)
-	}
-	if mpuo.mutation.RedCardCleared() {
-		_spec.ClearField(matchplayer.FieldRedCard, field.TypeBool)
 	}
 	if value, ok := mpuo.mutation.CreatedAt(); ok {
 		_spec.SetField(matchplayer.FieldCreatedAt, field.TypeTime, value)
 	}
-	if mpuo.mutation.CreatedAtCleared() {
-		_spec.ClearField(matchplayer.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := mpuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(matchplayer.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if mpuo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(matchplayer.FieldUpdatedAt, field.TypeTime)
+	if value, ok := mpuo.mutation.DeletedAt(); ok {
+		_spec.SetField(matchplayer.FieldDeletedAt, field.TypeTime, value)
+	}
+	if mpuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(matchplayer.FieldDeletedAt, field.TypeTime)
 	}
 	if mpuo.mutation.MatchCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -26,7 +26,7 @@ func (h Handler) Register(ctx *gin.Context) {
 
 	user, err := h.userCtrl.CreateUser(ctx.Request.Context(), req.Username, req.Email, req.Password)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	userFound, err := h.userCtrl.GetUserByID(ctx.Request.Context(), user.ID)

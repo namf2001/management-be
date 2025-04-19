@@ -14,7 +14,7 @@ type Team struct {
 }
 
 func (Team) Fields() []ent.Field {
-	return []ent.Field{field.Int("id"), field.String("name"), field.String("company_name").Optional(), field.String("contact_person").Optional(), field.String("contact_phone").Optional(), field.String("contact_email").Optional(), field.Time("created_at").Optional(), field.Time("updated_at").Optional()}
+	return []ent.Field{field.Int("id"), field.String("name"), field.String("company_name").Optional(), field.String("contact_person").Optional(), field.String("contact_phone").Optional(), field.String("contact_email").Optional(), field.Time("created_at"), field.Time("updated_at"), field.Time("deleted_at").Optional()}
 }
 func (Team) Edges() []ent.Edge {
 	return []ent.Edge{edge.To("matches", Match.Type)}

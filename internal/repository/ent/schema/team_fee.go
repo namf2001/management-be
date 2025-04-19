@@ -13,7 +13,7 @@ type TeamFee struct {
 }
 
 func (TeamFee) Fields() []ent.Field {
-	return []ent.Field{field.Int("id"), field.Float("amount"), field.Time("payment_date"), field.String("description").Optional(), field.Time("created_at").Optional(), field.Time("updated_at").Optional()}
+	return []ent.Field{field.Int("id"), field.Float("amount"), field.Time("payment_date"), field.String("description").Optional(), field.Time("created_at"), field.Time("updated_at"), field.Time("deleted_at").Optional()}
 }
 func (TeamFee) Edges() []ent.Edge {
 	return nil

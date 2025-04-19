@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"management-be/internal/repository/ent/match"
 	"management-be/internal/repository/ent/matchplayer"
@@ -55,25 +56,9 @@ func (mpc *MatchPlayerCreate) SetMinutesPlayed(i int32) *MatchPlayerCreate {
 	return mpc
 }
 
-// SetNillableMinutesPlayed sets the "minutes_played" field if the given value is not nil.
-func (mpc *MatchPlayerCreate) SetNillableMinutesPlayed(i *int32) *MatchPlayerCreate {
-	if i != nil {
-		mpc.SetMinutesPlayed(*i)
-	}
-	return mpc
-}
-
 // SetGoalsScored sets the "goals_scored" field.
 func (mpc *MatchPlayerCreate) SetGoalsScored(i int32) *MatchPlayerCreate {
 	mpc.mutation.SetGoalsScored(i)
-	return mpc
-}
-
-// SetNillableGoalsScored sets the "goals_scored" field if the given value is not nil.
-func (mpc *MatchPlayerCreate) SetNillableGoalsScored(i *int32) *MatchPlayerCreate {
-	if i != nil {
-		mpc.SetGoalsScored(*i)
-	}
 	return mpc
 }
 
@@ -83,25 +68,9 @@ func (mpc *MatchPlayerCreate) SetAssists(i int32) *MatchPlayerCreate {
 	return mpc
 }
 
-// SetNillableAssists sets the "assists" field if the given value is not nil.
-func (mpc *MatchPlayerCreate) SetNillableAssists(i *int32) *MatchPlayerCreate {
-	if i != nil {
-		mpc.SetAssists(*i)
-	}
-	return mpc
-}
-
 // SetYellowCards sets the "yellow_cards" field.
 func (mpc *MatchPlayerCreate) SetYellowCards(i int32) *MatchPlayerCreate {
 	mpc.mutation.SetYellowCards(i)
-	return mpc
-}
-
-// SetNillableYellowCards sets the "yellow_cards" field if the given value is not nil.
-func (mpc *MatchPlayerCreate) SetNillableYellowCards(i *int32) *MatchPlayerCreate {
-	if i != nil {
-		mpc.SetYellowCards(*i)
-	}
 	return mpc
 }
 
@@ -111,25 +80,9 @@ func (mpc *MatchPlayerCreate) SetRedCard(b bool) *MatchPlayerCreate {
 	return mpc
 }
 
-// SetNillableRedCard sets the "red_card" field if the given value is not nil.
-func (mpc *MatchPlayerCreate) SetNillableRedCard(b *bool) *MatchPlayerCreate {
-	if b != nil {
-		mpc.SetRedCard(*b)
-	}
-	return mpc
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (mpc *MatchPlayerCreate) SetCreatedAt(t time.Time) *MatchPlayerCreate {
 	mpc.mutation.SetCreatedAt(t)
-	return mpc
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (mpc *MatchPlayerCreate) SetNillableCreatedAt(t *time.Time) *MatchPlayerCreate {
-	if t != nil {
-		mpc.SetCreatedAt(*t)
-	}
 	return mpc
 }
 
@@ -139,10 +92,16 @@ func (mpc *MatchPlayerCreate) SetUpdatedAt(t time.Time) *MatchPlayerCreate {
 	return mpc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (mpc *MatchPlayerCreate) SetNillableUpdatedAt(t *time.Time) *MatchPlayerCreate {
+// SetDeletedAt sets the "deleted_at" field.
+func (mpc *MatchPlayerCreate) SetDeletedAt(t time.Time) *MatchPlayerCreate {
+	mpc.mutation.SetDeletedAt(t)
+	return mpc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (mpc *MatchPlayerCreate) SetNillableDeletedAt(t *time.Time) *MatchPlayerCreate {
 	if t != nil {
-		mpc.SetUpdatedAt(*t)
+		mpc.SetDeletedAt(*t)
 	}
 	return mpc
 }
@@ -197,6 +156,27 @@ func (mpc *MatchPlayerCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (mpc *MatchPlayerCreate) check() error {
+	if _, ok := mpc.mutation.MinutesPlayed(); !ok {
+		return &ValidationError{Name: "minutes_played", err: errors.New(`ent: missing required field "MatchPlayer.minutes_played"`)}
+	}
+	if _, ok := mpc.mutation.GoalsScored(); !ok {
+		return &ValidationError{Name: "goals_scored", err: errors.New(`ent: missing required field "MatchPlayer.goals_scored"`)}
+	}
+	if _, ok := mpc.mutation.Assists(); !ok {
+		return &ValidationError{Name: "assists", err: errors.New(`ent: missing required field "MatchPlayer.assists"`)}
+	}
+	if _, ok := mpc.mutation.YellowCards(); !ok {
+		return &ValidationError{Name: "yellow_cards", err: errors.New(`ent: missing required field "MatchPlayer.yellow_cards"`)}
+	}
+	if _, ok := mpc.mutation.RedCard(); !ok {
+		return &ValidationError{Name: "red_card", err: errors.New(`ent: missing required field "MatchPlayer.red_card"`)}
+	}
+	if _, ok := mpc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "MatchPlayer.created_at"`)}
+	}
+	if _, ok := mpc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "MatchPlayer.updated_at"`)}
+	}
 	return nil
 }
 
@@ -256,6 +236,10 @@ func (mpc *MatchPlayerCreate) createSpec() (*MatchPlayer, *sqlgraph.CreateSpec) 
 	if value, ok := mpc.mutation.UpdatedAt(); ok {
 		_spec.SetField(matchplayer.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := mpc.mutation.DeletedAt(); ok {
+		_spec.SetField(matchplayer.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
 	}
 	if nodes := mpc.mutation.MatchIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

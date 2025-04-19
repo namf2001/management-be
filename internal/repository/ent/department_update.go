@@ -57,12 +57,6 @@ func (du *DepartmentUpdate) SetNillableDescription(s *string) *DepartmentUpdate 
 	return du
 }
 
-// ClearDescription clears the value of the "description" field.
-func (du *DepartmentUpdate) ClearDescription() *DepartmentUpdate {
-	du.mutation.ClearDescription()
-	return du
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (du *DepartmentUpdate) SetCreatedAt(t time.Time) *DepartmentUpdate {
 	du.mutation.SetCreatedAt(t)
@@ -74,12 +68,6 @@ func (du *DepartmentUpdate) SetNillableCreatedAt(t *time.Time) *DepartmentUpdate
 	if t != nil {
 		du.SetCreatedAt(*t)
 	}
-	return du
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (du *DepartmentUpdate) ClearCreatedAt() *DepartmentUpdate {
-	du.mutation.ClearCreatedAt()
 	return du
 }
 
@@ -97,9 +85,23 @@ func (du *DepartmentUpdate) SetNillableUpdatedAt(t *time.Time) *DepartmentUpdate
 	return du
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (du *DepartmentUpdate) ClearUpdatedAt() *DepartmentUpdate {
-	du.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (du *DepartmentUpdate) SetDeletedAt(t time.Time) *DepartmentUpdate {
+	du.mutation.SetDeletedAt(t)
+	return du
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (du *DepartmentUpdate) SetNillableDeletedAt(t *time.Time) *DepartmentUpdate {
+	if t != nil {
+		du.SetDeletedAt(*t)
+	}
+	return du
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (du *DepartmentUpdate) ClearDeletedAt() *DepartmentUpdate {
+	du.mutation.ClearDeletedAt()
 	return du
 }
 
@@ -186,20 +188,17 @@ func (du *DepartmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := du.mutation.Description(); ok {
 		_spec.SetField(department.FieldDescription, field.TypeString, value)
 	}
-	if du.mutation.DescriptionCleared() {
-		_spec.ClearField(department.FieldDescription, field.TypeString)
-	}
 	if value, ok := du.mutation.CreatedAt(); ok {
 		_spec.SetField(department.FieldCreatedAt, field.TypeTime, value)
-	}
-	if du.mutation.CreatedAtCleared() {
-		_spec.ClearField(department.FieldCreatedAt, field.TypeTime)
 	}
 	if value, ok := du.mutation.UpdatedAt(); ok {
 		_spec.SetField(department.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if du.mutation.UpdatedAtCleared() {
-		_spec.ClearField(department.FieldUpdatedAt, field.TypeTime)
+	if value, ok := du.mutation.DeletedAt(); ok {
+		_spec.SetField(department.FieldDeletedAt, field.TypeTime, value)
+	}
+	if du.mutation.DeletedAtCleared() {
+		_spec.ClearField(department.FieldDeletedAt, field.TypeTime)
 	}
 	if du.mutation.PlayersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -294,12 +293,6 @@ func (duo *DepartmentUpdateOne) SetNillableDescription(s *string) *DepartmentUpd
 	return duo
 }
 
-// ClearDescription clears the value of the "description" field.
-func (duo *DepartmentUpdateOne) ClearDescription() *DepartmentUpdateOne {
-	duo.mutation.ClearDescription()
-	return duo
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (duo *DepartmentUpdateOne) SetCreatedAt(t time.Time) *DepartmentUpdateOne {
 	duo.mutation.SetCreatedAt(t)
@@ -311,12 +304,6 @@ func (duo *DepartmentUpdateOne) SetNillableCreatedAt(t *time.Time) *DepartmentUp
 	if t != nil {
 		duo.SetCreatedAt(*t)
 	}
-	return duo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (duo *DepartmentUpdateOne) ClearCreatedAt() *DepartmentUpdateOne {
-	duo.mutation.ClearCreatedAt()
 	return duo
 }
 
@@ -334,9 +321,23 @@ func (duo *DepartmentUpdateOne) SetNillableUpdatedAt(t *time.Time) *DepartmentUp
 	return duo
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (duo *DepartmentUpdateOne) ClearUpdatedAt() *DepartmentUpdateOne {
-	duo.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (duo *DepartmentUpdateOne) SetDeletedAt(t time.Time) *DepartmentUpdateOne {
+	duo.mutation.SetDeletedAt(t)
+	return duo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (duo *DepartmentUpdateOne) SetNillableDeletedAt(t *time.Time) *DepartmentUpdateOne {
+	if t != nil {
+		duo.SetDeletedAt(*t)
+	}
+	return duo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (duo *DepartmentUpdateOne) ClearDeletedAt() *DepartmentUpdateOne {
+	duo.mutation.ClearDeletedAt()
 	return duo
 }
 
@@ -453,20 +454,17 @@ func (duo *DepartmentUpdateOne) sqlSave(ctx context.Context) (_node *Department,
 	if value, ok := duo.mutation.Description(); ok {
 		_spec.SetField(department.FieldDescription, field.TypeString, value)
 	}
-	if duo.mutation.DescriptionCleared() {
-		_spec.ClearField(department.FieldDescription, field.TypeString)
-	}
 	if value, ok := duo.mutation.CreatedAt(); ok {
 		_spec.SetField(department.FieldCreatedAt, field.TypeTime, value)
-	}
-	if duo.mutation.CreatedAtCleared() {
-		_spec.ClearField(department.FieldCreatedAt, field.TypeTime)
 	}
 	if value, ok := duo.mutation.UpdatedAt(); ok {
 		_spec.SetField(department.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if duo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(department.FieldUpdatedAt, field.TypeTime)
+	if value, ok := duo.mutation.DeletedAt(); ok {
+		_spec.SetField(department.FieldDeletedAt, field.TypeTime, value)
+	}
+	if duo.mutation.DeletedAtCleared() {
+		_spec.ClearField(department.FieldDeletedAt, field.TypeTime)
 	}
 	if duo.mutation.PlayersCleared() {
 		edge := &sqlgraph.EdgeSpec{

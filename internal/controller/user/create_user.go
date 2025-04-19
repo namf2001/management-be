@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
 
 	"golang.org/x/crypto/bcrypt"
@@ -12,7 +13,7 @@ func (i impl) CreateUser(ctx context.Context, username, email, password string) 
 	// Hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return model.User{}, err
+		return model.User{}, pkgerrors.WithStack(ErrHashingPassword)
 	}
 
 	// Create the user

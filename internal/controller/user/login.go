@@ -35,7 +35,7 @@ func (i impl) Login(ctx context.Context, username, password string) (string, mod
 	// Generate JWT token
 	token, err := generateJWT(user.ID)
 	if err != nil {
-		return "", model.User{}, err
+		return "", model.User{}, pkgerrors.WithStack(ErrTokenGeneration)
 	}
 
 	return token, user, nil

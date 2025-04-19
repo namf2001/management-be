@@ -14,7 +14,7 @@ type MatchPlayer struct {
 }
 
 func (MatchPlayer) Fields() []ent.Field {
-	return []ent.Field{field.Int("id"), field.Int("match_id").Optional(), field.Int("player_id").Optional(), field.Int32("minutes_played").Optional(), field.Int32("goals_scored").Optional(), field.Int32("assists").Optional(), field.Int32("yellow_cards").Optional(), field.Bool("red_card").Optional(), field.Time("created_at").Optional(), field.Time("updated_at").Optional()}
+	return []ent.Field{field.Int("id"), field.Int("match_id").Optional(), field.Int("player_id").Optional(), field.Int32("minutes_played"), field.Int32("goals_scored"), field.Int32("assists"), field.Int32("yellow_cards"), field.Bool("red_card"), field.Time("created_at"), field.Time("updated_at"), field.Time("deleted_at").Optional()}
 }
 func (MatchPlayer) Edges() []ent.Edge {
 	return []ent.Edge{edge.From("match", Match.Type).Ref("match_players").Unique().Field("match_id"), edge.From("player", Player.Type).Ref("match_players").Unique().Field("player_id")}

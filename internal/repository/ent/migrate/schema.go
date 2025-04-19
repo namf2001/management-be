@@ -12,9 +12,10 @@ var (
 	DepartmentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "description", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 	}
 	// DepartmentsTable holds the schema information for the "departments" table.
 	DepartmentsTable = &schema.Table{
@@ -27,13 +28,14 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "match_date", Type: field.TypeTime},
 		{Name: "venue", Type: field.TypeString, Nullable: true},
-		{Name: "is_home_game", Type: field.TypeBool, Nullable: true},
+		{Name: "is_home_game", Type: field.TypeBool},
 		{Name: "our_score", Type: field.TypeInt32, Nullable: true},
 		{Name: "opponent_score", Type: field.TypeInt32, Nullable: true},
-		{Name: "status", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeString},
 		{Name: "notes", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "opponent_team_id", Type: field.TypeInt, Nullable: true},
 	}
 	// MatchesTable holds the schema information for the "matches" table.
@@ -44,7 +46,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "matches_teams_matches",
-				Columns:    []*schema.Column{MatchesColumns[10]},
+				Columns:    []*schema.Column{MatchesColumns[11]},
 				RefColumns: []*schema.Column{TeamsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -53,13 +55,14 @@ var (
 	// MatchPlayersColumns holds the columns for the "match_players" table.
 	MatchPlayersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "minutes_played", Type: field.TypeInt32, Nullable: true},
-		{Name: "goals_scored", Type: field.TypeInt32, Nullable: true},
-		{Name: "assists", Type: field.TypeInt32, Nullable: true},
-		{Name: "yellow_cards", Type: field.TypeInt32, Nullable: true},
-		{Name: "red_card", Type: field.TypeBool, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "minutes_played", Type: field.TypeInt32},
+		{Name: "goals_scored", Type: field.TypeInt32},
+		{Name: "assists", Type: field.TypeInt32},
+		{Name: "yellow_cards", Type: field.TypeInt32},
+		{Name: "red_card", Type: field.TypeBool},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "match_id", Type: field.TypeInt, Nullable: true},
 		{Name: "player_id", Type: field.TypeInt, Nullable: true},
 	}
@@ -71,13 +74,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "match_players_matches_match_players",
-				Columns:    []*schema.Column{MatchPlayersColumns[8]},
+				Columns:    []*schema.Column{MatchPlayersColumns[9]},
 				RefColumns: []*schema.Column{MatchesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "match_players_players_match_players",
-				Columns:    []*schema.Column{MatchPlayersColumns[9]},
+				Columns:    []*schema.Column{MatchPlayersColumns[10]},
 				RefColumns: []*schema.Column{PlayersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -94,9 +97,10 @@ var (
 		{Name: "weight_kg", Type: field.TypeInt32, Nullable: true},
 		{Name: "phone", Type: field.TypeString, Nullable: true},
 		{Name: "email", Type: field.TypeString, Nullable: true},
-		{Name: "is_active", Type: field.TypeBool, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "is_active", Type: field.TypeBool},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "department_id", Type: field.TypeInt, Nullable: true},
 	}
 	// PlayersTable holds the schema information for the "players" table.
@@ -107,7 +111,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "players_departments_players",
-				Columns:    []*schema.Column{PlayersColumns[12]},
+				Columns:    []*schema.Column{PlayersColumns[13]},
 				RefColumns: []*schema.Column{DepartmentsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -116,14 +120,15 @@ var (
 	// PlayerStatisticsColumns holds the columns for the "player_statistics" table.
 	PlayerStatisticsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "total_matches", Type: field.TypeInt32, Nullable: true},
-		{Name: "total_minutes_played", Type: field.TypeInt32, Nullable: true},
-		{Name: "total_goals", Type: field.TypeInt32, Nullable: true},
-		{Name: "total_assists", Type: field.TypeInt32, Nullable: true},
-		{Name: "total_yellow_cards", Type: field.TypeInt32, Nullable: true},
-		{Name: "total_red_cards", Type: field.TypeInt32, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "total_matches", Type: field.TypeInt32},
+		{Name: "total_minutes_played", Type: field.TypeInt32},
+		{Name: "total_goals", Type: field.TypeInt32},
+		{Name: "total_assists", Type: field.TypeInt32},
+		{Name: "total_yellow_cards", Type: field.TypeInt32},
+		{Name: "total_red_cards", Type: field.TypeInt32},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "player_id", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// PlayerStatisticsTable holds the schema information for the "player_statistics" table.
@@ -134,7 +139,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "player_statistics_players_player_statistic",
-				Columns:    []*schema.Column{PlayerStatisticsColumns[9]},
+				Columns:    []*schema.Column{PlayerStatisticsColumns[10]},
 				RefColumns: []*schema.Column{PlayersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -159,8 +164,9 @@ var (
 		{Name: "contact_person", Type: field.TypeString, Nullable: true},
 		{Name: "contact_phone", Type: field.TypeString, Nullable: true},
 		{Name: "contact_email", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 	}
 	// TeamsTable holds the schema information for the "teams" table.
 	TeamsTable = &schema.Table{
@@ -174,8 +180,9 @@ var (
 		{Name: "amount", Type: field.TypeFloat64},
 		{Name: "payment_date", Type: field.TypeTime},
 		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 	}
 	// TeamFeesTable holds the schema information for the "team_fees" table.
 	TeamFeesTable = &schema.Table{
@@ -186,12 +193,13 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "username", Type: field.TypeString, Unique: true},
+		{Name: "username", Type: field.TypeString},
 		{Name: "password", Type: field.TypeString},
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "full_name", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

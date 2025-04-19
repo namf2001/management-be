@@ -33,25 +33,9 @@ func (dc *DepartmentCreate) SetDescription(s string) *DepartmentCreate {
 	return dc
 }
 
-// SetNillableDescription sets the "description" field if the given value is not nil.
-func (dc *DepartmentCreate) SetNillableDescription(s *string) *DepartmentCreate {
-	if s != nil {
-		dc.SetDescription(*s)
-	}
-	return dc
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (dc *DepartmentCreate) SetCreatedAt(t time.Time) *DepartmentCreate {
 	dc.mutation.SetCreatedAt(t)
-	return dc
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (dc *DepartmentCreate) SetNillableCreatedAt(t *time.Time) *DepartmentCreate {
-	if t != nil {
-		dc.SetCreatedAt(*t)
-	}
 	return dc
 }
 
@@ -61,10 +45,16 @@ func (dc *DepartmentCreate) SetUpdatedAt(t time.Time) *DepartmentCreate {
 	return dc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (dc *DepartmentCreate) SetNillableUpdatedAt(t *time.Time) *DepartmentCreate {
+// SetDeletedAt sets the "deleted_at" field.
+func (dc *DepartmentCreate) SetDeletedAt(t time.Time) *DepartmentCreate {
+	dc.mutation.SetDeletedAt(t)
+	return dc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (dc *DepartmentCreate) SetNillableDeletedAt(t *time.Time) *DepartmentCreate {
 	if t != nil {
-		dc.SetUpdatedAt(*t)
+		dc.SetDeletedAt(*t)
 	}
 	return dc
 }
@@ -127,6 +117,15 @@ func (dc *DepartmentCreate) check() error {
 	if _, ok := dc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Department.name"`)}
 	}
+	if _, ok := dc.mutation.Description(); !ok {
+		return &ValidationError{Name: "description", err: errors.New(`ent: missing required field "Department.description"`)}
+	}
+	if _, ok := dc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Department.created_at"`)}
+	}
+	if _, ok := dc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Department.updated_at"`)}
+	}
 	return nil
 }
 
@@ -174,6 +173,10 @@ func (dc *DepartmentCreate) createSpec() (*Department, *sqlgraph.CreateSpec) {
 	if value, ok := dc.mutation.UpdatedAt(); ok {
 		_spec.SetField(department.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := dc.mutation.DeletedAt(); ok {
+		_spec.SetField(department.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
 	}
 	if nodes := dc.mutation.PlayersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

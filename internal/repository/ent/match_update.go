@@ -98,12 +98,6 @@ func (mu *MatchUpdate) SetNillableIsHomeGame(b *bool) *MatchUpdate {
 	return mu
 }
 
-// ClearIsHomeGame clears the value of the "is_home_game" field.
-func (mu *MatchUpdate) ClearIsHomeGame() *MatchUpdate {
-	mu.mutation.ClearIsHomeGame()
-	return mu
-}
-
 // SetOurScore sets the "our_score" field.
 func (mu *MatchUpdate) SetOurScore(i int32) *MatchUpdate {
 	mu.mutation.ResetOurScore()
@@ -172,12 +166,6 @@ func (mu *MatchUpdate) SetNillableStatus(s *string) *MatchUpdate {
 	return mu
 }
 
-// ClearStatus clears the value of the "status" field.
-func (mu *MatchUpdate) ClearStatus() *MatchUpdate {
-	mu.mutation.ClearStatus()
-	return mu
-}
-
 // SetNotes sets the "notes" field.
 func (mu *MatchUpdate) SetNotes(s string) *MatchUpdate {
 	mu.mutation.SetNotes(s)
@@ -212,12 +200,6 @@ func (mu *MatchUpdate) SetNillableCreatedAt(t *time.Time) *MatchUpdate {
 	return mu
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (mu *MatchUpdate) ClearCreatedAt() *MatchUpdate {
-	mu.mutation.ClearCreatedAt()
-	return mu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (mu *MatchUpdate) SetUpdatedAt(t time.Time) *MatchUpdate {
 	mu.mutation.SetUpdatedAt(t)
@@ -232,9 +214,23 @@ func (mu *MatchUpdate) SetNillableUpdatedAt(t *time.Time) *MatchUpdate {
 	return mu
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (mu *MatchUpdate) ClearUpdatedAt() *MatchUpdate {
-	mu.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (mu *MatchUpdate) SetDeletedAt(t time.Time) *MatchUpdate {
+	mu.mutation.SetDeletedAt(t)
+	return mu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (mu *MatchUpdate) SetNillableDeletedAt(t *time.Time) *MatchUpdate {
+	if t != nil {
+		mu.SetDeletedAt(*t)
+	}
+	return mu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (mu *MatchUpdate) ClearDeletedAt() *MatchUpdate {
+	mu.mutation.ClearDeletedAt()
 	return mu
 }
 
@@ -352,9 +348,6 @@ func (mu *MatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := mu.mutation.IsHomeGame(); ok {
 		_spec.SetField(match.FieldIsHomeGame, field.TypeBool, value)
 	}
-	if mu.mutation.IsHomeGameCleared() {
-		_spec.ClearField(match.FieldIsHomeGame, field.TypeBool)
-	}
 	if value, ok := mu.mutation.OurScore(); ok {
 		_spec.SetField(match.FieldOurScore, field.TypeInt32, value)
 	}
@@ -376,9 +369,6 @@ func (mu *MatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := mu.mutation.Status(); ok {
 		_spec.SetField(match.FieldStatus, field.TypeString, value)
 	}
-	if mu.mutation.StatusCleared() {
-		_spec.ClearField(match.FieldStatus, field.TypeString)
-	}
 	if value, ok := mu.mutation.Notes(); ok {
 		_spec.SetField(match.FieldNotes, field.TypeString, value)
 	}
@@ -388,14 +378,14 @@ func (mu *MatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := mu.mutation.CreatedAt(); ok {
 		_spec.SetField(match.FieldCreatedAt, field.TypeTime, value)
 	}
-	if mu.mutation.CreatedAtCleared() {
-		_spec.ClearField(match.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := mu.mutation.UpdatedAt(); ok {
 		_spec.SetField(match.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if mu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(match.FieldUpdatedAt, field.TypeTime)
+	if value, ok := mu.mutation.DeletedAt(); ok {
+		_spec.SetField(match.FieldDeletedAt, field.TypeTime, value)
+	}
+	if mu.mutation.DeletedAtCleared() {
+		_spec.ClearField(match.FieldDeletedAt, field.TypeTime)
 	}
 	if mu.mutation.MatchPlayersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -559,12 +549,6 @@ func (muo *MatchUpdateOne) SetNillableIsHomeGame(b *bool) *MatchUpdateOne {
 	return muo
 }
 
-// ClearIsHomeGame clears the value of the "is_home_game" field.
-func (muo *MatchUpdateOne) ClearIsHomeGame() *MatchUpdateOne {
-	muo.mutation.ClearIsHomeGame()
-	return muo
-}
-
 // SetOurScore sets the "our_score" field.
 func (muo *MatchUpdateOne) SetOurScore(i int32) *MatchUpdateOne {
 	muo.mutation.ResetOurScore()
@@ -633,12 +617,6 @@ func (muo *MatchUpdateOne) SetNillableStatus(s *string) *MatchUpdateOne {
 	return muo
 }
 
-// ClearStatus clears the value of the "status" field.
-func (muo *MatchUpdateOne) ClearStatus() *MatchUpdateOne {
-	muo.mutation.ClearStatus()
-	return muo
-}
-
 // SetNotes sets the "notes" field.
 func (muo *MatchUpdateOne) SetNotes(s string) *MatchUpdateOne {
 	muo.mutation.SetNotes(s)
@@ -673,12 +651,6 @@ func (muo *MatchUpdateOne) SetNillableCreatedAt(t *time.Time) *MatchUpdateOne {
 	return muo
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (muo *MatchUpdateOne) ClearCreatedAt() *MatchUpdateOne {
-	muo.mutation.ClearCreatedAt()
-	return muo
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (muo *MatchUpdateOne) SetUpdatedAt(t time.Time) *MatchUpdateOne {
 	muo.mutation.SetUpdatedAt(t)
@@ -693,9 +665,23 @@ func (muo *MatchUpdateOne) SetNillableUpdatedAt(t *time.Time) *MatchUpdateOne {
 	return muo
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (muo *MatchUpdateOne) ClearUpdatedAt() *MatchUpdateOne {
-	muo.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (muo *MatchUpdateOne) SetDeletedAt(t time.Time) *MatchUpdateOne {
+	muo.mutation.SetDeletedAt(t)
+	return muo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (muo *MatchUpdateOne) SetNillableDeletedAt(t *time.Time) *MatchUpdateOne {
+	if t != nil {
+		muo.SetDeletedAt(*t)
+	}
+	return muo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (muo *MatchUpdateOne) ClearDeletedAt() *MatchUpdateOne {
+	muo.mutation.ClearDeletedAt()
 	return muo
 }
 
@@ -843,9 +829,6 @@ func (muo *MatchUpdateOne) sqlSave(ctx context.Context) (_node *Match, err error
 	if value, ok := muo.mutation.IsHomeGame(); ok {
 		_spec.SetField(match.FieldIsHomeGame, field.TypeBool, value)
 	}
-	if muo.mutation.IsHomeGameCleared() {
-		_spec.ClearField(match.FieldIsHomeGame, field.TypeBool)
-	}
 	if value, ok := muo.mutation.OurScore(); ok {
 		_spec.SetField(match.FieldOurScore, field.TypeInt32, value)
 	}
@@ -867,9 +850,6 @@ func (muo *MatchUpdateOne) sqlSave(ctx context.Context) (_node *Match, err error
 	if value, ok := muo.mutation.Status(); ok {
 		_spec.SetField(match.FieldStatus, field.TypeString, value)
 	}
-	if muo.mutation.StatusCleared() {
-		_spec.ClearField(match.FieldStatus, field.TypeString)
-	}
 	if value, ok := muo.mutation.Notes(); ok {
 		_spec.SetField(match.FieldNotes, field.TypeString, value)
 	}
@@ -879,14 +859,14 @@ func (muo *MatchUpdateOne) sqlSave(ctx context.Context) (_node *Match, err error
 	if value, ok := muo.mutation.CreatedAt(); ok {
 		_spec.SetField(match.FieldCreatedAt, field.TypeTime, value)
 	}
-	if muo.mutation.CreatedAtCleared() {
-		_spec.ClearField(match.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := muo.mutation.UpdatedAt(); ok {
 		_spec.SetField(match.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if muo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(match.FieldUpdatedAt, field.TypeTime)
+	if value, ok := muo.mutation.DeletedAt(); ok {
+		_spec.SetField(match.FieldDeletedAt, field.TypeTime, value)
+	}
+	if muo.mutation.DeletedAtCleared() {
+		_spec.ClearField(match.FieldDeletedAt, field.TypeTime)
 	}
 	if muo.mutation.MatchPlayersCleared() {
 		edge := &sqlgraph.EdgeSpec{

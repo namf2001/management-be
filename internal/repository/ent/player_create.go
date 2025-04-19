@@ -139,25 +139,9 @@ func (pc *PlayerCreate) SetIsActive(b bool) *PlayerCreate {
 	return pc
 }
 
-// SetNillableIsActive sets the "is_active" field if the given value is not nil.
-func (pc *PlayerCreate) SetNillableIsActive(b *bool) *PlayerCreate {
-	if b != nil {
-		pc.SetIsActive(*b)
-	}
-	return pc
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (pc *PlayerCreate) SetCreatedAt(t time.Time) *PlayerCreate {
 	pc.mutation.SetCreatedAt(t)
-	return pc
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (pc *PlayerCreate) SetNillableCreatedAt(t *time.Time) *PlayerCreate {
-	if t != nil {
-		pc.SetCreatedAt(*t)
-	}
 	return pc
 }
 
@@ -167,10 +151,16 @@ func (pc *PlayerCreate) SetUpdatedAt(t time.Time) *PlayerCreate {
 	return pc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (pc *PlayerCreate) SetNillableUpdatedAt(t *time.Time) *PlayerCreate {
+// SetDeletedAt sets the "deleted_at" field.
+func (pc *PlayerCreate) SetDeletedAt(t time.Time) *PlayerCreate {
+	pc.mutation.SetDeletedAt(t)
+	return pc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (pc *PlayerCreate) SetNillableDeletedAt(t *time.Time) *PlayerCreate {
 	if t != nil {
-		pc.SetUpdatedAt(*t)
+		pc.SetDeletedAt(*t)
 	}
 	return pc
 }
@@ -260,6 +250,15 @@ func (pc *PlayerCreate) check() error {
 	if _, ok := pc.mutation.Position(); !ok {
 		return &ValidationError{Name: "position", err: errors.New(`ent: missing required field "Player.position"`)}
 	}
+	if _, ok := pc.mutation.IsActive(); !ok {
+		return &ValidationError{Name: "is_active", err: errors.New(`ent: missing required field "Player.is_active"`)}
+	}
+	if _, ok := pc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Player.created_at"`)}
+	}
+	if _, ok := pc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Player.updated_at"`)}
+	}
 	return nil
 }
 
@@ -335,6 +334,10 @@ func (pc *PlayerCreate) createSpec() (*Player, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.UpdatedAt(); ok {
 		_spec.SetField(player.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := pc.mutation.DeletedAt(); ok {
+		_spec.SetField(player.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
 	}
 	if nodes := pc.mutation.MatchPlayersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

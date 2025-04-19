@@ -36,6 +36,8 @@ type PlayerStatistic struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PlayerStatisticQuery when eager-loading is set.
 	Edges        PlayerStatisticEdges `json:"edges"`
@@ -69,7 +71,7 @@ func (*PlayerStatistic) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case playerstatistic.FieldID, playerstatistic.FieldPlayerID, playerstatistic.FieldTotalMatches, playerstatistic.FieldTotalMinutesPlayed, playerstatistic.FieldTotalGoals, playerstatistic.FieldTotalAssists, playerstatistic.FieldTotalYellowCards, playerstatistic.FieldTotalRedCards:
 			values[i] = new(sql.NullInt64)
-		case playerstatistic.FieldCreatedAt, playerstatistic.FieldUpdatedAt:
+		case playerstatistic.FieldCreatedAt, playerstatistic.FieldUpdatedAt, playerstatistic.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -146,6 +148,12 @@ func (ps *PlayerStatistic) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ps.UpdatedAt = value.Time
 			}
+		case playerstatistic.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				ps.DeletedAt = value.Time
+			}
 		default:
 			ps.selectValues.Set(columns[i], values[i])
 		}
@@ -213,6 +221,9 @@ func (ps *PlayerStatistic) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(ps.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(ps.DeletedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

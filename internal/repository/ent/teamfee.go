@@ -26,7 +26,9 @@ type TeamFee struct {
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt    time.Time `json:"updated_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt    time.Time `json:"deleted_at,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -41,7 +43,7 @@ func (*TeamFee) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case teamfee.FieldDescription:
 			values[i] = new(sql.NullString)
-		case teamfee.FieldPaymentDate, teamfee.FieldCreatedAt, teamfee.FieldUpdatedAt:
+		case teamfee.FieldPaymentDate, teamfee.FieldCreatedAt, teamfee.FieldUpdatedAt, teamfee.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -94,6 +96,12 @@ func (tf *TeamFee) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				tf.UpdatedAt = value.Time
 			}
+		case teamfee.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				tf.DeletedAt = value.Time
+			}
 		default:
 			tf.selectValues.Set(columns[i], values[i])
 		}
@@ -144,6 +152,9 @@ func (tf *TeamFee) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(tf.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(tf.DeletedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

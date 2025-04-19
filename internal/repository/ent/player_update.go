@@ -234,12 +234,6 @@ func (pu *PlayerUpdate) SetNillableIsActive(b *bool) *PlayerUpdate {
 	return pu
 }
 
-// ClearIsActive clears the value of the "is_active" field.
-func (pu *PlayerUpdate) ClearIsActive() *PlayerUpdate {
-	pu.mutation.ClearIsActive()
-	return pu
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (pu *PlayerUpdate) SetCreatedAt(t time.Time) *PlayerUpdate {
 	pu.mutation.SetCreatedAt(t)
@@ -251,12 +245,6 @@ func (pu *PlayerUpdate) SetNillableCreatedAt(t *time.Time) *PlayerUpdate {
 	if t != nil {
 		pu.SetCreatedAt(*t)
 	}
-	return pu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (pu *PlayerUpdate) ClearCreatedAt() *PlayerUpdate {
-	pu.mutation.ClearCreatedAt()
 	return pu
 }
 
@@ -274,9 +262,23 @@ func (pu *PlayerUpdate) SetNillableUpdatedAt(t *time.Time) *PlayerUpdate {
 	return pu
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (pu *PlayerUpdate) ClearUpdatedAt() *PlayerUpdate {
-	pu.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (pu *PlayerUpdate) SetDeletedAt(t time.Time) *PlayerUpdate {
+	pu.mutation.SetDeletedAt(t)
+	return pu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (pu *PlayerUpdate) SetNillableDeletedAt(t *time.Time) *PlayerUpdate {
+	if t != nil {
+		pu.SetDeletedAt(*t)
+	}
+	return pu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (pu *PlayerUpdate) ClearDeletedAt() *PlayerUpdate {
+	pu.mutation.ClearDeletedAt()
 	return pu
 }
 
@@ -447,20 +449,17 @@ func (pu *PlayerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.IsActive(); ok {
 		_spec.SetField(player.FieldIsActive, field.TypeBool, value)
 	}
-	if pu.mutation.IsActiveCleared() {
-		_spec.ClearField(player.FieldIsActive, field.TypeBool)
-	}
 	if value, ok := pu.mutation.CreatedAt(); ok {
 		_spec.SetField(player.FieldCreatedAt, field.TypeTime, value)
-	}
-	if pu.mutation.CreatedAtCleared() {
-		_spec.ClearField(player.FieldCreatedAt, field.TypeTime)
 	}
 	if value, ok := pu.mutation.UpdatedAt(); ok {
 		_spec.SetField(player.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if pu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(player.FieldUpdatedAt, field.TypeTime)
+	if value, ok := pu.mutation.DeletedAt(); ok {
+		_spec.SetField(player.FieldDeletedAt, field.TypeTime, value)
+	}
+	if pu.mutation.DeletedAtCleared() {
+		_spec.ClearField(player.FieldDeletedAt, field.TypeTime)
 	}
 	if pu.mutation.MatchPlayersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -788,12 +787,6 @@ func (puo *PlayerUpdateOne) SetNillableIsActive(b *bool) *PlayerUpdateOne {
 	return puo
 }
 
-// ClearIsActive clears the value of the "is_active" field.
-func (puo *PlayerUpdateOne) ClearIsActive() *PlayerUpdateOne {
-	puo.mutation.ClearIsActive()
-	return puo
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (puo *PlayerUpdateOne) SetCreatedAt(t time.Time) *PlayerUpdateOne {
 	puo.mutation.SetCreatedAt(t)
@@ -805,12 +798,6 @@ func (puo *PlayerUpdateOne) SetNillableCreatedAt(t *time.Time) *PlayerUpdateOne 
 	if t != nil {
 		puo.SetCreatedAt(*t)
 	}
-	return puo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (puo *PlayerUpdateOne) ClearCreatedAt() *PlayerUpdateOne {
-	puo.mutation.ClearCreatedAt()
 	return puo
 }
 
@@ -828,9 +815,23 @@ func (puo *PlayerUpdateOne) SetNillableUpdatedAt(t *time.Time) *PlayerUpdateOne 
 	return puo
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (puo *PlayerUpdateOne) ClearUpdatedAt() *PlayerUpdateOne {
-	puo.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (puo *PlayerUpdateOne) SetDeletedAt(t time.Time) *PlayerUpdateOne {
+	puo.mutation.SetDeletedAt(t)
+	return puo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (puo *PlayerUpdateOne) SetNillableDeletedAt(t *time.Time) *PlayerUpdateOne {
+	if t != nil {
+		puo.SetDeletedAt(*t)
+	}
+	return puo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (puo *PlayerUpdateOne) ClearDeletedAt() *PlayerUpdateOne {
+	puo.mutation.ClearDeletedAt()
 	return puo
 }
 
@@ -1031,20 +1032,17 @@ func (puo *PlayerUpdateOne) sqlSave(ctx context.Context) (_node *Player, err err
 	if value, ok := puo.mutation.IsActive(); ok {
 		_spec.SetField(player.FieldIsActive, field.TypeBool, value)
 	}
-	if puo.mutation.IsActiveCleared() {
-		_spec.ClearField(player.FieldIsActive, field.TypeBool)
-	}
 	if value, ok := puo.mutation.CreatedAt(); ok {
 		_spec.SetField(player.FieldCreatedAt, field.TypeTime, value)
-	}
-	if puo.mutation.CreatedAtCleared() {
-		_spec.ClearField(player.FieldCreatedAt, field.TypeTime)
 	}
 	if value, ok := puo.mutation.UpdatedAt(); ok {
 		_spec.SetField(player.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if puo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(player.FieldUpdatedAt, field.TypeTime)
+	if value, ok := puo.mutation.DeletedAt(); ok {
+		_spec.SetField(player.FieldDeletedAt, field.TypeTime, value)
+	}
+	if puo.mutation.DeletedAtCleared() {
+		_spec.ClearField(player.FieldDeletedAt, field.TypeTime)
 	}
 	if puo.mutation.MatchPlayersCleared() {
 		edge := &sqlgraph.EdgeSpec{

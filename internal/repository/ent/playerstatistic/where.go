@@ -100,6 +100,11 @@ func UpdatedAt(v time.Time) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.PlayerStatistic {
+	return predicate.PlayerStatistic(sql.FieldEQ(FieldDeletedAt, v))
+}
+
 // PlayerIDEQ applies the EQ predicate on the "player_id" field.
 func PlayerIDEQ(v int) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldEQ(FieldPlayerID, v))
@@ -170,16 +175,6 @@ func TotalMatchesLTE(v int32) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldLTE(FieldTotalMatches, v))
 }
 
-// TotalMatchesIsNil applies the IsNil predicate on the "total_matches" field.
-func TotalMatchesIsNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldIsNull(FieldTotalMatches))
-}
-
-// TotalMatchesNotNil applies the NotNil predicate on the "total_matches" field.
-func TotalMatchesNotNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldNotNull(FieldTotalMatches))
-}
-
 // TotalMinutesPlayedEQ applies the EQ predicate on the "total_minutes_played" field.
 func TotalMinutesPlayedEQ(v int32) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldEQ(FieldTotalMinutesPlayed, v))
@@ -218,16 +213,6 @@ func TotalMinutesPlayedLT(v int32) predicate.PlayerStatistic {
 // TotalMinutesPlayedLTE applies the LTE predicate on the "total_minutes_played" field.
 func TotalMinutesPlayedLTE(v int32) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldLTE(FieldTotalMinutesPlayed, v))
-}
-
-// TotalMinutesPlayedIsNil applies the IsNil predicate on the "total_minutes_played" field.
-func TotalMinutesPlayedIsNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldIsNull(FieldTotalMinutesPlayed))
-}
-
-// TotalMinutesPlayedNotNil applies the NotNil predicate on the "total_minutes_played" field.
-func TotalMinutesPlayedNotNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldNotNull(FieldTotalMinutesPlayed))
 }
 
 // TotalGoalsEQ applies the EQ predicate on the "total_goals" field.
@@ -270,16 +255,6 @@ func TotalGoalsLTE(v int32) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldLTE(FieldTotalGoals, v))
 }
 
-// TotalGoalsIsNil applies the IsNil predicate on the "total_goals" field.
-func TotalGoalsIsNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldIsNull(FieldTotalGoals))
-}
-
-// TotalGoalsNotNil applies the NotNil predicate on the "total_goals" field.
-func TotalGoalsNotNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldNotNull(FieldTotalGoals))
-}
-
 // TotalAssistsEQ applies the EQ predicate on the "total_assists" field.
 func TotalAssistsEQ(v int32) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldEQ(FieldTotalAssists, v))
@@ -318,16 +293,6 @@ func TotalAssistsLT(v int32) predicate.PlayerStatistic {
 // TotalAssistsLTE applies the LTE predicate on the "total_assists" field.
 func TotalAssistsLTE(v int32) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldLTE(FieldTotalAssists, v))
-}
-
-// TotalAssistsIsNil applies the IsNil predicate on the "total_assists" field.
-func TotalAssistsIsNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldIsNull(FieldTotalAssists))
-}
-
-// TotalAssistsNotNil applies the NotNil predicate on the "total_assists" field.
-func TotalAssistsNotNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldNotNull(FieldTotalAssists))
 }
 
 // TotalYellowCardsEQ applies the EQ predicate on the "total_yellow_cards" field.
@@ -370,16 +335,6 @@ func TotalYellowCardsLTE(v int32) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldLTE(FieldTotalYellowCards, v))
 }
 
-// TotalYellowCardsIsNil applies the IsNil predicate on the "total_yellow_cards" field.
-func TotalYellowCardsIsNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldIsNull(FieldTotalYellowCards))
-}
-
-// TotalYellowCardsNotNil applies the NotNil predicate on the "total_yellow_cards" field.
-func TotalYellowCardsNotNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldNotNull(FieldTotalYellowCards))
-}
-
 // TotalRedCardsEQ applies the EQ predicate on the "total_red_cards" field.
 func TotalRedCardsEQ(v int32) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldEQ(FieldTotalRedCards, v))
@@ -418,16 +373,6 @@ func TotalRedCardsLT(v int32) predicate.PlayerStatistic {
 // TotalRedCardsLTE applies the LTE predicate on the "total_red_cards" field.
 func TotalRedCardsLTE(v int32) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldLTE(FieldTotalRedCards, v))
-}
-
-// TotalRedCardsIsNil applies the IsNil predicate on the "total_red_cards" field.
-func TotalRedCardsIsNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldIsNull(FieldTotalRedCards))
-}
-
-// TotalRedCardsNotNil applies the NotNil predicate on the "total_red_cards" field.
-func TotalRedCardsNotNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldNotNull(FieldTotalRedCards))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -470,16 +415,6 @@ func CreatedAtLTE(v time.Time) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldLTE(FieldCreatedAt, v))
 }
 
-// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
-func CreatedAtIsNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldIsNull(FieldCreatedAt))
-}
-
-// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
-func CreatedAtNotNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldNotNull(FieldCreatedAt))
-}
-
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldEQ(FieldUpdatedAt, v))
@@ -520,14 +455,54 @@ func UpdatedAtLTE(v time.Time) predicate.PlayerStatistic {
 	return predicate.PlayerStatistic(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldIsNull(FieldUpdatedAt))
+// DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
+func DeletedAtEQ(v time.Time) predicate.PlayerStatistic {
+	return predicate.PlayerStatistic(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.PlayerStatistic {
-	return predicate.PlayerStatistic(sql.FieldNotNull(FieldUpdatedAt))
+// DeletedAtNEQ applies the NEQ predicate on the "deleted_at" field.
+func DeletedAtNEQ(v time.Time) predicate.PlayerStatistic {
+	return predicate.PlayerStatistic(sql.FieldNEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtIn applies the In predicate on the "deleted_at" field.
+func DeletedAtIn(vs ...time.Time) predicate.PlayerStatistic {
+	return predicate.PlayerStatistic(sql.FieldIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtNotIn applies the NotIn predicate on the "deleted_at" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.PlayerStatistic {
+	return predicate.PlayerStatistic(sql.FieldNotIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtGT applies the GT predicate on the "deleted_at" field.
+func DeletedAtGT(v time.Time) predicate.PlayerStatistic {
+	return predicate.PlayerStatistic(sql.FieldGT(FieldDeletedAt, v))
+}
+
+// DeletedAtGTE applies the GTE predicate on the "deleted_at" field.
+func DeletedAtGTE(v time.Time) predicate.PlayerStatistic {
+	return predicate.PlayerStatistic(sql.FieldGTE(FieldDeletedAt, v))
+}
+
+// DeletedAtLT applies the LT predicate on the "deleted_at" field.
+func DeletedAtLT(v time.Time) predicate.PlayerStatistic {
+	return predicate.PlayerStatistic(sql.FieldLT(FieldDeletedAt, v))
+}
+
+// DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
+func DeletedAtLTE(v time.Time) predicate.PlayerStatistic {
+	return predicate.PlayerStatistic(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.PlayerStatistic {
+	return predicate.PlayerStatistic(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.PlayerStatistic {
+	return predicate.PlayerStatistic(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // HasPlayer applies the HasEdge predicate on the "player" edge.

@@ -70,12 +70,6 @@ func (psu *PlayerStatisticUpdate) AddTotalMatches(i int32) *PlayerStatisticUpdat
 	return psu
 }
 
-// ClearTotalMatches clears the value of the "total_matches" field.
-func (psu *PlayerStatisticUpdate) ClearTotalMatches() *PlayerStatisticUpdate {
-	psu.mutation.ClearTotalMatches()
-	return psu
-}
-
 // SetTotalMinutesPlayed sets the "total_minutes_played" field.
 func (psu *PlayerStatisticUpdate) SetTotalMinutesPlayed(i int32) *PlayerStatisticUpdate {
 	psu.mutation.ResetTotalMinutesPlayed()
@@ -94,12 +88,6 @@ func (psu *PlayerStatisticUpdate) SetNillableTotalMinutesPlayed(i *int32) *Playe
 // AddTotalMinutesPlayed adds i to the "total_minutes_played" field.
 func (psu *PlayerStatisticUpdate) AddTotalMinutesPlayed(i int32) *PlayerStatisticUpdate {
 	psu.mutation.AddTotalMinutesPlayed(i)
-	return psu
-}
-
-// ClearTotalMinutesPlayed clears the value of the "total_minutes_played" field.
-func (psu *PlayerStatisticUpdate) ClearTotalMinutesPlayed() *PlayerStatisticUpdate {
-	psu.mutation.ClearTotalMinutesPlayed()
 	return psu
 }
 
@@ -124,12 +112,6 @@ func (psu *PlayerStatisticUpdate) AddTotalGoals(i int32) *PlayerStatisticUpdate 
 	return psu
 }
 
-// ClearTotalGoals clears the value of the "total_goals" field.
-func (psu *PlayerStatisticUpdate) ClearTotalGoals() *PlayerStatisticUpdate {
-	psu.mutation.ClearTotalGoals()
-	return psu
-}
-
 // SetTotalAssists sets the "total_assists" field.
 func (psu *PlayerStatisticUpdate) SetTotalAssists(i int32) *PlayerStatisticUpdate {
 	psu.mutation.ResetTotalAssists()
@@ -148,12 +130,6 @@ func (psu *PlayerStatisticUpdate) SetNillableTotalAssists(i *int32) *PlayerStati
 // AddTotalAssists adds i to the "total_assists" field.
 func (psu *PlayerStatisticUpdate) AddTotalAssists(i int32) *PlayerStatisticUpdate {
 	psu.mutation.AddTotalAssists(i)
-	return psu
-}
-
-// ClearTotalAssists clears the value of the "total_assists" field.
-func (psu *PlayerStatisticUpdate) ClearTotalAssists() *PlayerStatisticUpdate {
-	psu.mutation.ClearTotalAssists()
 	return psu
 }
 
@@ -178,12 +154,6 @@ func (psu *PlayerStatisticUpdate) AddTotalYellowCards(i int32) *PlayerStatisticU
 	return psu
 }
 
-// ClearTotalYellowCards clears the value of the "total_yellow_cards" field.
-func (psu *PlayerStatisticUpdate) ClearTotalYellowCards() *PlayerStatisticUpdate {
-	psu.mutation.ClearTotalYellowCards()
-	return psu
-}
-
 // SetTotalRedCards sets the "total_red_cards" field.
 func (psu *PlayerStatisticUpdate) SetTotalRedCards(i int32) *PlayerStatisticUpdate {
 	psu.mutation.ResetTotalRedCards()
@@ -205,12 +175,6 @@ func (psu *PlayerStatisticUpdate) AddTotalRedCards(i int32) *PlayerStatisticUpda
 	return psu
 }
 
-// ClearTotalRedCards clears the value of the "total_red_cards" field.
-func (psu *PlayerStatisticUpdate) ClearTotalRedCards() *PlayerStatisticUpdate {
-	psu.mutation.ClearTotalRedCards()
-	return psu
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (psu *PlayerStatisticUpdate) SetCreatedAt(t time.Time) *PlayerStatisticUpdate {
 	psu.mutation.SetCreatedAt(t)
@@ -222,12 +186,6 @@ func (psu *PlayerStatisticUpdate) SetNillableCreatedAt(t *time.Time) *PlayerStat
 	if t != nil {
 		psu.SetCreatedAt(*t)
 	}
-	return psu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (psu *PlayerStatisticUpdate) ClearCreatedAt() *PlayerStatisticUpdate {
-	psu.mutation.ClearCreatedAt()
 	return psu
 }
 
@@ -245,9 +203,23 @@ func (psu *PlayerStatisticUpdate) SetNillableUpdatedAt(t *time.Time) *PlayerStat
 	return psu
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (psu *PlayerStatisticUpdate) ClearUpdatedAt() *PlayerStatisticUpdate {
-	psu.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (psu *PlayerStatisticUpdate) SetDeletedAt(t time.Time) *PlayerStatisticUpdate {
+	psu.mutation.SetDeletedAt(t)
+	return psu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (psu *PlayerStatisticUpdate) SetNillableDeletedAt(t *time.Time) *PlayerStatisticUpdate {
+	if t != nil {
+		psu.SetDeletedAt(*t)
+	}
+	return psu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (psu *PlayerStatisticUpdate) ClearDeletedAt() *PlayerStatisticUpdate {
+	psu.mutation.ClearDeletedAt()
 	return psu
 }
 
@@ -309,17 +281,11 @@ func (psu *PlayerStatisticUpdate) sqlSave(ctx context.Context) (n int, err error
 	if value, ok := psu.mutation.AddedTotalMatches(); ok {
 		_spec.AddField(playerstatistic.FieldTotalMatches, field.TypeInt32, value)
 	}
-	if psu.mutation.TotalMatchesCleared() {
-		_spec.ClearField(playerstatistic.FieldTotalMatches, field.TypeInt32)
-	}
 	if value, ok := psu.mutation.TotalMinutesPlayed(); ok {
 		_spec.SetField(playerstatistic.FieldTotalMinutesPlayed, field.TypeInt32, value)
 	}
 	if value, ok := psu.mutation.AddedTotalMinutesPlayed(); ok {
 		_spec.AddField(playerstatistic.FieldTotalMinutesPlayed, field.TypeInt32, value)
-	}
-	if psu.mutation.TotalMinutesPlayedCleared() {
-		_spec.ClearField(playerstatistic.FieldTotalMinutesPlayed, field.TypeInt32)
 	}
 	if value, ok := psu.mutation.TotalGoals(); ok {
 		_spec.SetField(playerstatistic.FieldTotalGoals, field.TypeInt32, value)
@@ -327,17 +293,11 @@ func (psu *PlayerStatisticUpdate) sqlSave(ctx context.Context) (n int, err error
 	if value, ok := psu.mutation.AddedTotalGoals(); ok {
 		_spec.AddField(playerstatistic.FieldTotalGoals, field.TypeInt32, value)
 	}
-	if psu.mutation.TotalGoalsCleared() {
-		_spec.ClearField(playerstatistic.FieldTotalGoals, field.TypeInt32)
-	}
 	if value, ok := psu.mutation.TotalAssists(); ok {
 		_spec.SetField(playerstatistic.FieldTotalAssists, field.TypeInt32, value)
 	}
 	if value, ok := psu.mutation.AddedTotalAssists(); ok {
 		_spec.AddField(playerstatistic.FieldTotalAssists, field.TypeInt32, value)
-	}
-	if psu.mutation.TotalAssistsCleared() {
-		_spec.ClearField(playerstatistic.FieldTotalAssists, field.TypeInt32)
 	}
 	if value, ok := psu.mutation.TotalYellowCards(); ok {
 		_spec.SetField(playerstatistic.FieldTotalYellowCards, field.TypeInt32, value)
@@ -345,29 +305,23 @@ func (psu *PlayerStatisticUpdate) sqlSave(ctx context.Context) (n int, err error
 	if value, ok := psu.mutation.AddedTotalYellowCards(); ok {
 		_spec.AddField(playerstatistic.FieldTotalYellowCards, field.TypeInt32, value)
 	}
-	if psu.mutation.TotalYellowCardsCleared() {
-		_spec.ClearField(playerstatistic.FieldTotalYellowCards, field.TypeInt32)
-	}
 	if value, ok := psu.mutation.TotalRedCards(); ok {
 		_spec.SetField(playerstatistic.FieldTotalRedCards, field.TypeInt32, value)
 	}
 	if value, ok := psu.mutation.AddedTotalRedCards(); ok {
 		_spec.AddField(playerstatistic.FieldTotalRedCards, field.TypeInt32, value)
 	}
-	if psu.mutation.TotalRedCardsCleared() {
-		_spec.ClearField(playerstatistic.FieldTotalRedCards, field.TypeInt32)
-	}
 	if value, ok := psu.mutation.CreatedAt(); ok {
 		_spec.SetField(playerstatistic.FieldCreatedAt, field.TypeTime, value)
-	}
-	if psu.mutation.CreatedAtCleared() {
-		_spec.ClearField(playerstatistic.FieldCreatedAt, field.TypeTime)
 	}
 	if value, ok := psu.mutation.UpdatedAt(); ok {
 		_spec.SetField(playerstatistic.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if psu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(playerstatistic.FieldUpdatedAt, field.TypeTime)
+	if value, ok := psu.mutation.DeletedAt(); ok {
+		_spec.SetField(playerstatistic.FieldDeletedAt, field.TypeTime, value)
+	}
+	if psu.mutation.DeletedAtCleared() {
+		_spec.ClearField(playerstatistic.FieldDeletedAt, field.TypeTime)
 	}
 	if psu.mutation.PlayerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -459,12 +413,6 @@ func (psuo *PlayerStatisticUpdateOne) AddTotalMatches(i int32) *PlayerStatisticU
 	return psuo
 }
 
-// ClearTotalMatches clears the value of the "total_matches" field.
-func (psuo *PlayerStatisticUpdateOne) ClearTotalMatches() *PlayerStatisticUpdateOne {
-	psuo.mutation.ClearTotalMatches()
-	return psuo
-}
-
 // SetTotalMinutesPlayed sets the "total_minutes_played" field.
 func (psuo *PlayerStatisticUpdateOne) SetTotalMinutesPlayed(i int32) *PlayerStatisticUpdateOne {
 	psuo.mutation.ResetTotalMinutesPlayed()
@@ -483,12 +431,6 @@ func (psuo *PlayerStatisticUpdateOne) SetNillableTotalMinutesPlayed(i *int32) *P
 // AddTotalMinutesPlayed adds i to the "total_minutes_played" field.
 func (psuo *PlayerStatisticUpdateOne) AddTotalMinutesPlayed(i int32) *PlayerStatisticUpdateOne {
 	psuo.mutation.AddTotalMinutesPlayed(i)
-	return psuo
-}
-
-// ClearTotalMinutesPlayed clears the value of the "total_minutes_played" field.
-func (psuo *PlayerStatisticUpdateOne) ClearTotalMinutesPlayed() *PlayerStatisticUpdateOne {
-	psuo.mutation.ClearTotalMinutesPlayed()
 	return psuo
 }
 
@@ -513,12 +455,6 @@ func (psuo *PlayerStatisticUpdateOne) AddTotalGoals(i int32) *PlayerStatisticUpd
 	return psuo
 }
 
-// ClearTotalGoals clears the value of the "total_goals" field.
-func (psuo *PlayerStatisticUpdateOne) ClearTotalGoals() *PlayerStatisticUpdateOne {
-	psuo.mutation.ClearTotalGoals()
-	return psuo
-}
-
 // SetTotalAssists sets the "total_assists" field.
 func (psuo *PlayerStatisticUpdateOne) SetTotalAssists(i int32) *PlayerStatisticUpdateOne {
 	psuo.mutation.ResetTotalAssists()
@@ -537,12 +473,6 @@ func (psuo *PlayerStatisticUpdateOne) SetNillableTotalAssists(i *int32) *PlayerS
 // AddTotalAssists adds i to the "total_assists" field.
 func (psuo *PlayerStatisticUpdateOne) AddTotalAssists(i int32) *PlayerStatisticUpdateOne {
 	psuo.mutation.AddTotalAssists(i)
-	return psuo
-}
-
-// ClearTotalAssists clears the value of the "total_assists" field.
-func (psuo *PlayerStatisticUpdateOne) ClearTotalAssists() *PlayerStatisticUpdateOne {
-	psuo.mutation.ClearTotalAssists()
 	return psuo
 }
 
@@ -567,12 +497,6 @@ func (psuo *PlayerStatisticUpdateOne) AddTotalYellowCards(i int32) *PlayerStatis
 	return psuo
 }
 
-// ClearTotalYellowCards clears the value of the "total_yellow_cards" field.
-func (psuo *PlayerStatisticUpdateOne) ClearTotalYellowCards() *PlayerStatisticUpdateOne {
-	psuo.mutation.ClearTotalYellowCards()
-	return psuo
-}
-
 // SetTotalRedCards sets the "total_red_cards" field.
 func (psuo *PlayerStatisticUpdateOne) SetTotalRedCards(i int32) *PlayerStatisticUpdateOne {
 	psuo.mutation.ResetTotalRedCards()
@@ -594,12 +518,6 @@ func (psuo *PlayerStatisticUpdateOne) AddTotalRedCards(i int32) *PlayerStatistic
 	return psuo
 }
 
-// ClearTotalRedCards clears the value of the "total_red_cards" field.
-func (psuo *PlayerStatisticUpdateOne) ClearTotalRedCards() *PlayerStatisticUpdateOne {
-	psuo.mutation.ClearTotalRedCards()
-	return psuo
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (psuo *PlayerStatisticUpdateOne) SetCreatedAt(t time.Time) *PlayerStatisticUpdateOne {
 	psuo.mutation.SetCreatedAt(t)
@@ -611,12 +529,6 @@ func (psuo *PlayerStatisticUpdateOne) SetNillableCreatedAt(t *time.Time) *Player
 	if t != nil {
 		psuo.SetCreatedAt(*t)
 	}
-	return psuo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (psuo *PlayerStatisticUpdateOne) ClearCreatedAt() *PlayerStatisticUpdateOne {
-	psuo.mutation.ClearCreatedAt()
 	return psuo
 }
 
@@ -634,9 +546,23 @@ func (psuo *PlayerStatisticUpdateOne) SetNillableUpdatedAt(t *time.Time) *Player
 	return psuo
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (psuo *PlayerStatisticUpdateOne) ClearUpdatedAt() *PlayerStatisticUpdateOne {
-	psuo.mutation.ClearUpdatedAt()
+// SetDeletedAt sets the "deleted_at" field.
+func (psuo *PlayerStatisticUpdateOne) SetDeletedAt(t time.Time) *PlayerStatisticUpdateOne {
+	psuo.mutation.SetDeletedAt(t)
+	return psuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (psuo *PlayerStatisticUpdateOne) SetNillableDeletedAt(t *time.Time) *PlayerStatisticUpdateOne {
+	if t != nil {
+		psuo.SetDeletedAt(*t)
+	}
+	return psuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (psuo *PlayerStatisticUpdateOne) ClearDeletedAt() *PlayerStatisticUpdateOne {
+	psuo.mutation.ClearDeletedAt()
 	return psuo
 }
 
@@ -728,17 +654,11 @@ func (psuo *PlayerStatisticUpdateOne) sqlSave(ctx context.Context) (_node *Playe
 	if value, ok := psuo.mutation.AddedTotalMatches(); ok {
 		_spec.AddField(playerstatistic.FieldTotalMatches, field.TypeInt32, value)
 	}
-	if psuo.mutation.TotalMatchesCleared() {
-		_spec.ClearField(playerstatistic.FieldTotalMatches, field.TypeInt32)
-	}
 	if value, ok := psuo.mutation.TotalMinutesPlayed(); ok {
 		_spec.SetField(playerstatistic.FieldTotalMinutesPlayed, field.TypeInt32, value)
 	}
 	if value, ok := psuo.mutation.AddedTotalMinutesPlayed(); ok {
 		_spec.AddField(playerstatistic.FieldTotalMinutesPlayed, field.TypeInt32, value)
-	}
-	if psuo.mutation.TotalMinutesPlayedCleared() {
-		_spec.ClearField(playerstatistic.FieldTotalMinutesPlayed, field.TypeInt32)
 	}
 	if value, ok := psuo.mutation.TotalGoals(); ok {
 		_spec.SetField(playerstatistic.FieldTotalGoals, field.TypeInt32, value)
@@ -746,17 +666,11 @@ func (psuo *PlayerStatisticUpdateOne) sqlSave(ctx context.Context) (_node *Playe
 	if value, ok := psuo.mutation.AddedTotalGoals(); ok {
 		_spec.AddField(playerstatistic.FieldTotalGoals, field.TypeInt32, value)
 	}
-	if psuo.mutation.TotalGoalsCleared() {
-		_spec.ClearField(playerstatistic.FieldTotalGoals, field.TypeInt32)
-	}
 	if value, ok := psuo.mutation.TotalAssists(); ok {
 		_spec.SetField(playerstatistic.FieldTotalAssists, field.TypeInt32, value)
 	}
 	if value, ok := psuo.mutation.AddedTotalAssists(); ok {
 		_spec.AddField(playerstatistic.FieldTotalAssists, field.TypeInt32, value)
-	}
-	if psuo.mutation.TotalAssistsCleared() {
-		_spec.ClearField(playerstatistic.FieldTotalAssists, field.TypeInt32)
 	}
 	if value, ok := psuo.mutation.TotalYellowCards(); ok {
 		_spec.SetField(playerstatistic.FieldTotalYellowCards, field.TypeInt32, value)
@@ -764,29 +678,23 @@ func (psuo *PlayerStatisticUpdateOne) sqlSave(ctx context.Context) (_node *Playe
 	if value, ok := psuo.mutation.AddedTotalYellowCards(); ok {
 		_spec.AddField(playerstatistic.FieldTotalYellowCards, field.TypeInt32, value)
 	}
-	if psuo.mutation.TotalYellowCardsCleared() {
-		_spec.ClearField(playerstatistic.FieldTotalYellowCards, field.TypeInt32)
-	}
 	if value, ok := psuo.mutation.TotalRedCards(); ok {
 		_spec.SetField(playerstatistic.FieldTotalRedCards, field.TypeInt32, value)
 	}
 	if value, ok := psuo.mutation.AddedTotalRedCards(); ok {
 		_spec.AddField(playerstatistic.FieldTotalRedCards, field.TypeInt32, value)
 	}
-	if psuo.mutation.TotalRedCardsCleared() {
-		_spec.ClearField(playerstatistic.FieldTotalRedCards, field.TypeInt32)
-	}
 	if value, ok := psuo.mutation.CreatedAt(); ok {
 		_spec.SetField(playerstatistic.FieldCreatedAt, field.TypeTime, value)
-	}
-	if psuo.mutation.CreatedAtCleared() {
-		_spec.ClearField(playerstatistic.FieldCreatedAt, field.TypeTime)
 	}
 	if value, ok := psuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(playerstatistic.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if psuo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(playerstatistic.FieldUpdatedAt, field.TypeTime)
+	if value, ok := psuo.mutation.DeletedAt(); ok {
+		_spec.SetField(playerstatistic.FieldDeletedAt, field.TypeTime, value)
+	}
+	if psuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(playerstatistic.FieldDeletedAt, field.TypeTime)
 	}
 	if psuo.mutation.PlayerCleared() {
 		edge := &sqlgraph.EdgeSpec{

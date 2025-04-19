@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"management-be/internal/repository/ent/player"
 	"management-be/internal/repository/ent/playerstatistic"
@@ -40,25 +41,9 @@ func (psc *PlayerStatisticCreate) SetTotalMatches(i int32) *PlayerStatisticCreat
 	return psc
 }
 
-// SetNillableTotalMatches sets the "total_matches" field if the given value is not nil.
-func (psc *PlayerStatisticCreate) SetNillableTotalMatches(i *int32) *PlayerStatisticCreate {
-	if i != nil {
-		psc.SetTotalMatches(*i)
-	}
-	return psc
-}
-
 // SetTotalMinutesPlayed sets the "total_minutes_played" field.
 func (psc *PlayerStatisticCreate) SetTotalMinutesPlayed(i int32) *PlayerStatisticCreate {
 	psc.mutation.SetTotalMinutesPlayed(i)
-	return psc
-}
-
-// SetNillableTotalMinutesPlayed sets the "total_minutes_played" field if the given value is not nil.
-func (psc *PlayerStatisticCreate) SetNillableTotalMinutesPlayed(i *int32) *PlayerStatisticCreate {
-	if i != nil {
-		psc.SetTotalMinutesPlayed(*i)
-	}
 	return psc
 }
 
@@ -68,25 +53,9 @@ func (psc *PlayerStatisticCreate) SetTotalGoals(i int32) *PlayerStatisticCreate 
 	return psc
 }
 
-// SetNillableTotalGoals sets the "total_goals" field if the given value is not nil.
-func (psc *PlayerStatisticCreate) SetNillableTotalGoals(i *int32) *PlayerStatisticCreate {
-	if i != nil {
-		psc.SetTotalGoals(*i)
-	}
-	return psc
-}
-
 // SetTotalAssists sets the "total_assists" field.
 func (psc *PlayerStatisticCreate) SetTotalAssists(i int32) *PlayerStatisticCreate {
 	psc.mutation.SetTotalAssists(i)
-	return psc
-}
-
-// SetNillableTotalAssists sets the "total_assists" field if the given value is not nil.
-func (psc *PlayerStatisticCreate) SetNillableTotalAssists(i *int32) *PlayerStatisticCreate {
-	if i != nil {
-		psc.SetTotalAssists(*i)
-	}
 	return psc
 }
 
@@ -96,25 +65,9 @@ func (psc *PlayerStatisticCreate) SetTotalYellowCards(i int32) *PlayerStatisticC
 	return psc
 }
 
-// SetNillableTotalYellowCards sets the "total_yellow_cards" field if the given value is not nil.
-func (psc *PlayerStatisticCreate) SetNillableTotalYellowCards(i *int32) *PlayerStatisticCreate {
-	if i != nil {
-		psc.SetTotalYellowCards(*i)
-	}
-	return psc
-}
-
 // SetTotalRedCards sets the "total_red_cards" field.
 func (psc *PlayerStatisticCreate) SetTotalRedCards(i int32) *PlayerStatisticCreate {
 	psc.mutation.SetTotalRedCards(i)
-	return psc
-}
-
-// SetNillableTotalRedCards sets the "total_red_cards" field if the given value is not nil.
-func (psc *PlayerStatisticCreate) SetNillableTotalRedCards(i *int32) *PlayerStatisticCreate {
-	if i != nil {
-		psc.SetTotalRedCards(*i)
-	}
 	return psc
 }
 
@@ -124,24 +77,22 @@ func (psc *PlayerStatisticCreate) SetCreatedAt(t time.Time) *PlayerStatisticCrea
 	return psc
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (psc *PlayerStatisticCreate) SetNillableCreatedAt(t *time.Time) *PlayerStatisticCreate {
-	if t != nil {
-		psc.SetCreatedAt(*t)
-	}
-	return psc
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (psc *PlayerStatisticCreate) SetUpdatedAt(t time.Time) *PlayerStatisticCreate {
 	psc.mutation.SetUpdatedAt(t)
 	return psc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (psc *PlayerStatisticCreate) SetNillableUpdatedAt(t *time.Time) *PlayerStatisticCreate {
+// SetDeletedAt sets the "deleted_at" field.
+func (psc *PlayerStatisticCreate) SetDeletedAt(t time.Time) *PlayerStatisticCreate {
+	psc.mutation.SetDeletedAt(t)
+	return psc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (psc *PlayerStatisticCreate) SetNillableDeletedAt(t *time.Time) *PlayerStatisticCreate {
 	if t != nil {
-		psc.SetUpdatedAt(*t)
+		psc.SetDeletedAt(*t)
 	}
 	return psc
 }
@@ -191,6 +142,30 @@ func (psc *PlayerStatisticCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (psc *PlayerStatisticCreate) check() error {
+	if _, ok := psc.mutation.TotalMatches(); !ok {
+		return &ValidationError{Name: "total_matches", err: errors.New(`ent: missing required field "PlayerStatistic.total_matches"`)}
+	}
+	if _, ok := psc.mutation.TotalMinutesPlayed(); !ok {
+		return &ValidationError{Name: "total_minutes_played", err: errors.New(`ent: missing required field "PlayerStatistic.total_minutes_played"`)}
+	}
+	if _, ok := psc.mutation.TotalGoals(); !ok {
+		return &ValidationError{Name: "total_goals", err: errors.New(`ent: missing required field "PlayerStatistic.total_goals"`)}
+	}
+	if _, ok := psc.mutation.TotalAssists(); !ok {
+		return &ValidationError{Name: "total_assists", err: errors.New(`ent: missing required field "PlayerStatistic.total_assists"`)}
+	}
+	if _, ok := psc.mutation.TotalYellowCards(); !ok {
+		return &ValidationError{Name: "total_yellow_cards", err: errors.New(`ent: missing required field "PlayerStatistic.total_yellow_cards"`)}
+	}
+	if _, ok := psc.mutation.TotalRedCards(); !ok {
+		return &ValidationError{Name: "total_red_cards", err: errors.New(`ent: missing required field "PlayerStatistic.total_red_cards"`)}
+	}
+	if _, ok := psc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "PlayerStatistic.created_at"`)}
+	}
+	if _, ok := psc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "PlayerStatistic.updated_at"`)}
+	}
 	return nil
 }
 
@@ -254,6 +229,10 @@ func (psc *PlayerStatisticCreate) createSpec() (*PlayerStatistic, *sqlgraph.Crea
 	if value, ok := psc.mutation.UpdatedAt(); ok {
 		_spec.SetField(playerstatistic.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := psc.mutation.DeletedAt(); ok {
+		_spec.SetField(playerstatistic.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
 	}
 	if nodes := psc.mutation.PlayerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

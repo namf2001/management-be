@@ -43,6 +43,8 @@ type Player struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PlayerQuery when eager-loading is set.
 	Edges        PlayerEdges `json:"edges"`
@@ -104,7 +106,7 @@ func (*Player) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case player.FieldFullName, player.FieldPosition, player.FieldPhone, player.FieldEmail:
 			values[i] = new(sql.NullString)
-		case player.FieldDateOfBirth, player.FieldCreatedAt, player.FieldUpdatedAt:
+		case player.FieldDateOfBirth, player.FieldCreatedAt, player.FieldUpdatedAt, player.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -199,6 +201,12 @@ func (pl *Player) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pl.UpdatedAt = value.Time
 			}
+		case player.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				pl.DeletedAt = value.Time
+			}
 		default:
 			pl.selectValues.Set(columns[i], values[i])
 		}
@@ -285,6 +293,9 @@ func (pl *Player) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(pl.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(pl.DeletedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -79,6 +79,11 @@ func UpdatedAt(v time.Time) predicate.TeamFee {
 	return predicate.TeamFee(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.TeamFee {
+	return predicate.TeamFee(sql.FieldEQ(FieldDeletedAt, v))
+}
+
 // AmountEQ applies the EQ predicate on the "amount" field.
 func AmountEQ(v float64) predicate.TeamFee {
 	return predicate.TeamFee(sql.FieldEQ(FieldAmount, v))
@@ -274,16 +279,6 @@ func CreatedAtLTE(v time.Time) predicate.TeamFee {
 	return predicate.TeamFee(sql.FieldLTE(FieldCreatedAt, v))
 }
 
-// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
-func CreatedAtIsNil() predicate.TeamFee {
-	return predicate.TeamFee(sql.FieldIsNull(FieldCreatedAt))
-}
-
-// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
-func CreatedAtNotNil() predicate.TeamFee {
-	return predicate.TeamFee(sql.FieldNotNull(FieldCreatedAt))
-}
-
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.TeamFee {
 	return predicate.TeamFee(sql.FieldEQ(FieldUpdatedAt, v))
@@ -324,14 +319,54 @@ func UpdatedAtLTE(v time.Time) predicate.TeamFee {
 	return predicate.TeamFee(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.TeamFee {
-	return predicate.TeamFee(sql.FieldIsNull(FieldUpdatedAt))
+// DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
+func DeletedAtEQ(v time.Time) predicate.TeamFee {
+	return predicate.TeamFee(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.TeamFee {
-	return predicate.TeamFee(sql.FieldNotNull(FieldUpdatedAt))
+// DeletedAtNEQ applies the NEQ predicate on the "deleted_at" field.
+func DeletedAtNEQ(v time.Time) predicate.TeamFee {
+	return predicate.TeamFee(sql.FieldNEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtIn applies the In predicate on the "deleted_at" field.
+func DeletedAtIn(vs ...time.Time) predicate.TeamFee {
+	return predicate.TeamFee(sql.FieldIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtNotIn applies the NotIn predicate on the "deleted_at" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.TeamFee {
+	return predicate.TeamFee(sql.FieldNotIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtGT applies the GT predicate on the "deleted_at" field.
+func DeletedAtGT(v time.Time) predicate.TeamFee {
+	return predicate.TeamFee(sql.FieldGT(FieldDeletedAt, v))
+}
+
+// DeletedAtGTE applies the GTE predicate on the "deleted_at" field.
+func DeletedAtGTE(v time.Time) predicate.TeamFee {
+	return predicate.TeamFee(sql.FieldGTE(FieldDeletedAt, v))
+}
+
+// DeletedAtLT applies the LT predicate on the "deleted_at" field.
+func DeletedAtLT(v time.Time) predicate.TeamFee {
+	return predicate.TeamFee(sql.FieldLT(FieldDeletedAt, v))
+}
+
+// DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
+func DeletedAtLTE(v time.Time) predicate.TeamFee {
+	return predicate.TeamFee(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.TeamFee {
+	return predicate.TeamFee(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.TeamFee {
+	return predicate.TeamFee(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // And groups predicates with the AND operator between them.

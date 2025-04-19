@@ -62,14 +62,6 @@ func (mc *MatchCreate) SetIsHomeGame(b bool) *MatchCreate {
 	return mc
 }
 
-// SetNillableIsHomeGame sets the "is_home_game" field if the given value is not nil.
-func (mc *MatchCreate) SetNillableIsHomeGame(b *bool) *MatchCreate {
-	if b != nil {
-		mc.SetIsHomeGame(*b)
-	}
-	return mc
-}
-
 // SetOurScore sets the "our_score" field.
 func (mc *MatchCreate) SetOurScore(i int32) *MatchCreate {
 	mc.mutation.SetOurScore(i)
@@ -104,14 +96,6 @@ func (mc *MatchCreate) SetStatus(s string) *MatchCreate {
 	return mc
 }
 
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (mc *MatchCreate) SetNillableStatus(s *string) *MatchCreate {
-	if s != nil {
-		mc.SetStatus(*s)
-	}
-	return mc
-}
-
 // SetNotes sets the "notes" field.
 func (mc *MatchCreate) SetNotes(s string) *MatchCreate {
 	mc.mutation.SetNotes(s)
@@ -132,24 +116,22 @@ func (mc *MatchCreate) SetCreatedAt(t time.Time) *MatchCreate {
 	return mc
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (mc *MatchCreate) SetNillableCreatedAt(t *time.Time) *MatchCreate {
-	if t != nil {
-		mc.SetCreatedAt(*t)
-	}
-	return mc
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (mc *MatchCreate) SetUpdatedAt(t time.Time) *MatchCreate {
 	mc.mutation.SetUpdatedAt(t)
 	return mc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (mc *MatchCreate) SetNillableUpdatedAt(t *time.Time) *MatchCreate {
+// SetDeletedAt sets the "deleted_at" field.
+func (mc *MatchCreate) SetDeletedAt(t time.Time) *MatchCreate {
+	mc.mutation.SetDeletedAt(t)
+	return mc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (mc *MatchCreate) SetNillableDeletedAt(t *time.Time) *MatchCreate {
 	if t != nil {
-		mc.SetUpdatedAt(*t)
+		mc.SetDeletedAt(*t)
 	}
 	return mc
 }
@@ -231,6 +213,18 @@ func (mc *MatchCreate) check() error {
 	if _, ok := mc.mutation.MatchDate(); !ok {
 		return &ValidationError{Name: "match_date", err: errors.New(`ent: missing required field "Match.match_date"`)}
 	}
+	if _, ok := mc.mutation.IsHomeGame(); !ok {
+		return &ValidationError{Name: "is_home_game", err: errors.New(`ent: missing required field "Match.is_home_game"`)}
+	}
+	if _, ok := mc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Match.status"`)}
+	}
+	if _, ok := mc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Match.created_at"`)}
+	}
+	if _, ok := mc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Match.updated_at"`)}
+	}
 	return nil
 }
 
@@ -298,6 +292,10 @@ func (mc *MatchCreate) createSpec() (*Match, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.UpdatedAt(); ok {
 		_spec.SetField(match.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := mc.mutation.DeletedAt(); ok {
+		_spec.SetField(match.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
 	}
 	if nodes := mc.mutation.MatchPlayersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

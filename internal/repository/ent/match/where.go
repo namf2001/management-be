@@ -105,6 +105,11 @@ func UpdatedAt(v time.Time) predicate.Match {
 	return predicate.Match(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.Match {
+	return predicate.Match(sql.FieldEQ(FieldDeletedAt, v))
+}
+
 // OpponentTeamIDEQ applies the EQ predicate on the "opponent_team_id" field.
 func OpponentTeamIDEQ(v int) predicate.Match {
 	return predicate.Match(sql.FieldEQ(FieldOpponentTeamID, v))
@@ -258,16 +263,6 @@ func IsHomeGameEQ(v bool) predicate.Match {
 // IsHomeGameNEQ applies the NEQ predicate on the "is_home_game" field.
 func IsHomeGameNEQ(v bool) predicate.Match {
 	return predicate.Match(sql.FieldNEQ(FieldIsHomeGame, v))
-}
-
-// IsHomeGameIsNil applies the IsNil predicate on the "is_home_game" field.
-func IsHomeGameIsNil() predicate.Match {
-	return predicate.Match(sql.FieldIsNull(FieldIsHomeGame))
-}
-
-// IsHomeGameNotNil applies the NotNil predicate on the "is_home_game" field.
-func IsHomeGameNotNil() predicate.Match {
-	return predicate.Match(sql.FieldNotNull(FieldIsHomeGame))
 }
 
 // OurScoreEQ applies the EQ predicate on the "our_score" field.
@@ -425,16 +420,6 @@ func StatusHasSuffix(v string) predicate.Match {
 	return predicate.Match(sql.FieldHasSuffix(FieldStatus, v))
 }
 
-// StatusIsNil applies the IsNil predicate on the "status" field.
-func StatusIsNil() predicate.Match {
-	return predicate.Match(sql.FieldIsNull(FieldStatus))
-}
-
-// StatusNotNil applies the NotNil predicate on the "status" field.
-func StatusNotNil() predicate.Match {
-	return predicate.Match(sql.FieldNotNull(FieldStatus))
-}
-
 // StatusEqualFold applies the EqualFold predicate on the "status" field.
 func StatusEqualFold(v string) predicate.Match {
 	return predicate.Match(sql.FieldEqualFold(FieldStatus, v))
@@ -560,16 +545,6 @@ func CreatedAtLTE(v time.Time) predicate.Match {
 	return predicate.Match(sql.FieldLTE(FieldCreatedAt, v))
 }
 
-// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
-func CreatedAtIsNil() predicate.Match {
-	return predicate.Match(sql.FieldIsNull(FieldCreatedAt))
-}
-
-// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
-func CreatedAtNotNil() predicate.Match {
-	return predicate.Match(sql.FieldNotNull(FieldCreatedAt))
-}
-
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.Match {
 	return predicate.Match(sql.FieldEQ(FieldUpdatedAt, v))
@@ -610,14 +585,54 @@ func UpdatedAtLTE(v time.Time) predicate.Match {
 	return predicate.Match(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.Match {
-	return predicate.Match(sql.FieldIsNull(FieldUpdatedAt))
+// DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
+func DeletedAtEQ(v time.Time) predicate.Match {
+	return predicate.Match(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.Match {
-	return predicate.Match(sql.FieldNotNull(FieldUpdatedAt))
+// DeletedAtNEQ applies the NEQ predicate on the "deleted_at" field.
+func DeletedAtNEQ(v time.Time) predicate.Match {
+	return predicate.Match(sql.FieldNEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtIn applies the In predicate on the "deleted_at" field.
+func DeletedAtIn(vs ...time.Time) predicate.Match {
+	return predicate.Match(sql.FieldIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtNotIn applies the NotIn predicate on the "deleted_at" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.Match {
+	return predicate.Match(sql.FieldNotIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtGT applies the GT predicate on the "deleted_at" field.
+func DeletedAtGT(v time.Time) predicate.Match {
+	return predicate.Match(sql.FieldGT(FieldDeletedAt, v))
+}
+
+// DeletedAtGTE applies the GTE predicate on the "deleted_at" field.
+func DeletedAtGTE(v time.Time) predicate.Match {
+	return predicate.Match(sql.FieldGTE(FieldDeletedAt, v))
+}
+
+// DeletedAtLT applies the LT predicate on the "deleted_at" field.
+func DeletedAtLT(v time.Time) predicate.Match {
+	return predicate.Match(sql.FieldLT(FieldDeletedAt, v))
+}
+
+// DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
+func DeletedAtLTE(v time.Time) predicate.Match {
+	return predicate.Match(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.Match {
+	return predicate.Match(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.Match {
+	return predicate.Match(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // HasMatchPlayers applies the HasEdge predicate on the "match_players" edge.

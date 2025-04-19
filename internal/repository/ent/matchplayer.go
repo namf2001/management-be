@@ -37,6 +37,8 @@ type MatchPlayer struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MatchPlayerQuery when eager-loading is set.
 	Edges        MatchPlayerEdges `json:"edges"`
@@ -85,7 +87,7 @@ func (*MatchPlayer) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case matchplayer.FieldID, matchplayer.FieldMatchID, matchplayer.FieldPlayerID, matchplayer.FieldMinutesPlayed, matchplayer.FieldGoalsScored, matchplayer.FieldAssists, matchplayer.FieldYellowCards:
 			values[i] = new(sql.NullInt64)
-		case matchplayer.FieldCreatedAt, matchplayer.FieldUpdatedAt:
+		case matchplayer.FieldCreatedAt, matchplayer.FieldUpdatedAt, matchplayer.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -162,6 +164,12 @@ func (mp *MatchPlayer) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				mp.UpdatedAt = value.Time
 			}
+		case matchplayer.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				mp.DeletedAt = value.Time
+			}
 		default:
 			mp.selectValues.Set(columns[i], values[i])
 		}
@@ -234,6 +242,9 @@ func (mp *MatchPlayer) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(mp.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(mp.DeletedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -115,6 +115,11 @@ func UpdatedAt(v time.Time) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldDeletedAt, v))
+}
+
 // DepartmentIDEQ applies the EQ predicate on the "department_id" field.
 func DepartmentIDEQ(v int) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldDepartmentID, v))
@@ -635,16 +640,6 @@ func IsActiveNEQ(v bool) predicate.Player {
 	return predicate.Player(sql.FieldNEQ(FieldIsActive, v))
 }
 
-// IsActiveIsNil applies the IsNil predicate on the "is_active" field.
-func IsActiveIsNil() predicate.Player {
-	return predicate.Player(sql.FieldIsNull(FieldIsActive))
-}
-
-// IsActiveNotNil applies the NotNil predicate on the "is_active" field.
-func IsActiveNotNil() predicate.Player {
-	return predicate.Player(sql.FieldNotNull(FieldIsActive))
-}
-
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldCreatedAt, v))
@@ -683,16 +678,6 @@ func CreatedAtLT(v time.Time) predicate.Player {
 // CreatedAtLTE applies the LTE predicate on the "created_at" field.
 func CreatedAtLTE(v time.Time) predicate.Player {
 	return predicate.Player(sql.FieldLTE(FieldCreatedAt, v))
-}
-
-// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
-func CreatedAtIsNil() predicate.Player {
-	return predicate.Player(sql.FieldIsNull(FieldCreatedAt))
-}
-
-// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
-func CreatedAtNotNil() predicate.Player {
-	return predicate.Player(sql.FieldNotNull(FieldCreatedAt))
 }
 
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
@@ -735,14 +720,54 @@ func UpdatedAtLTE(v time.Time) predicate.Player {
 	return predicate.Player(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.Player {
-	return predicate.Player(sql.FieldIsNull(FieldUpdatedAt))
+// DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
+func DeletedAtEQ(v time.Time) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.Player {
-	return predicate.Player(sql.FieldNotNull(FieldUpdatedAt))
+// DeletedAtNEQ applies the NEQ predicate on the "deleted_at" field.
+func DeletedAtNEQ(v time.Time) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtIn applies the In predicate on the "deleted_at" field.
+func DeletedAtIn(vs ...time.Time) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtNotIn applies the NotIn predicate on the "deleted_at" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtGT applies the GT predicate on the "deleted_at" field.
+func DeletedAtGT(v time.Time) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldDeletedAt, v))
+}
+
+// DeletedAtGTE applies the GTE predicate on the "deleted_at" field.
+func DeletedAtGTE(v time.Time) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldDeletedAt, v))
+}
+
+// DeletedAtLT applies the LT predicate on the "deleted_at" field.
+func DeletedAtLT(v time.Time) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldDeletedAt, v))
+}
+
+// DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
+func DeletedAtLTE(v time.Time) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.Player {
+	return predicate.Player(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.Player {
+	return predicate.Player(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // HasMatchPlayers applies the HasEdge predicate on the "match_players" edge.

@@ -1,103 +1,108 @@
--- Create users table for admin authentication
-CREATE TABLE users (
-    id BIGINT PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    full_name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS "users" (
+    "id" BIGINT PRIMARY KEY,
+    "username" TEXT NOT NULL CONSTRAINT "username_check" CHECK ("username" <> ''::TEXT),
+    "password" TEXT NOT NULL,
+    "email" TEXT NOT NULL UNIQUE,
+    "full_name" TEXT NOT NULL DEFAULT '',
+    "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "deleted_at" TIMESTAMP WITH TIME ZONE NULL
 );
 
--- Create departments table
-CREATE TABLE departments (
-    id BIGINT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS "departments" (
+    "id" BIGINT PRIMARY KEY,
+    "name" TEXT NOT NULL CONSTRAINT "name_check" CHECK ("name" <> ''::TEXT),
+    "description" TEXT NOT NULL DEFAULT '',
+    "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "deleted_at" TIMESTAMP WITH TIME ZONE NULL
 );
 
--- Create players table
-CREATE TABLE players (
-    id BIGINT PRIMARY KEY,
-    department_id BIGINT REFERENCES departments(id),
-    full_name VARCHAR(100) NOT NULL,
-    jersey_number INTEGER UNIQUE,
-    position VARCHAR(50) NOT NULL,
-    date_of_birth DATE,
-    height_cm INTEGER,
-    weight_kg INTEGER,
-    phone VARCHAR(20),
-    email VARCHAR(100),
-    is_active BOOLEAN DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS "players" (
+    "id" BIGINT PRIMARY KEY,
+    "department_id" BIGINT NOT NULL,
+    "full_name" TEXT NOT NULL CONSTRAINT "full_name_check" CHECK ("full_name" <> ''::TEXT),
+    "jersey_number" INTEGER UNIQUE,
+    "position" TEXT NOT NULL,
+    "date_of_birth" DATE,
+    "height_cm" INTEGER,
+    "weight_kg" INTEGER,
+    "phone" TEXT DEFAULT '',
+    "email" TEXT DEFAULT '',
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
+    "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "deleted_at" TIMESTAMP WITH TIME ZONE NULL,
+    FOREIGN KEY ("department_id") REFERENCES "departments" ("id")
 );
 
--- Create teams table (opponent teams)
-CREATE TABLE teams (
-    id BIGINT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    company_name VARCHAR(100),
-    contact_person VARCHAR(100),
-    contact_phone VARCHAR(20),
-    contact_email VARCHAR(100),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS "teams" (
+    "id" BIGINT PRIMARY KEY,
+    "name" TEXT NOT NULL CONSTRAINT "team_name_check" CHECK ("name" <> ''::TEXT),
+    "company_name" TEXT DEFAULT '',
+    "contact_person" TEXT DEFAULT '',
+    "contact_phone" TEXT DEFAULT '',
+    "contact_email" TEXT DEFAULT '',
+    "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "deleted_at" TIMESTAMP WITH TIME ZONE NULL
 );
 
--- Create matches table
-CREATE TABLE matches (
-    id BIGINT PRIMARY KEY,
-    opponent_team_id BIGINT REFERENCES teams(id),
-    match_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    venue VARCHAR(200),
-    is_home_game BOOLEAN DEFAULT true,
-    our_score INTEGER,
-    opponent_score INTEGER,
-    status VARCHAR(20) DEFAULT 'scheduled', -- scheduled, completed, cancelled
-    notes TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS "matches" (
+    "id" BIGINT PRIMARY KEY,
+    "opponent_team_id" BIGINT NOT NULL,
+    "match_date" TIMESTAMP WITH TIME ZONE NOT NULL,
+    "venue" TEXT DEFAULT '',
+    "is_home_game" BOOLEAN NOT NULL DEFAULT true,
+    "our_score" INTEGER,
+    "opponent_score" INTEGER,
+    "status" TEXT NOT NULL DEFAULT 'scheduled',
+    "notes" TEXT DEFAULT '',
+    "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "deleted_at" TIMESTAMP WITH TIME ZONE NULL,
+    FOREIGN KEY ("opponent_team_id") REFERENCES "teams" ("id")
 );
 
--- Create match_players table (players who participated in matches)
-CREATE TABLE match_players (
-    id BIGINT PRIMARY KEY,
-    match_id BIGINT REFERENCES matches(id),
-    player_id BIGINT REFERENCES players(id),
-    minutes_played INTEGER DEFAULT 0,
-    goals_scored INTEGER DEFAULT 0,
-    assists INTEGER DEFAULT 0,
-    yellow_cards INTEGER DEFAULT 0,
-    red_card BOOLEAN DEFAULT false,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(match_id, player_id)
+CREATE TABLE IF NOT EXISTS "match_players" (
+    "id" BIGINT PRIMARY KEY,
+    "match_id" BIGINT NOT NULL,
+    "player_id" BIGINT NOT NULL,
+    "minutes_played" INTEGER NOT NULL DEFAULT 0,
+    "goals_scored" INTEGER NOT NULL DEFAULT 0,
+    "assists" INTEGER NOT NULL DEFAULT 0,
+    "yellow_cards" INTEGER NOT NULL DEFAULT 0,
+    "red_card" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "deleted_at" TIMESTAMP WITH TIME ZONE NULL,
+    UNIQUE("match_id", "player_id"),
+    FOREIGN KEY ("match_id") REFERENCES "matches" ("id"),
+    FOREIGN KEY ("player_id") REFERENCES "players" ("id")
 );
 
--- Create team_fees table (for tracking team maintenance fees)
-CREATE TABLE team_fees (
-    id BIGINT PRIMARY KEY,
-    amount DECIMAL(10,2) NOT NULL,
-    payment_date DATE NOT NULL,
-    description TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS "team_fees" (
+    "id" BIGINT PRIMARY KEY,
+    "amount" DECIMAL(10,2) NOT NULL,
+    "payment_date" DATE NOT NULL,
+    "description" TEXT DEFAULT '',
+    "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "deleted_at" TIMESTAMP WITH TIME ZONE NULL
 );
 
--- Create player_statistics table (aggregated statistics)
-CREATE TABLE player_statistics (
-    id BIGINT PRIMARY KEY,
-    player_id BIGINT REFERENCES players(id),
-    total_matches INTEGER DEFAULT 0,
-    total_minutes_played INTEGER DEFAULT 0,
-    total_goals INTEGER DEFAULT 0,
-    total_assists INTEGER DEFAULT 0,
-    total_yellow_cards INTEGER DEFAULT 0,
-    total_red_cards INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(player_id)
-); 
+CREATE TABLE IF NOT EXISTS "player_statistics" (
+    "id" BIGINT PRIMARY KEY,
+    "player_id" BIGINT NOT NULL,
+    "total_matches" INTEGER NOT NULL DEFAULT 0,
+    "total_minutes_played" INTEGER NOT NULL DEFAULT 0,
+    "total_goals" INTEGER NOT NULL DEFAULT 0,
+    "total_assists" INTEGER NOT NULL DEFAULT 0,
+    "total_yellow_cards" INTEGER NOT NULL DEFAULT 0,
+    "total_red_cards" INTEGER NOT NULL DEFAULT 0,
+    "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "deleted_at" TIMESTAMP WITH TIME ZONE NULL,
+    UNIQUE("player_id"),
+    FOREIGN KEY ("player_id") REFERENCES "players" ("id")
+);

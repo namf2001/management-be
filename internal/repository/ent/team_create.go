@@ -89,24 +89,22 @@ func (tc *TeamCreate) SetCreatedAt(t time.Time) *TeamCreate {
 	return tc
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (tc *TeamCreate) SetNillableCreatedAt(t *time.Time) *TeamCreate {
-	if t != nil {
-		tc.SetCreatedAt(*t)
-	}
-	return tc
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (tc *TeamCreate) SetUpdatedAt(t time.Time) *TeamCreate {
 	tc.mutation.SetUpdatedAt(t)
 	return tc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (tc *TeamCreate) SetNillableUpdatedAt(t *time.Time) *TeamCreate {
+// SetDeletedAt sets the "deleted_at" field.
+func (tc *TeamCreate) SetDeletedAt(t time.Time) *TeamCreate {
+	tc.mutation.SetDeletedAt(t)
+	return tc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (tc *TeamCreate) SetNillableDeletedAt(t *time.Time) *TeamCreate {
 	if t != nil {
-		tc.SetUpdatedAt(*t)
+		tc.SetDeletedAt(*t)
 	}
 	return tc
 }
@@ -169,6 +167,12 @@ func (tc *TeamCreate) check() error {
 	if _, ok := tc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Team.name"`)}
 	}
+	if _, ok := tc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Team.created_at"`)}
+	}
+	if _, ok := tc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Team.updated_at"`)}
+	}
 	return nil
 }
 
@@ -228,6 +232,10 @@ func (tc *TeamCreate) createSpec() (*Team, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.UpdatedAt(); ok {
 		_spec.SetField(team.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := tc.mutation.DeletedAt(); ok {
+		_spec.SetField(team.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
 	}
 	if nodes := tc.mutation.MatchesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

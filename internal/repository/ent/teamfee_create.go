@@ -52,24 +52,22 @@ func (tfc *TeamFeeCreate) SetCreatedAt(t time.Time) *TeamFeeCreate {
 	return tfc
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (tfc *TeamFeeCreate) SetNillableCreatedAt(t *time.Time) *TeamFeeCreate {
-	if t != nil {
-		tfc.SetCreatedAt(*t)
-	}
-	return tfc
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (tfc *TeamFeeCreate) SetUpdatedAt(t time.Time) *TeamFeeCreate {
 	tfc.mutation.SetUpdatedAt(t)
 	return tfc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (tfc *TeamFeeCreate) SetNillableUpdatedAt(t *time.Time) *TeamFeeCreate {
+// SetDeletedAt sets the "deleted_at" field.
+func (tfc *TeamFeeCreate) SetDeletedAt(t time.Time) *TeamFeeCreate {
+	tfc.mutation.SetDeletedAt(t)
+	return tfc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (tfc *TeamFeeCreate) SetNillableDeletedAt(t *time.Time) *TeamFeeCreate {
 	if t != nil {
-		tfc.SetUpdatedAt(*t)
+		tfc.SetDeletedAt(*t)
 	}
 	return tfc
 }
@@ -119,6 +117,12 @@ func (tfc *TeamFeeCreate) check() error {
 	}
 	if _, ok := tfc.mutation.PaymentDate(); !ok {
 		return &ValidationError{Name: "payment_date", err: errors.New(`ent: missing required field "TeamFee.payment_date"`)}
+	}
+	if _, ok := tfc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "TeamFee.created_at"`)}
+	}
+	if _, ok := tfc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "TeamFee.updated_at"`)}
 	}
 	return nil
 }
@@ -171,6 +175,10 @@ func (tfc *TeamFeeCreate) createSpec() (*TeamFee, *sqlgraph.CreateSpec) {
 	if value, ok := tfc.mutation.UpdatedAt(); ok {
 		_spec.SetField(teamfee.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := tfc.mutation.DeletedAt(); ok {
+		_spec.SetField(teamfee.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
 	}
 	return _node, _spec
 }
