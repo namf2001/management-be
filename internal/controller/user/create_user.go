@@ -9,7 +9,7 @@ import (
 )
 
 // CreateUser creates a new user account
-func (i impl) CreateUser(ctx context.Context, username, email, password string) (model.User, error) {
+func (i impl) CreateUser(ctx context.Context, username, email, password, fullName string) (model.User, error) {
 	// Hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
@@ -18,7 +18,7 @@ func (i impl) CreateUser(ctx context.Context, username, email, password string) 
 
 	// Create the user
 	userRepo := i.repo.User()
-	user, err := userRepo.CreateUser(ctx, username, email, string(hashedPassword))
+	user, err := userRepo.CreateUser(ctx, username, email, string(hashedPassword), fullName)
 	if err != nil {
 		return model.User{}, err
 	}

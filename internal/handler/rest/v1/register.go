@@ -9,12 +9,14 @@ type RegisterRequest struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
 	Email    string `json:"email" binding:"required,email"`
+	FullName string `json:"full_name"`
 }
 
 type RegisterResponse struct {
 	ID       int    `json:"id"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
+	FullName string `json:"full_name"`
 }
 
 func (h Handler) Register(ctx *gin.Context) {
@@ -24,7 +26,7 @@ func (h Handler) Register(ctx *gin.Context) {
 		return
 	}
 
-	user, err := h.userCtrl.CreateUser(ctx.Request.Context(), req.Username, req.Email, req.Password)
+	user, err := h.userCtrl.CreateUser(ctx.Request.Context(), req.Username, req.Email, req.Password, req.FullName)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -39,6 +41,7 @@ func (h Handler) Register(ctx *gin.Context) {
 		ID:       userFound.ID,
 		Username: userFound.Username,
 		Email:    userFound.Email,
+		FullName: userFound.FullName,
 	}
 
 	ctx.JSON(http.StatusCreated, response)

@@ -20,5 +20,6 @@ func (i impl) GetUserByUsername(ctx context.Context, username string) (model.Use
 		ID:       foundUser.ID,
 		Username: foundUser.Username,
 		Email:    foundUser.Email,
+		FullName: foundUser.FullName,
 	}, nil
 }

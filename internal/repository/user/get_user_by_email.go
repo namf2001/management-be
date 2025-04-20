@@ -18,5 +18,6 @@ func (i impl) GetUserByEmail(ctx context.Context, email string) (model.User, err
 		ID:       foundUser.ID,
 		Username: foundUser.Username,
 		Email:    foundUser.Email,
+		FullName: foundUser.FullName,
 	}, nil
 }
