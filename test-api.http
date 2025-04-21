@@ -30,3 +30,14 @@ Content-Type: application/json
 }
 
 ###
+### Change Password
+POST http://localhost:8000/api/users/change-password
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1OTcsImlhdCI6MTc0NTIxOTE5NywidXNlcl9pZCI6NDF9.Io_cS5fYUJN8lxOMlzxlmIvay_1ASkRhRhN1j3-RzVc
+
+{
+  "current_password": "password123",
+  "new_password": "newpassword123"
+}
+
+###

@@ -18,6 +18,7 @@ func (i impl) GetUserByID(ctx context.Context, id int) (model.User, error) {
 		ID:       user.ID,
 		Username: user.Username,
 		Email:    user.Email,
+		Password: user.Password,
 		FullName: user.FullName,
 	}, nil
 }

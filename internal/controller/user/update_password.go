@@ -35,6 +35,6 @@ func (i impl) UpdatePassword(ctx context.Context, userID int, currentPassword, n
 	if err != nil {
 		return err
 	}
-	// For now, we'll just return a placeholder error
-	return pkgerrors.WithStack(ErrPasswordUpdate)
+
+	return nil
 }
