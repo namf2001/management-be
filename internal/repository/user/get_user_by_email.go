@@ -11,7 +11,7 @@ import (
 func (i impl) GetUserByEmail(ctx context.Context, email string) (model.User, error) {
 	foundUser, err := i.entClient.User.Query().Where(user.EmailEQ(email)).Only(ctx)
 	if err != nil {
-		return model.User{}, pkgerrors.WithStack(ErrDatabase)
+		return model.User{}, pkgerrors.WithStack(err)
 	}
 
 	return model.User{

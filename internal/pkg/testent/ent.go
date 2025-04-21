@@ -4,9 +4,11 @@ import (
 	"context"
 	sqlconn "database/sql"
 	"errors"
+	"fmt"
 	"management-be/internal/pkg/config"
 	"management-be/internal/repository/ent"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -24,9 +26,39 @@ var appEntClient *ent.Client
 // and will be rolled back (so no data is actually written into the database)
 func WithEntTx(t *testing.T, callback func(tx *ent.Tx)) {
 	if appEntClient == nil {
-		var err error
+		// Manually set environment variables for testing
+		os.Setenv("DB_HOST", "localhost")
+		os.Setenv("DB_PORT", "5432")
+		os.Setenv("DB_USER", "management-football")
+		os.Setenv("DB_PASSWORD", "management-football")
+		os.Setenv("DB_NAME", "management-football")
+		os.Setenv("DB_SCHEMA", "public")
+
 		// Replace with your actual database connection string
-		drv, err := sql.Open(dialect.Postgres, os.Getenv("PG_URL"))
+		pgURL := os.Getenv("PG_URL")
+		if pgURL == "" {
+			// Construct the connection string from individual environment variables
+			host := os.Getenv("DB_HOST")
+			port := os.Getenv("DB_PORT")
+			user := os.Getenv("DB_USER")
+			password := os.Getenv("DB_PASSWORD")
+			dbname := os.Getenv("DB_NAME")
+			schema := os.Getenv("DB_SCHEMA")
+
+			pgURL = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s",
+				user, password, host, port, dbname, schema)
+		}
+
+		// Ensure sslmode=disable is set
+		if !strings.Contains(pgURL, "sslmode=") {
+			if strings.Contains(pgURL, "?") {
+				pgURL += "&sslmode=disable"
+			} else {
+				pgURL += "?sslmode=disable"
+			}
+		}
+
+		drv, err := sql.Open(dialect.Postgres, pgURL)
 
 		// Create an ent.Client with the driver.
 		appEntClient = ent.NewClient(ent.Driver(drv))

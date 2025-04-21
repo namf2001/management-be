@@ -19,4 +19,6 @@ var (
 	ErrHashingPassword        = errors.New("error hashing password")
 	ErrTokenGeneration        = errors.New("error generating token")
 	ErrPasswordUpdate         = errors.New("error updating password")
+	ErrInvalidCredentials     = errors.New("invalid username or password")
+	ErrUserNotFound           = errors.New("user not found")
 )

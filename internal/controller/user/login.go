@@ -5,15 +5,11 @@ import (
 	"errors"
 	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
-)
-
-var (
-	ErrInvalidCredentials = errors.New("invalid username or password")
-	ErrUserNotFound       = errors.New("user not found")
 )
 
 // Login authenticates a user and returns a JWT token
@@ -43,13 +39,21 @@ func (i impl) Login(ctx context.Context, username, password string) (string, mod
 
 // generateJWT creates a new JWT token for the given user ID
 func generateJWT(userID int) (string, error) {
-	// In a real implementation, you would get the secret from environment variables
-	secret := []byte("your-secret-key")
+	// Get the secret from environment variables
+	secret := []byte(os.Getenv("JWT_SECRET"))
+
+	// Parse expiration time from environment variable
+	expStr := os.Getenv("JWT_EXPIRATION")
+	expDuration, err := parseExpiration(expStr)
+	if err != nil {
+		// Default to 24 hours if parsing fails
+		expDuration = time.Hour * 24
+	}
 
 	// Create the Claims
 	claims := jwt.MapClaims{
 		"user_id": userID,
-		"exp":     time.Now().Add(time.Hour * 24).Unix(), // 24 hour expiration
+		"exp":     time.Now().Add(expDuration).Unix(),
 		"iat":     time.Now().Unix(),
 	}
 
@@ -63,4 +67,9 @@ func generateJWT(userID int) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+// parseExpiration parses the expiration time string (e.g., "24h") into a time.Duration
+func parseExpiration(expStr string) (time.Duration, error) {
+	return time.ParseDuration(expStr)
 }

@@ -25,7 +25,7 @@ api-pg-migrate-down:
 	${COMPOSE} run --rm pg-migrate -path=/api-migrations -database="postgres://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable" drop
 api-gen-models:
 	-${DOCKER_BIN} rm -f ${PROJECT_NAME}-api-local 2>/dev/null || true
-	${API_COMPOSE} sh -c 'cd ./internal/repository && entimport -dsn "postgres://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable" && ent generate --feature sql/execquery ./ent/schema'
+	${API_COMPOSE} sh -c 'cd ./internal/repository && rm -f ./ent/schema/*.go && entimport -dsn "postgres://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable"'
 api-go-generate:
 	-${DOCKER_BIN} rm -f ${PROJECT_NAME}-api-local 2>/dev/null || true
 	${API_COMPOSE} sh -c "go generate ./..."

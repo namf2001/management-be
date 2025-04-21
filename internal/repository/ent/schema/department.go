@@ -14,7 +14,7 @@ type Department struct {
 }
 
 func (Department) Fields() []ent.Field {
-	return []ent.Field{field.Int("id"), field.String("name"), field.String("description"), field.Time("created_at"), field.Time("updated_at"), field.Time("deleted_at").Optional()}
+	return []ent.Field{field.Int("id"), field.String("name").Unique(), field.String("description"), field.Time("created_at"), field.Time("updated_at"), field.Time("deleted_at").Optional()}
 }
 func (Department) Edges() []ent.Edge {
 	return []ent.Edge{edge.To("players", Player.Type)}

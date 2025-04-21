@@ -11,19 +11,22 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetUserByID(t *testing.T) {
+func TestUpdatePassword(t *testing.T) {
 	type args struct {
-		userID int
-		expErr error
+		userID         int
+		hashedPassword string
+		expErr         error
 	}
 
 	tcs := map[string]args{
 		"success": {
-			userID: 0, // Will be set dynamically
+			userID:         0, // Will be set dynamically
+			hashedPassword: "newpassword123",
 		},
 		"err - user not found": {
-			userID: 999, // Non-existent user ID
-			expErr: ErrDatabase,
+			userID:         999, // Non-existent user ID
+			hashedPassword: "newpassword123",
+			expErr:         ErrUserNotFoundByID,
 		},
 	}
 
@@ -40,17 +43,18 @@ func TestGetUserByID(t *testing.T) {
 				}
 
 				repo := NewRepository(tx.Client())
-				user, err := repo.GetUserByID(context.Background(), tc.userID)
+				err := repo.UpdatePassword(context.Background(), tc.userID, tc.hashedPassword)
 
 				// then
 				if tc.expErr != nil {
 					require.ErrorIs(t, err, tc.expErr)
 				} else {
 					require.NoError(t, err)
-					require.Equal(t, tc.userID, user.ID)
-					require.Equal(t, "admintest", user.Username)
-					require.Equal(t, "admintest@gmail.com", user.Email)
-					require.Equal(t, "Admin Test User", user.FullName)
+
+					// Verify the password was updated
+					updatedUser, err := tx.Client().User.Get(context.Background(), tc.userID)
+					require.NoError(t, err)
+					require.Equal(t, tc.hashedPassword, updatedUser.Password)
 				}
 			})
 		})

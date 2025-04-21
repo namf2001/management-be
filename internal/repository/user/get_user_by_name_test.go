@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"errors"
 	"testing"
 
 	"management-be/internal/pkg/testent"
@@ -11,19 +10,19 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetByEmail(t *testing.T) {
+func TestGetUserByUsername(t *testing.T) {
 	type args struct {
-		givenEmail string
-		expErr     error
+		givenUsername string
+		expErr        error
 	}
 
 	tcs := map[string]args{
 		"success": {
-			givenEmail: "admintest@gmail.com",
+			givenUsername: "admintest",
 		},
 		"err - user not found": {
-			givenEmail: "admintest10@gmail.com",
-			expErr:     errors.New("ent: user not found"),
+			givenUsername: "nonexistentuser",
+			expErr:        ErrUserNotFoundByUsername,
 		},
 	}
 
@@ -32,13 +31,14 @@ func TestGetByEmail(t *testing.T) {
 			testent.WithEntTx(t, func(tx *ent.Tx) {
 				testent.LoadTestSQLFile(t, tx, "testdata/insert_user.sql")
 				repo := NewRepository(tx.Client())
-				_, err := repo.GetUserByEmail(context.Background(), tc.givenEmail)
+				user, err := repo.GetUserByUsername(context.Background(), tc.givenUsername)
 
 				// then
 				if tc.expErr != nil {
-					require.EqualError(t, err, tc.expErr.Error())
+					require.ErrorIs(t, err, tc.expErr)
 				} else {
 					require.NoError(t, err)
+					require.Equal(t, tc.givenUsername, user.Username)
 				}
 			})
 		})
