@@ -1,0 +1,36 @@
+### Create a new department
+POST http://localhost:8000/api/departments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1OTcsImlhdCI6MTc0NTIxOTE5NywidXNlcl9pZCI6NDF9.Io_cS5fYUJN8lxOMlzxlmIvay_1ASkRhRhN1j3-RzVc
+
+{
+  "name": "Engineering",
+  "description": "Software Engineering Department",
+  "manager_id": 1
+}
+
+###
+### Get department by ID
+GET http://localhost:8000/api/departments/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1OTcsImlhdCI6MTc0NTIxOTE5NywidXNlcl9pZCI6NDF9.Io_cS5fYUJN8lxOMlzxlmIvay_1ASkRhRhN1j3-RzVc
+
+###
+### Update department
+PUT http://localhost:8000/api/departments/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1OTcsImlhdCI6MTc0NTIxOTE5NywidXNlcl9pZCI6NDF9.Io_cS5fYUJN8lxOMlzxlmIvay_1ASkRhRhN1j3-RzVc
+
+{
+  "name": "Engineering Updated",
+  "description": "Updated Software Engineering Department",
+  "manager_id": 2
+}
+
+###
+### Delete department
+DELETE http://localhost:8000/api/departments/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1OTcsImlhdCI6MTc0NTIxOTE5NywidXNlcl9pZCI6NDF9.Io_cS5fYUJN8lxOMlzxlmIvay_1ASkRhRhN1j3-RzVc
+
+
+###
+

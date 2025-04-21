@@ -2,10 +2,11 @@ package user
 
 import (
 	"context"
-	pkgerrors "github.com/pkg/errors"
-	"management-be/internal/model"
 
+	pkgerrors "github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
+
+	"management-be/internal/model"
 )
 
 // CreateUser creates a new user account
