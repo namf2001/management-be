@@ -5,6 +5,7 @@ import (
 	"errors"
 	pkgerrors "github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
+	"management-be/internal/repository/ent"
 )
 
 // UpdatePassword changes a user's password
@@ -30,11 +31,15 @@ func (i impl) UpdatePassword(ctx context.Context, userID int, currentPassword, n
 		return pkgerrors.WithStack(ErrHashingPassword)
 	}
 
-	// Update the password
-	err = i.repo.User().UpdatePassword(ctx, userID, string(hashedPassword))
-	if err != nil {
-		return err
-	}
+	// Execute the update operation within a transaction
+	err = i.repo.WithTransaction(ctx, func(tx *ent.Tx) error {
+		// Update the password
+		err := i.repo.User().UpdatePassword(ctx, userID, string(hashedPassword))
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 
-	return nil
+	return err
 }

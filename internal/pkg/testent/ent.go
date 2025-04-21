@@ -2,20 +2,21 @@ package testent
 
 import (
 	"context"
-	sqlconn "database/sql"
 	"errors"
 	"fmt"
-	"management-be/internal/pkg/config"
-	"management-be/internal/repository/ent"
 	"os"
 	"strings"
 	"testing"
 	"time"
 
+	sqlconn "database/sql"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/require"
+
+	"management-be/internal/pkg/config"
+	"management-be/internal/repository/ent"
 )
 
 var appEntClient *ent.Client

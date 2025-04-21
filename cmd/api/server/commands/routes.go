@@ -5,6 +5,7 @@ import (
 	"management-be/internal/pkg/middleware/auth"
 	"net/http"
 
+	"management-be/internal/controller/department"
 	"management-be/internal/controller/user"
 	"management-be/internal/repository"
 
@@ -29,7 +30,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// Initialize repositories and controllers
 	repoRegistry := repository.NewRegistry(s.db.Client())
 	userController := user.NewController(repoRegistry)
-	handler := v1.NewHandler(userController)
+	departmentController := department.NewController(repoRegistry)
+	handler := v1.NewHandler(userController, departmentController)
 
 	// User routes
 	userGroup := r.Group("/api/users")
@@ -37,6 +39,16 @@ func (s *Server) RegisterRoutes() http.Handler {
 		userGroup.POST("/register", handler.Register)
 		userGroup.POST("/login", handler.Login)
 		userGroup.POST("/change-password", auth.JWTAuthMiddleware(), handler.ChangePassword)
+	}
+
+	// Department routes
+	departmentGroup := r.Group("/api/departments")
+	{
+		departmentGroup.GET("", auth.JWTAuthMiddleware(), handler.ListDepartments)
+		departmentGroup.GET("/:id", auth.JWTAuthMiddleware(), handler.GetDepartment)
+		departmentGroup.POST("", auth.JWTAuthMiddleware(), handler.CreateDepartment)
+		departmentGroup.PUT("/:id", auth.JWTAuthMiddleware(), handler.UpdateDepartment)
+		departmentGroup.DELETE("/:id", auth.JWTAuthMiddleware(), handler.DeleteDepartment)
 	}
 
 	return r

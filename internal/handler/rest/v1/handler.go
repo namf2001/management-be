@@ -1,13 +1,18 @@
 package v1
 
-import "management-be/internal/controller/user"
+import (
+	"management-be/internal/controller/department"
+	"management-be/internal/controller/user"
+)
 
 type Handler struct {
-	userCtrl user.Controller
+	userCtrl       user.Controller
+	departmentCtrl department.Controller
 }
 
-func NewHandler(userCtrl user.Controller) Handler {
+func NewHandler(userCtrl user.Controller, departmentCtrl department.Controller) Handler {
 	return Handler{
-		userCtrl: userCtrl,
+		userCtrl:       userCtrl,
+		departmentCtrl: departmentCtrl,
 	}
 }
