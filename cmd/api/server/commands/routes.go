@@ -2,6 +2,7 @@ package commands
 
 import (
 	v1 "management-be/internal/handler/rest/v1"
+	"management-be/internal/pkg/middleware/auth"
 	"net/http"
 
 	"management-be/internal/controller/user"
@@ -35,6 +36,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	{
 		userGroup.POST("/register", handler.Register)
 		userGroup.POST("/login", handler.Login)
+		userGroup.POST("/change-password", auth.JWTAuthMiddleware(), handler.ChangePassword)
 	}
 
 	return r
