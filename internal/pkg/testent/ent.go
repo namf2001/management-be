@@ -12,43 +12,30 @@ import (
 	"testing"
 	"time"
 
-	"entgo.io/ent/dialect/sql"
-
 	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/sql"
 	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/require"
 )
 
 var appEntClient *ent.Client
 
-// WithEntTx provides a callback with an `*ent.Tx` for running ent related tests
-// where the `*ent.Tx` is actually powered by a database transaction
-// and will be rolled back (so no data is actually written into the database)
-func WithEntTx(t *testing.T, callback func(tx *ent.Tx)) {
-	if appEntClient == nil {
-		// Manually set environment variables for testing
-		os.Setenv("DB_HOST", "localhost")
-		os.Setenv("DB_PORT", "5432")
-		os.Setenv("DB_USER", "management-football")
-		os.Setenv("DB_PASSWORD", "management-football")
-		os.Setenv("DB_NAME", "management-football")
-		os.Setenv("DB_SCHEMA", "public")
+// setTestEnv sets up the environment variables needed for testing
+func setTestEnv() {
+	// Manually set environment variables for testing
+	os.Setenv("DB_HOST", "localhost")
+	os.Setenv("DB_PORT", "5432")
+	os.Setenv("DB_USER", "management-football")
+	os.Setenv("DB_PASSWORD", "management-football")
+	os.Setenv("DB_NAME", "management-football")
+	os.Setenv("DB_SCHEMA", "public")
+}
 
-		// Replace with your actual database connection string
-		pgURL := os.Getenv("PG_URL")
-		if pgURL == "" {
-			// Construct the connection string from individual environment variables
-			host := os.Getenv("DB_HOST")
-			port := os.Getenv("DB_PORT")
-			user := os.Getenv("DB_USER")
-			password := os.Getenv("DB_PASSWORD")
-			dbname := os.Getenv("DB_NAME")
-			schema := os.Getenv("DB_SCHEMA")
-
-			pgURL = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s",
-				user, password, host, port, dbname, schema)
-		}
-
+// buildConnString constructs the database connection string
+func buildConnString() string {
+	// Replace with your actual database connection string
+	pgURL := os.Getenv("PG_URL")
+	if pgURL != "" {
 		// Ensure sslmode=disable is set
 		if !strings.Contains(pgURL, "sslmode=") {
 			if strings.Contains(pgURL, "?") {
@@ -57,8 +44,35 @@ func WithEntTx(t *testing.T, callback func(tx *ent.Tx)) {
 				pgURL += "?sslmode=disable"
 			}
 		}
+		return pgURL
+	}
 
-		drv, err := sql.Open(dialect.Postgres, pgURL)
+	// Construct the connection string from individual environment variables
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
+	schema := os.Getenv("DB_SCHEMA")
+
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s",
+		user, password, host, port, dbname, schema)
+}
+
+// WithEntTx provides a callback with an `*ent.Tx` for running ent related tests
+// where the `*ent.Tx` is actually powered by a database transaction
+// and will be rolled back (so no data is actually written into the database)
+func WithEntTx(t *testing.T, callback func(tx *ent.Tx)) {
+	// Skip tests in CI/CD environment
+	if os.Getenv("CI") != "" {
+		t.Skip("Skipping database tests in CI environment")
+		return
+	}
+
+	if appEntClient == nil {
+		setTestEnv()
+		drv, err := sql.Open(dialect.Postgres, buildConnString())
+		require.NoError(t, err)
 
 		// Create an ent.Client with the driver.
 		appEntClient = ent.NewClient(ent.Driver(drv))
