@@ -4,6 +4,7 @@ import (
 	"context"
 	"management-be/internal/repository/department"
 	"management-be/internal/repository/ent"
+	"management-be/internal/repository/player"
 	"management-be/internal/repository/team"
 	"management-be/internal/repository/user"
 )
@@ -20,6 +21,7 @@ type impl struct {
 	user       user.Repository
 	department department.Repository
 	team       team.Repository
+	player     player.Repository
 }
 
 func NewRegistry(entConn *ent.Client) Registry {
@@ -27,6 +29,7 @@ func NewRegistry(entConn *ent.Client) Registry {
 		entConn:    entConn,
 		user:       user.NewRepository(entConn),
 		department: department.NewRepository(entConn),
+		player:     player.NewRepository(entConn),
 		team:       team.NewRepository(entConn),
 	}
 }
@@ -41,6 +44,10 @@ func (i *impl) Department() department.Repository {
 
 func (i *impl) Team() team.Repository {
 	return i.team
+}
+
+func (i *impl) Player() player.Repository {
+	return i.player
 }
 
 // WithTransaction executes the given function within a transaction
