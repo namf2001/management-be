@@ -1,13 +1,16 @@
 package v1
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
+// LoginRequest represents the request body for user login
+// @name LoginRequest
 type LoginRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Username string `json:"username" binding:"required" example:"john_doe"`
+	Password string `json:"password" binding:"required" example:"password123"`
 }
 
 type UserResponse struct {
@@ -16,11 +19,24 @@ type UserResponse struct {
 	Email    string `json:"email"`
 }
 
+// LoginResponse represents the response body for user login
+// @name LoginResponse
 type LoginResponse struct {
-	Token string       `json:"token"`
+	Token string       `json:"token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
 	User  UserResponse `json:"user"`
 }
 
+// @Summary      Login user
+// @Description  Login user with username and password
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        credentials  body      LoginRequest  true  "User login credentials"
+// @Success      200         {object}  LoginResponse
+// @Failure      400         {object}  object{error=string}
+// @Failure      401         {object}  object{error=string}
+// @Failure      500         {object}  object{error=string}
+// @Router       /api/users/login [post]
 func (h Handler) Login(ctx *gin.Context) {
 	var req LoginRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {

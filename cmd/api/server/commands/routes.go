@@ -5,6 +5,7 @@ import (
 	v1 "management-be/internal/handler/rest/v1"
 	"management-be/internal/pkg/middleware/auth"
 	"net/http"
+	"time"
 
 	"management-be/internal/controller/department"
 	"management-be/internal/controller/team"
@@ -13,31 +14,50 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
-	r := gin.Default()
+	r := gin.New()
+	r.Use(gin.Logger(), gin.Recovery())
 
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"}, // Add your frontend URL
+	// CORS configuration
+	corsConfig := cors.Config{
+		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
-		AllowHeaders:     []string{"Accept", "Authorization", "Content-Type"},
-		AllowCredentials: true, // Enable cookies/auth
-	}))
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}
+	r.Use(cors.New(corsConfig))
 
+	// Middleware xử lý preflight OPTIONS
+	r.Use(func(c *gin.Context) {
+		if c.Request.Method == http.MethodOptions {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
+		c.Next()
+	})
+
+	// Swagger
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	// Health check & root
 	r.GET("/", s.HelloWorldHandler)
-
 	r.GET("/health", s.healthHandler)
 
-	// Initialize repositories and controllers
+	// Repositories & Controllers
 	repoRegistry := repository.NewRegistry(s.db.Client())
 	userController := user.NewController(repoRegistry)
 	departmentController := department.NewController(repoRegistry)
 	teamController := team.NewController(repoRegistry)
-	playersController := player.NewController(repoRegistry)
-	handler := v1.NewHandler(userController, departmentController, teamController, playersController)
+	playerController := player.NewController(repoRegistry)
+	handler := v1.NewHandler(userController, departmentController, teamController, playerController)
 
-	// User routes
+	// Routes with auth
 	userGroup := r.Group("/api/users")
 	{
 		userGroup.POST("/register", handler.Register)
@@ -45,25 +65,23 @@ func (s *Server) RegisterRoutes() http.Handler {
 		userGroup.POST("/change-password", auth.JWTAuthMiddleware(), handler.ChangePassword)
 	}
 
-	// Department routes
-	departmentGroup := r.Group("/api/departments")
+	departmentGroup := r.Group("/api/departments", auth.JWTAuthMiddleware())
 	{
-		departmentGroup.GET("", auth.JWTAuthMiddleware(), handler.ListDepartments)
-		departmentGroup.GET("/:id", auth.JWTAuthMiddleware(), handler.GetDepartment)
-		departmentGroup.POST("", auth.JWTAuthMiddleware(), handler.CreateDepartment)
-		departmentGroup.PUT("/:id", auth.JWTAuthMiddleware(), handler.UpdateDepartment)
-		departmentGroup.DELETE("/:id", auth.JWTAuthMiddleware(), handler.DeleteDepartment)
+		departmentGroup.GET("", handler.ListDepartments)
+		departmentGroup.GET("/:id", handler.GetDepartment)
+		departmentGroup.POST("", handler.CreateDepartment)
+		departmentGroup.PUT("/:id", handler.UpdateDepartment)
+		departmentGroup.DELETE("/:id", handler.DeleteDepartment)
 	}
 
-	// Team routes
-	teamGroup := r.Group("/api/teams")
+	teamGroup := r.Group("/api/teams", auth.JWTAuthMiddleware())
 	{
-		teamGroup.GET("", auth.JWTAuthMiddleware(), handler.ListTeams)
-		teamGroup.GET("/:id", auth.JWTAuthMiddleware(), handler.GetTeam)
-		teamGroup.POST("", auth.JWTAuthMiddleware(), handler.CreateTeam)
-		teamGroup.PUT("/:id", auth.JWTAuthMiddleware(), handler.UpdateTeam)
-		teamGroup.DELETE("/:id", auth.JWTAuthMiddleware(), handler.DeleteTeam)
-		teamGroup.GET("/:id/statistics", auth.JWTAuthMiddleware(), handler.GetTeamStatistics)
+		teamGroup.GET("", handler.ListTeams)
+		teamGroup.GET("/:id", handler.GetTeam)
+		teamGroup.POST("", handler.CreateTeam)
+		teamGroup.PUT("/:id", handler.UpdateTeam)
+		teamGroup.DELETE("/:id", handler.DeleteTeam)
+		teamGroup.GET("/:id/statistics", handler.GetTeamStatistics)
 	}
 
 	return r

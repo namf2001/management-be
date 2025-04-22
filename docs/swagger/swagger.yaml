@@ -1,0 +1,164 @@
+basePath: /
+definitions:
+  v1.LoginRequest:
+    properties:
+      password:
+        example: password123
+        type: string
+      username:
+        example: john_doe
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  v1.LoginResponse:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+      user:
+        $ref: '#/definitions/v1.UserResponse'
+    type: object
+  v1.RegisterRequest:
+    properties:
+      email:
+        example: john@example.com
+        type: string
+      full_name:
+        example: John Doe
+        type: string
+      password:
+        example: password123
+        type: string
+      username:
+        example: john_doe
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  v1.RegisterResponse:
+    properties:
+      email:
+        example: john@example.com
+        type: string
+      full_name:
+        example: John Doe
+        type: string
+      id:
+        example: 1
+        type: integer
+      username:
+        example: john_doe
+        type: string
+    type: object
+  v1.UserResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a management backend API server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Management BE API
+  version: "1.0"
+paths:
+  /api/users/login:
+    post:
+      consumes:
+      - application/json
+      description: Login user with username and password
+      parameters:
+      - description: User login credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/v1.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Login user
+      tags:
+      - users
+  /users/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with username, password, email and full name
+      parameters:
+      - description: User registration information
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/v1.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1.RegisterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Register a new user
+      tags:
+      - users
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
