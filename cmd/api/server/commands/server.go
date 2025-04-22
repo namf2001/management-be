@@ -7,9 +7,10 @@ import (
 	"strconv"
 	"time"
 
-	_ "github.com/joho/godotenv/autoload"
-
+	_ "management-be/docs/swagger"
 	"management-be/internal/database"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 type Server struct {

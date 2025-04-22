@@ -1,24 +1,40 @@
 package v1
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
+// RegisterRequest represents the request body for user registration
+// @name RegisterRequest
 type RegisterRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	Email    string `json:"email" binding:"required,email"`
-	FullName string `json:"full_name"`
+	Username string `json:"username" binding:"required" example:"john_doe"`
+	Password string `json:"password" binding:"required" example:"password123"`
+	Email    string `json:"email" binding:"required,email" example:"john@example.com"`
+	FullName string `json:"full_name" example:"John Doe"`
 }
 
+// RegisterResponse represents the response body for user registration
+// @name RegisterResponse
 type RegisterResponse struct {
-	ID       int    `json:"id"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	FullName string `json:"full_name"`
+	ID       int    `json:"id" example:"1"`
+	Username string `json:"username" example:"john_doe"`
+	Email    string `json:"email" example:"john@example.com"`
+	FullName string `json:"full_name" example:"John Doe"`
 }
 
+// Register
+// @Summary      Register a new user
+// @Description  Register a new user with username, password, email and full name
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        user  body      RegisterRequest  true  "User registration information"
+// @Success      201  {object}  RegisterResponse
+// @Failure      400  {object}  object{error=string}
+// @Failure      500  {object}  object{error=string}
+// @Router       /api/users/register [post]
 func (h Handler) Register(ctx *gin.Context) {
 	var req RegisterRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {

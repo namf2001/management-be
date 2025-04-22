@@ -1,4 +1,4 @@
-.PHONY: build-local-go-image api-setup api-run api-down api-pg-migrate-up api-pg-migrate-down api-gen-models api-go-generate api-gen-mocks pg all build run docker-run docker-down test itest clean watch db-seed workflow
+.PHONY: build-local-go-image api-setup api-run api-down api-pg-migrate-up api-pg-migrate-down api-gen-models api-go-generate api-gen-mocks pg all build run docker-run docker-down test itest clean watch db-seed workflow swagger-docs swagger-serve test-coverage
 
 DOCKER_BIN := docker
 PROJECT_NAME := management-football
@@ -7,6 +7,8 @@ DOCKER_BIN := docker
 
 COMPOSE := PROJECT_NAME=${PROJECT_NAME} ${DOCKER_COMPOSE_BIN} -f build/docker-compose.base.yaml -f build/docker-compose.local.yaml
 API_COMPOSE = ${COMPOSE} run --name ${PROJECT_NAME}-api-local --rm --service-ports -w /api api
+
+PORT_SWAGGER := 8080
 
 build-local-go-image:
 	${DOCKER_BIN} build -f build/local.go.Dockerfile -t ${PROJECT_NAME}-api-local:latest .
@@ -45,8 +47,6 @@ all: build test
 
 build:
 	@echo "Building..."
-
-
 	@go build -o main cmd/api/main.go
 
 # Run the application
@@ -73,17 +73,20 @@ docker-down:
 
 # Test the application
 test:
-	@echo "Testing..."
-	@go test ./... -v
+	@echo "Running tests..."
+	@go test -v ./...
+
 # Integrations Tests for the application
 itest:
 	@echo "Running integration tests..."
 	@go test ./internal/database -v
 
-# Clean the binary
+# Clean the binary and generated files
 clean:
 	@echo "Cleaning..."
 	@rm -f main
+	@rm -rf docs/swagger/*
+	@rm -f coverage.out coverage.html
 
 # Live Reload
 watch:
@@ -105,3 +108,20 @@ watch:
 # Workflow for setting up the entire project
 workflow: api-setup api-gen-models api-go-generate db-seed
 	@echo "Workflow completed successfully!"
+
+# Generate Swagger documentation
+swagger-docs:
+	@echo "Generating Swagger documentation..."
+	@~/go/bin/swag init -g swagger.go -o docs/swagger
+
+# Serve Swagger documentation (requires server to be running)
+swagger-serve:
+	@echo "Open Swagger UI in browser..."
+	@open http://localhost:$(PORT_SWAGGER)/swagger/index.html
+
+# Run tests with coverage
+test-coverage:
+	@echo "Running tests with coverage..."
+	@go test -v -coverprofile=coverage.out ./...
+	@go tool cover -html=coverage.out -o coverage.html
+	@open coverage.html
