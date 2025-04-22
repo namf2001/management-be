@@ -5,7 +5,7 @@ Get all opponent teams.
 
 ### Request
 ```http
-GET /teams
+GET /teams/page={page_number}&limit={page_size}
 Authorization: Bearer <token>
 ```
 
@@ -29,7 +29,13 @@ Authorization: Bearer <token>
                     "draws": "integer"
                 }
             }
-        ]
+        ],
+        "pagination": {
+            "current_page": "integer",
+            "total_pages": "integer",
+            "total_items": "integer",
+            "items_per_page": "integer"
+        }
     }
 }
 ```

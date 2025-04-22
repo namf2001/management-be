@@ -1,4 +1,4 @@
-.PHONY: build-local-go-image api-setup api-run api-down api-pg-migrate-up api-pg-migrate-down api-gen-models api-go-generate api-gen-mocks pg all build run docker-run docker-down test itest clean watch
+.PHONY: build-local-go-image api-setup api-run api-down api-pg-migrate-up api-pg-migrate-down api-gen-models api-go-generate api-gen-mocks pg all build run docker-run docker-down test itest clean watch db-seed
 
 DOCKER_BIN := docker
 PROJECT_NAME := management-football
@@ -23,6 +23,9 @@ api-pg-migrate-up:
 	${COMPOSE} run --rm pg-migrate -path=/api-migrations -database="postgres://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable" up
 api-pg-migrate-down:
 	${COMPOSE} run --rm pg-migrate -path=/api-migrations -database="postgres://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable" drop
+db-seed:
+	@echo "Seeding database with fake data..."
+	@go run data/seed/*.go
 api-gen-models:
 	-${DOCKER_BIN} rm -f ${PROJECT_NAME}-api-local 2>/dev/null || true
 	${API_COMPOSE} sh -c 'cd ./internal/repository && rm -f ./ent/schema/*.go && entimport -dsn "postgres://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable"'

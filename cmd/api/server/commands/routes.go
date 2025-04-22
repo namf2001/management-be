@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"management-be/internal/controller/department"
+	"management-be/internal/controller/team"
 	"management-be/internal/controller/user"
 	"management-be/internal/repository"
 
@@ -31,7 +32,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	repoRegistry := repository.NewRegistry(s.db.Client())
 	userController := user.NewController(repoRegistry)
 	departmentController := department.NewController(repoRegistry)
-	handler := v1.NewHandler(userController, departmentController)
+	teamController := team.NewController(repoRegistry)
+	handler := v1.NewHandler(userController, departmentController, teamController)
 
 	// User routes
 	userGroup := r.Group("/api/users")
@@ -49,6 +51,17 @@ func (s *Server) RegisterRoutes() http.Handler {
 		departmentGroup.POST("", auth.JWTAuthMiddleware(), handler.CreateDepartment)
 		departmentGroup.PUT("/:id", auth.JWTAuthMiddleware(), handler.UpdateDepartment)
 		departmentGroup.DELETE("/:id", auth.JWTAuthMiddleware(), handler.DeleteDepartment)
+	}
+
+	// Team routes
+	teamGroup := r.Group("/api/teams")
+	{
+		teamGroup.GET("", auth.JWTAuthMiddleware(), handler.ListTeams)
+		teamGroup.GET("/:id", auth.JWTAuthMiddleware(), handler.GetTeam)
+		teamGroup.POST("", auth.JWTAuthMiddleware(), handler.CreateTeam)
+		teamGroup.PUT("/:id", auth.JWTAuthMiddleware(), handler.UpdateTeam)
+		teamGroup.DELETE("/:id", auth.JWTAuthMiddleware(), handler.DeleteTeam)
+		teamGroup.GET("/:id/statistics", auth.JWTAuthMiddleware(), handler.GetTeamStatistics)
 	}
 
 	return r

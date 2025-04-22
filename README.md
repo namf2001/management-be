@@ -59,6 +59,11 @@ Rollback database migrations:
 make api-pg-migrate-down
 ```
 
+Seed the database with fake data:
+```bash
+make db-seed
+```
+
 ### Code Generation
 
 Generate models from the database:
@@ -81,6 +86,7 @@ make api-gen-mocks
 1. Create or modify migration files in `data/migrations/`
 2. Run `make api-setup` to set up the API environment
 3. Run `make api-pg-migrate-up` to apply the migrations to the database
-4. Run `make api-gen-models` to generate models from the database
-5. Run `make api-go-generate` to generate Go code
-6. Run `make api-run` to run the API service
+4. (Optional) Run `make db-seed` to seed the database with fake data for development and testing
+5. Run `make api-gen-models` to generate models from the database
+6. Run `make api-go-generate` to generate Go code
+7. Run `make api-run` to run the API service
