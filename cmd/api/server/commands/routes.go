@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"management-be/internal/controller/player"
 	v1 "management-be/internal/handler/rest/v1"
 	"management-be/internal/pkg/middleware/auth"
 	"net/http"
@@ -33,7 +34,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	userController := user.NewController(repoRegistry)
 	departmentController := department.NewController(repoRegistry)
 	teamController := team.NewController(repoRegistry)
-	handler := v1.NewHandler(userController, departmentController, teamController)
+	playersController := player.NewController(repoRegistry)
+	handler := v1.NewHandler(userController, departmentController, teamController, playersController)
 
 	// User routes
 	userGroup := r.Group("/api/users")

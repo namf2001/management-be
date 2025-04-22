@@ -4,7 +4,48 @@ import (
 	"context"
 	"log"
 	"management-be/internal/database"
+	"management-be/internal/repository/ent"
 )
+
+func deleteAllData(ctx context.Context, client *ent.Client) error {
+	log.Println("Deleting all existing data...")
+
+	// Delete in reverse order of dependencies
+	if _, err := client.PlayerStatistic.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.TeamFee.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.MatchPlayer.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.Match.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.Player.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.Team.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.User.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.Department.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	log.Println("Successfully deleted all existing data")
+	return nil
+}
 
 func main() {
 	log.Println("Starting database seeding...")
@@ -15,6 +56,11 @@ func main() {
 	defer db.Close()
 
 	ctx := context.Background()
+
+	// Delete all existing data before seeding
+	if err := deleteAllData(ctx, client); err != nil {
+		log.Fatalf("Failed to delete existing data: %v", err)
+	}
 
 	// Seed data in the correct order to respect foreign key constraints
 	if err := seedDepartments(ctx, client); err != nil {

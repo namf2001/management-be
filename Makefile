@@ -1,4 +1,4 @@
-.PHONY: build-local-go-image api-setup api-run api-down api-pg-migrate-up api-pg-migrate-down api-gen-models api-go-generate api-gen-mocks pg all build run docker-run docker-down test itest clean watch db-seed
+.PHONY: build-local-go-image api-setup api-run api-down api-pg-migrate-up api-pg-migrate-down api-gen-models api-go-generate api-gen-mocks pg all build run docker-run docker-down test itest clean watch db-seed workflow
 
 DOCKER_BIN := docker
 PROJECT_NAME := management-football
@@ -101,3 +101,7 @@ watch:
                 exit 1; \
             fi; \
         fi
+
+# Workflow for setting up the entire project
+workflow: api-setup api-gen-models api-go-generate db-seed
+	@echo "Workflow completed successfully!"
