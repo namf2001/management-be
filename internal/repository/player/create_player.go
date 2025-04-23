@@ -28,6 +28,14 @@ func (i impl) CreatePlayer(ctx context.Context, departmentID int, fullName, posi
 		return model.Player{}, err
 	}
 
+	var heightCM, weightKG *int32
+	if player.HeightCm != 0 {
+		heightCM = &player.HeightCm
+	}
+	if player.WeightKg != 0 {
+		weightKG = &player.WeightKg
+	}
+
 	// Convert ent.Player to model.Player
 	return model.Player{
 		ID:           player.ID,
@@ -36,8 +44,8 @@ func (i impl) CreatePlayer(ctx context.Context, departmentID int, fullName, posi
 		Position:     player.Position,
 		JerseyNumber: &player.JerseyNumber,
 		DateOfBirth:  &player.DateOfBirth,
-		HeightCM:     &player.HeightCm,
-		WeightKG:     &player.WeightKg,
+		HeightCM:     heightCM,
+		WeightKG:     weightKG,
 		Phone:        player.Phone,
 		Email:        player.Email,
 		IsActive:     player.IsActive,

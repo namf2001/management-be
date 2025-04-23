@@ -1,0 +1,7 @@
+ALTER TABLE "matches"
+ALTER COLUMN "our_score" DROP NOT NULL,
+ALTER COLUMN "our_score" DROP DEFAULT;
+
+ALTER TABLE "matches"
+ALTER COLUMN "opponent_score" DROP NOT NULL,
+ALTER COLUMN "opponent_score" DROP DEFAULT;
