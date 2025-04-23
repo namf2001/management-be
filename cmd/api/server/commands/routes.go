@@ -1,21 +1,21 @@
 package commands
 
 import (
-	"management-be/internal/controller/player"
-	v1 "management-be/internal/handler/rest/v1"
-	"management-be/internal/pkg/middleware/auth"
 	"net/http"
 	"time"
-
-	"management-be/internal/controller/department"
-	"management-be/internal/controller/team"
-	"management-be/internal/controller/user"
-	"management-be/internal/repository"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+
+	"management-be/internal/controller/department"
+	"management-be/internal/controller/player"
+	"management-be/internal/controller/team"
+	"management-be/internal/controller/user"
+	v1 "management-be/internal/handler/rest/v1"
+	"management-be/internal/pkg/middleware/auth"
+	"management-be/internal/repository"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
