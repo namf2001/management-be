@@ -49,7 +49,7 @@ func (h Handler) GetTeamStatistics(ctx *gin.Context) {
 		recentForm = append(recentForm, gin.H{
 			"match_date": match.MatchDate.Format(time.RFC3339),
 			"result":     result,
-			"score":      strconv.Itoa(match.OurScore) + "-" + strconv.Itoa(match.OpponentScore),
+			"score":      strconv.Itoa(int(match.OurScore)) + "-" + strconv.Itoa(int(match.OpponentScore)),
 		})
 	}
 
@@ -66,8 +66,8 @@ func (h Handler) GetTeamStatistics(ctx *gin.Context) {
 	awayDraws := 0
 
 	for _, match := range stats.Matches {
-		goalsScored += match.OurScore
-		goalsConceded += match.OpponentScore
+		goalsScored += int(match.OurScore)
+		goalsConceded += int(match.OpponentScore)
 
 		// Determine home/away performance
 		if match.Venue == "home" {

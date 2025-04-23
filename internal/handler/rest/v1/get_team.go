@@ -51,12 +51,12 @@ func (h Handler) GetTeam(ctx *gin.Context) {
 	matches := make([]MatchResponse, len(stats.Matches))
 	for i, match := range stats.Matches {
 		matches[i] = MatchResponse{
-			MatchID:        match.MatchID,
-			MatchDate:      match.MatchDate.Format("2006-01-02T15:04:05Z07:00"),
-			Venue:          match.Venue,
-			OurScore:       match.OurScore,
-			OpponentScore:  match.OpponentScore,
-			Status:         match.Status,
+			MatchID:       match.ID,
+			MatchDate:     match.MatchDate.Format("2006-01-02T15:04:05Z07:00"),
+			Venue:         match.Venue,
+			OurScore:      match.OurScore,
+			OpponentScore: match.OpponentScore,
+			Status:        match.Status,
 		}
 	}
 

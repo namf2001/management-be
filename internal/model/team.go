@@ -22,15 +22,5 @@ type MatchHistory struct {
 	Wins         int     `json:"wins"`
 	Losses       int     `json:"losses"`
 	Draws        int     `json:"draws"`
-	Matches      []Match `json:"matches,omitempty"`
-}
-
-// Match represents a match in a team's history
-type Match struct {
-	MatchID        int       `json:"match_id"`
-	MatchDate      time.Time `json:"match_date"`
-	Venue          string    `json:"venue"`
-	OurScore       int       `json:"our_score"`
-	OpponentScore  int       `json:"opponent_score"`
-	Status         string    `json:"status"`
+	Matches      []Match `json:"match,omitempty"`
 }
