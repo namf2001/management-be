@@ -120,7 +120,7 @@ paths:
       summary: Login user
       tags:
       - users
-  /users/register:
+  /api/users/register:
     post:
       consumes:
       - application/json
