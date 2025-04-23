@@ -2,50 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"strings"
+
 	"management-be/internal/database"
 	"management-be/internal/repository/ent"
 )
-
-func deleteAllData(ctx context.Context, client *ent.Client) error {
-	log.Println("Deleting all existing data...")
-
-	// Delete in reverse order of dependencies
-	if _, err := client.PlayerStatistic.Delete().Exec(ctx); err != nil {
-		return err
-	}
-
-	if _, err := client.TeamFee.Delete().Exec(ctx); err != nil {
-		return err
-	}
-
-	if _, err := client.MatchPlayer.Delete().Exec(ctx); err != nil {
-		return err
-	}
-
-	if _, err := client.Match.Delete().Exec(ctx); err != nil {
-		return err
-	}
-
-	if _, err := client.Player.Delete().Exec(ctx); err != nil {
-		return err
-	}
-
-	if _, err := client.Team.Delete().Exec(ctx); err != nil {
-		return err
-	}
-
-	if _, err := client.User.Delete().Exec(ctx); err != nil {
-		return err
-	}
-
-	if _, err := client.Department.Delete().Exec(ctx); err != nil {
-		return err
-	}
-
-	log.Println("Successfully deleted all existing data")
-	return nil
-}
 
 func main() {
 	log.Println("Starting database seeding...")
@@ -96,4 +59,68 @@ func main() {
 	}
 
 	log.Println("Database seeding completed successfully!")
+}
+
+var tableSequences = []string{
+	"departments",
+	"users",
+	"teams",
+	"players",
+	"matches",
+	"match_players",
+	"team_fees",
+	"player_statistics",
+}
+
+func buildResetSequencesSQL() string {
+	var statements []string
+	for _, table := range tableSequences {
+		statements = append(statements, fmt.Sprintf("ALTER SEQUENCE %s_id_seq RESTART WITH 1", table))
+	}
+	return strings.Join(statements, ";\n") + ";"
+}
+
+func deleteAllData(ctx context.Context, client *ent.Client) error {
+	log.Println("Deleting all existing data...")
+
+	// Delete in reverse order of dependencies
+	if _, err := client.PlayerStatistic.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.TeamFee.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.MatchPlayer.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.Match.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.Player.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.Team.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.User.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	if _, err := client.Department.Delete().Exec(ctx); err != nil {
+		return err
+	}
+
+	// Reset all sequences to 1
+	if _, err := client.ExecContext(ctx, buildResetSequencesSQL()); err != nil {
+		return err
+	}
+
+	log.Println("Successfully deleted all existing data and reset ID sequences")
+	return nil
 }
