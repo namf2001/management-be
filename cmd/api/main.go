@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"management-be/cmd/api/server/commands"
 	"net/http"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"management-be/cmd/api/server/commands"
 )
 
 func gracefulShutdown(apiServer *http.Server, done chan bool) {

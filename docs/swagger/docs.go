@@ -91,7 +91,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/register": {
+        "/api/users/register": {
             "post": {
                 "description": "Register a new user with username, password, email and full name",
                 "consumes": [
