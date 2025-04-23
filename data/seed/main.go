@@ -43,7 +43,21 @@ func deleteAllData(ctx context.Context, client *ent.Client) error {
 		return err
 	}
 
-	log.Println("Successfully deleted all existing data")
+	// Reset all sequences to 1
+	if _, err := client.ExecContext(ctx, `
+		ALTER SEQUENCE departments_id_seq RESTART WITH 1;
+		ALTER SEQUENCE users_id_seq RESTART WITH 1;
+		ALTER SEQUENCE teams_id_seq RESTART WITH 1;
+		ALTER SEQUENCE players_id_seq RESTART WITH 1;
+		ALTER SEQUENCE matches_id_seq RESTART WITH 1;
+		ALTER SEQUENCE match_players_id_seq RESTART WITH 1;
+		ALTER SEQUENCE team_fees_id_seq RESTART WITH 1;
+		ALTER SEQUENCE player_statistics_id_seq RESTART WITH 1;
+	`); err != nil {
+		return err
+	}
+
+	log.Println("Successfully deleted all existing data and reset ID sequences")
 	return nil
 }
 
