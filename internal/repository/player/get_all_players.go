@@ -34,7 +34,7 @@ func (i impl) GetAllPlayers(ctx context.Context, page, limit int) ([]model.Playe
 			FullName:     player.FullName,
 			Position:     player.Position,
 			JerseyNumber: player.JerseyNumber,
-			DateOfBirth:  &player.DateOfBirth,
+			DateOfBirth:  player.DateOfBirth,
 			HeightCm:     player.HeightCm,
 			WeightKg:     player.WeightKg,
 			Phone:        player.Phone,

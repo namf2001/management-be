@@ -18,7 +18,7 @@ func (i impl) GetPlayerByID(ctx context.Context, id int) (model.Player, error) {
 		FullName:     player.FullName,
 		Position:     player.Position,
 		JerseyNumber: player.JerseyNumber,
-		DateOfBirth:  &player.DateOfBirth,
+		DateOfBirth:  player.DateOfBirth,
 		HeightCm:     player.HeightCm,
 		WeightKg:     player.WeightKg,
 		Phone:        player.Phone,

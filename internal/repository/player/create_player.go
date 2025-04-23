@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// CreatePlayer creates a new player with the provided details.
 func (i impl) CreatePlayer(ctx context.Context, departmentID int, fullName, position string, jerseyNumber int32, dateOfBirth time.Time, heightCm, weightKg int32, phone, email string, isActive bool) (model.Player, error) {
 	// Create player using ent client
 	player, err := i.entClient.Player.Create().
@@ -34,7 +35,7 @@ func (i impl) CreatePlayer(ctx context.Context, departmentID int, fullName, posi
 		FullName:     player.FullName,
 		Position:     player.Position,
 		JerseyNumber: player.JerseyNumber,
-		DateOfBirth:  &player.DateOfBirth,
+		DateOfBirth:  player.DateOfBirth,
 		HeightCm:     player.HeightCm,
 		WeightKg:     player.WeightKg,
 		Phone:        player.Phone,
