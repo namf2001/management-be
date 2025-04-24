@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"management-be/internal/controller/match"
 	"net/http"
 	"time"
 
@@ -55,7 +56,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	departmentController := department.NewController(repoRegistry)
 	teamController := team.NewController(repoRegistry)
 	playerController := player.NewController(repoRegistry)
-	handler := v1.NewHandler(userController, departmentController, teamController, playerController)
+	matchController := match.NewController(repoRegistry)
+	handler := v1.NewHandler(userController, departmentController, teamController, playerController, matchController)
 
 	// Routes with auth
 	userGroup := r.Group("/api/users")
