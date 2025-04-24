@@ -45,7 +45,7 @@ func TestUpdateDepartment(t *testing.T) {
 
 				// Record the time before update to verify updated_at is changed
 				beforeUpdate := time.Now()
-				time.Sleep(1 * time.Millisecond) // Ensure time difference
+				time.Sleep(10 * time.Millisecond) // Ensure time difference
 
 				repo := NewRepository(tx.Client())
 				department, err := repo.UpdateDepartment(context.Background(), tc.id, tc.name, tc.description)

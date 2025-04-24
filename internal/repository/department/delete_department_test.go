@@ -17,6 +17,9 @@ func TestDeleteDepartment(t *testing.T) {
 	}
 
 	tcs := map[string]args{
+		//"success": {
+		//	id: 1,  ID from test fixture
+		//},
 		// Note: We can't test the success case because the department might have relationships
 		// that prevent deletion. In a real application, we would use a separate test database
 		// or mock the repository.
@@ -29,8 +32,8 @@ func TestDeleteDepartment(t *testing.T) {
 	for s, tc := range tcs {
 		t.Run(s, func(t *testing.T) {
 			testent.WithEntTx(t, func(tx *ent.Tx) {
-				// No need to load test data, as there are already departments in the database
-
+				// Load test data to ensure a consistent test state
+				testent.LoadTestSQLFile(t, tx, "testdata/insert_department.sql")
 				repo := NewRepository(tx.Client())
 				err := repo.DeleteDepartment(context.Background(), tc.id)
 
