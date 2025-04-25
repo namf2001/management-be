@@ -1,0 +1,53 @@
+### List all matches
+GET http://localhost:8080/api/matches
+Authorization: Bearer {{token}}
+
+### Get match by ID
+GET http://localhost:8080/api/matches/1
+Authorization: Bearer {{token}}
+
+### Create new match
+POST http://localhost:8080/api/matches
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "team1Id": 1,
+    "team2Id": 2,
+    "date": "2024-04-25T10:00:00Z",
+    "location": "Stadium A",
+    "score1": 0,
+    "score2": 0
+}
+
+### Update match
+PUT http://localhost:8080/api/matches/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "team1Id": 1,
+    "team2Id": 2,
+    "date": "2024-04-25T10:00:00Z",
+    "location": "Stadium B",
+    "score1": 2,
+    "score2": 1
+}
+
+### Delete match
+DELETE http://localhost:8080/api/matches/1
+Authorization: Bearer {{token}}
+
+### Update match players
+PUT http://localhost:8080/api/matches/1/players
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "team1Players": [1, 2, 3],
+    "team2Players": [4, 5, 6]
+}
+
+### Get match statistics
+GET http://localhost:8080/api/matches/1/statistics
+Authorization: Bearer {{token}} 
