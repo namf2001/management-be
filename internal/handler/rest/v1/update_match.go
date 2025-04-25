@@ -1,7 +1,9 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
+	"management-be/internal/controller/match"
 	"net/http"
 	"strconv"
 	"time"
@@ -13,8 +15,8 @@ type UpdateMatchRequest struct {
 	MatchDate      time.Time `json:"match_date" binding:"required"`
 	Venue          string    `json:"venue" binding:"required"`
 	IsHomeGame     bool      `json:"is_home_game"`
-	OurScore       int       `json:"our_score"`
-	OpponentScore  int       `json:"opponent_score"`
+	OurScore       int32     `json:"our_score"`
+	OpponentScore  int32     `json:"opponent_score"`
 	Status         string    `json:"status" binding:"required"`
 	Notes          string    `json:"notes"`
 }
@@ -55,7 +57,7 @@ func (h Handler) UpdateMatch(ctx *gin.Context) {
 	}
 
 	// Call the controller
-	match, err := h.matchCtrl.UpdateMatch(
+	matchUpdate, err := h.matchCtrl.UpdateMatch(
 		ctx.Request.Context(),
 		id,
 		req.OpponentTeamID,
@@ -68,6 +70,14 @@ func (h Handler) UpdateMatch(ctx *gin.Context) {
 		req.Notes,
 	)
 	if err != nil {
+		if errors.Is(err, match.ErrMatchNotFound) {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"success": false,
+				"error":   "Match not found",
+			})
+			return
+		}
+		// Fallback to 500 for all other errors
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"error":   "Failed to update match",
@@ -77,15 +87,15 @@ func (h Handler) UpdateMatch(ctx *gin.Context) {
 
 	// Prepare response
 	response := UpdateMatchResponse{
-		ID:             match.ID,
-		OpponentTeamID: match.OpponentTeamID,
-		MatchDate:      match.MatchDate,
-		Venue:          match.Venue,
-		IsHomeGame:     match.IsHomeGame,
-		OurScore:       match.OurScore,
-		OpponentScore:  match.OpponentScore,
-		Status:         match.Status,
-		Notes:          match.Notes,
+		ID:             matchUpdate.ID,
+		OpponentTeamID: matchUpdate.OpponentTeamID,
+		MatchDate:      matchUpdate.MatchDate,
+		Venue:          matchUpdate.Venue,
+		IsHomeGame:     matchUpdate.IsHomeGame,
+		OurScore:       matchUpdate.OurScore,
+		OpponentScore:  matchUpdate.OpponentScore,
+		Status:         matchUpdate.Status,
+		Notes:          matchUpdate.Notes,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{

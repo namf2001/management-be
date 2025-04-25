@@ -18,7 +18,7 @@ type Controller interface {
 	// CreateManyMatches creates multiple matches at once
 	CreateManyMatches(ctx context.Context, matches []model.Match) ([]model.Match, error)
 	// UpdateMatch updates an existing match
-	UpdateMatch(ctx context.Context, id int, opponentTeamID int, matchDate time.Time, venue string, isHomeGame bool, ourScore, opponentScore int, status, notes string) (model.Match, error)
+	UpdateMatch(ctx context.Context, id int, opponentTeamID int, matchDate time.Time, venue string, isHomeGame bool, ourScore, opponentScore int32, status, notes string) (model.Match, error)
 	// DeleteMatch deletes a match by ID
 	DeleteMatch(ctx context.Context, id int) error
 	// UpdateMatchPlayers updates player participation in a match

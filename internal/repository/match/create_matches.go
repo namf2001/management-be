@@ -27,12 +27,6 @@ func (i impl) CreateManyMatches(ctx context.Context, matches []model.Match) ([]m
 			SetUpdatedAt(now)
 
 		// Set optional fields if they exist
-		if match.OurScore != 0 {
-			creators[idx].SetOurScore(match.OurScore)
-		}
-		if match.OpponentScore != 0 {
-			creators[idx].SetOpponentScore(match.OpponentScore)
-		}
 	}
 
 	// Use CreateBulk for efficient batch insertion

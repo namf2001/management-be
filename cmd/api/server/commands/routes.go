@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"management-be/internal/controller/match"
 	"net/http"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"management-be/internal/controller/department"
+	"management-be/internal/controller/match"
 	"management-be/internal/controller/player"
 	"management-be/internal/controller/team"
 	"management-be/internal/controller/user"
@@ -84,6 +84,18 @@ func (s *Server) RegisterRoutes() http.Handler {
 		teamGroup.PUT("/:id", handler.UpdateTeam)
 		teamGroup.DELETE("/:id", handler.DeleteTeam)
 		teamGroup.GET("/:id/statistics", handler.GetTeamStatistics)
+	}
+
+	matchGroup := r.Group("/api/matches", auth.JWTAuthMiddleware())
+	{
+		matchGroup.GET("", handler.ListMatches)
+		matchGroup.GET("/:id", handler.GetMatch)
+		matchGroup.POST("", handler.CreateMatch)
+		//matchGroup.POST("/batch", handler.CreateManyMatches)
+		matchGroup.PUT("/:id", handler.UpdateMatch)
+		matchGroup.DELETE("/:id", handler.DeleteMatch)
+		matchGroup.PUT("/:id/players", handler.UpdateMatchPlayers)
+		matchGroup.GET("/:id/statistics", handler.GetMatchStatistics)
 	}
 
 	return r

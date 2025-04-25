@@ -7,7 +7,7 @@ import (
 )
 
 // UpdateMatch updates an existing match with the provided details.
-func (i impl) UpdateMatch(ctx context.Context, id int, opponentTeamID int, matchDate time.Time, venue string, isHomeGame bool, ourScore, opponentScore int, status, notes string) (model.Match, error) {
+func (i impl) UpdateMatch(ctx context.Context, id int, opponentTeamID int, matchDate time.Time, venue string, isHomeGame bool, ourScore, opponentScore int32, status, notes string) (model.Match, error) {
 	now := time.Now()
 
 	match, err := i.entClient.Match.UpdateOneID(id).
@@ -15,8 +15,8 @@ func (i impl) UpdateMatch(ctx context.Context, id int, opponentTeamID int, match
 		SetMatchDate(matchDate).
 		SetVenue(venue).
 		SetIsHomeGame(isHomeGame).
-		SetOurScore(int32(ourScore)).
-		SetOpponentScore(int32(opponentScore)).
+		SetOurScore(ourScore).
+		SetOpponentScore(opponentScore).
 		SetStatus(status).
 		SetNotes(notes).
 		SetUpdatedAt(now).

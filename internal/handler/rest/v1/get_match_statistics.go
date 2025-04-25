@@ -1,7 +1,9 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
+	"management-be/internal/controller/match"
 	"net/http"
 	"strconv"
 )
@@ -51,6 +53,13 @@ func (h Handler) GetMatchStatistics(ctx *gin.Context) {
 	// Call the controller
 	stats, err := h.matchCtrl.GetMatchStatistics(ctx.Request.Context(), id)
 	if err != nil {
+		if errors.Is(err, match.ErrMatchNotFound) {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"success": false,
+				"error":   "Match not found",
+			})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"error":   "Failed to get match statistics",

@@ -1,7 +1,9 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
+	"management-be/internal/controller/match"
 	"management-be/internal/model"
 	"net/http"
 	"strconv"
@@ -67,10 +69,24 @@ func (h Handler) UpdateMatchPlayers(ctx *gin.Context) {
 	// Call the controller
 	err = h.matchCtrl.UpdateMatchPlayers(ctx.Request.Context(), id, matchPlayers)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"success": false,
-			"error":   "Failed to update match players",
-		})
+		// Handle specific error types
+		switch {
+		case errors.Is(err, match.ErrMatchNotFound):
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"success": false,
+				"error":   "Match not found",
+			})
+		case errors.Is(err, match.ErrInvalidPlayerData):
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"error":   "Invalid player data",
+			})
+		default:
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"error":   "Failed to update match players",
+			})
+		}
 		return
 	}
 

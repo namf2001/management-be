@@ -6,6 +6,7 @@ import (
 	"management-be/internal/repository/ent"
 	"management-be/internal/repository/match"
 	"management-be/internal/repository/player"
+	"management-be/internal/repository/player_statistics"
 	"management-be/internal/repository/team"
 	"management-be/internal/repository/team_fee"
 	"management-be/internal/repository/user"
@@ -18,28 +19,31 @@ type Registry interface {
 	Player() player.Repository
 	Match() match.Repository
 	TeamFee() team_fee.Repository
+	PlayerStatistics() player_statistics.Repository
 	WithTransaction(ctx context.Context, fn func(tx *ent.Tx) error) error
 }
 
 type impl struct {
-	entConn    *ent.Client
-	user       user.Repository
-	department department.Repository
-	team       team.Repository
-	player     player.Repository
-	match      match.Repository
-	teamFee    team_fee.Repository
+	entConn          *ent.Client
+	user             user.Repository
+	department       department.Repository
+	team             team.Repository
+	player           player.Repository
+	match            match.Repository
+	teamFee          team_fee.Repository
+	playerStatistics player_statistics.Repository
 }
 
 func NewRegistry(entConn *ent.Client) Registry {
 	return &impl{
-		entConn:    entConn,
-		user:       user.NewRepository(entConn),
-		department: department.NewRepository(entConn),
-		player:     player.NewRepository(entConn),
-		team:       team.NewRepository(entConn),
-		match:      match.NewRepository(entConn),
-		teamFee:    team_fee.NewRepository(entConn),
+		entConn:          entConn,
+		user:             user.NewRepository(entConn),
+		department:       department.NewRepository(entConn),
+		player:           player.NewRepository(entConn),
+		team:             team.NewRepository(entConn),
+		match:            match.NewRepository(entConn),
+		teamFee:          team_fee.NewRepository(entConn),
+		playerStatistics: player_statistics.NewRepository(entConn),
 	}
 }
 
@@ -57,6 +61,10 @@ func (i *impl) Team() team.Repository {
 
 func (i *impl) Player() player.Repository {
 	return i.player
+}
+
+func (i *impl) PlayerStatistics() player_statistics.Repository {
+	return i.playerStatistics
 }
 
 func (i *impl) Match() match.Repository {
