@@ -3,12 +3,12 @@ package match
 import (
 	"context"
 	"management-be/internal/model"
-	"management-be/internal/repository/ent"
+	"management-be/internal/repository"
 	"time"
 )
 
-// Repository defines the interface for team repository operations
-type Repository interface {
+// Controller defines the interface for match controller operations
+type Controller interface {
 	// ListMatches returns all matches with optional filters
 	ListMatches(ctx context.Context, status string, startDate, endDate time.Time, opponentTeamID int) ([]model.Match, error)
 	// GetMatch returns a match by ID with detailed information
@@ -19,8 +19,8 @@ type Repository interface {
 	CreateManyMatches(ctx context.Context, matches []model.Match) ([]model.Match, error)
 	// UpdateMatch updates an existing match
 	UpdateMatch(ctx context.Context, id int, opponentTeamID int, matchDate time.Time, venue string, isHomeGame bool, ourScore, opponentScore int32, status, notes string) (model.Match, error)
-	// DeleteMatchByID deletes a match by ID
-	DeleteMatchByID(ctx context.Context, id int) error
+	// DeleteMatch deletes a match by ID
+	DeleteMatch(ctx context.Context, id int) error
 	// UpdateMatchPlayers updates player participation in a match
 	UpdateMatchPlayers(ctx context.Context, matchID int, players []model.MatchPlayer) error
 	// GetMatchStatistics returns match statistics and summary
@@ -28,12 +28,12 @@ type Repository interface {
 }
 
 type impl struct {
-	entClient *ent.Client
+	repo repository.Registry
 }
 
-// NewRepository creates a new team repository
-func NewRepository(entClient *ent.Client) Repository {
+// NewController creates a new match controller
+func NewController(repo repository.Registry) Controller {
 	return &impl{
-		entClient: entClient,
+		repo: repo,
 	}
 }
