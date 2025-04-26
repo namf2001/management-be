@@ -1,23 +1,24 @@
-package v1
+package match
 
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"management-be/internal/handler/rest/v1/team"
 	"net/http"
 	"time"
 )
 
 // ListMatchesResponse represents the response for listing matches
 type ListMatchesResponse struct {
-	ID            int          `json:"id"`
-	OpponentTeam  TeamResponse `json:"opponent_team"`
-	MatchDate     time.Time    `json:"match_date"`
-	Venue         string       `json:"venue"`
-	IsHomeGame    bool         `json:"is_home_game"`
-	OurScore      int32        `json:"our_score,omitempty"`
-	OpponentScore int32        `json:"opponent_score,omitempty"`
-	Status        string       `json:"status"`
-	Notes         string       `json:"notes"`
+	ID            int               `json:"id"`
+	OpponentTeam  team.TeamResponse `json:"opponent_team"`
+	MatchDate     time.Time         `json:"match_date"`
+	Venue         string            `json:"venue"`
+	IsHomeGame    bool              `json:"is_home_game"`
+	OurScore      int32             `json:"our_score,omitempty"`
+	OpponentScore int32             `json:"opponent_score,omitempty"`
+	Status        string            `json:"status"`
+	Notes         string            `json:"notes"`
 }
 
 // ListMatches handles the request to list all matches with optional filters
@@ -91,7 +92,7 @@ func (h Handler) ListMatches(ctx *gin.Context) {
 	for _, match := range matches {
 		response = append(response, ListMatchesResponse{
 			ID: match.ID,
-			OpponentTeam: TeamResponse{
+			OpponentTeam: team.TeamResponse{
 				ID:          match.OpponentTeamID,
 				Name:        "", // Need to fetch team details
 				CompanyName: "",

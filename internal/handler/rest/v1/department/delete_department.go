@@ -1,4 +1,4 @@
-package v1
+package department
 
 import (
 	"github.com/gin-gonic/gin"
@@ -24,7 +24,7 @@ func (h Handler) DeleteDepartment(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
-			"error":   "Failed to delete department",
+			"error":   err.Error(),
 		})
 		return
 	}
