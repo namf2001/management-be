@@ -44,6 +44,18 @@ func (f MatchPlayerFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MatchPlayerMutation", m)
 }
 
+// The MatchesGatewayFunc type is an adapter to allow the use of ordinary
+// function as MatchesGateway mutator.
+type MatchesGatewayFunc func(context.Context, *ent.MatchesGatewayMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MatchesGatewayFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MatchesGatewayMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MatchesGatewayMutation", m)
+}
+
 // The PlayerFunc type is an adapter to allow the use of ordinary
 // function as Player mutator.
 type PlayerFunc func(context.Context, *ent.PlayerMutation) (ent.Value, error)

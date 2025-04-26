@@ -3,6 +3,7 @@
 package migrate
 
 import (
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/dialect/sql/schema"
 	"entgo.io/ent/schema/field"
 )
@@ -85,6 +86,31 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
+	}
+	// MatchesGatewayColumns holds the columns for the "matches_gateway" table.
+	MatchesGatewayColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "competition_name", Type: field.TypeString},
+		{Name: "season_start_date", Type: field.TypeTime},
+		{Name: "match_date", Type: field.TypeTime},
+		{Name: "home_team_name", Type: field.TypeString},
+		{Name: "home_team_short_name", Type: field.TypeString},
+		{Name: "home_team_logo", Type: field.TypeString},
+		{Name: "away_team_name", Type: field.TypeString},
+		{Name: "away_team_short_name", Type: field.TypeString},
+		{Name: "away_team_logo", Type: field.TypeString},
+		{Name: "home_score", Type: field.TypeInt32, Nullable: true},
+		{Name: "away_score", Type: field.TypeInt32, Nullable: true},
+		{Name: "status", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+	}
+	// MatchesGatewayTable holds the schema information for the "matches_gateway" table.
+	MatchesGatewayTable = &schema.Table{
+		Name:       "matches_gateway",
+		Columns:    MatchesGatewayColumns,
+		PrimaryKey: []*schema.Column{MatchesGatewayColumns[0]},
 	}
 	// PlayersColumns holds the columns for the "players" table.
 	PlayersColumns = []*schema.Column{
@@ -212,6 +238,7 @@ var (
 		DepartmentsTable,
 		MatchesTable,
 		MatchPlayersTable,
+		MatchesGatewayTable,
 		PlayersTable,
 		PlayerStatisticsTable,
 		SchemaMigrationsTable,
@@ -225,6 +252,9 @@ func init() {
 	MatchesTable.ForeignKeys[0].RefTable = TeamsTable
 	MatchPlayersTable.ForeignKeys[0].RefTable = MatchesTable
 	MatchPlayersTable.ForeignKeys[1].RefTable = PlayersTable
+	MatchesGatewayTable.Annotation = &entsql.Annotation{
+		Table: "matches_gateway",
+	}
 	PlayersTable.ForeignKeys[0].RefTable = DepartmentsTable
 	PlayerStatisticsTable.ForeignKeys[0].RefTable = PlayersTable
 }

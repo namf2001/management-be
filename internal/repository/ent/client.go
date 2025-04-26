@@ -13,6 +13,7 @@ import (
 
 	"management-be/internal/repository/ent/department"
 	"management-be/internal/repository/ent/match"
+	"management-be/internal/repository/ent/matchesgateway"
 	"management-be/internal/repository/ent/matchplayer"
 	"management-be/internal/repository/ent/player"
 	"management-be/internal/repository/ent/playerstatistic"
@@ -40,6 +41,8 @@ type Client struct {
 	Match *MatchClient
 	// MatchPlayer is the client for interacting with the MatchPlayer builders.
 	MatchPlayer *MatchPlayerClient
+	// MatchesGateway is the client for interacting with the MatchesGateway builders.
+	MatchesGateway *MatchesGatewayClient
 	// Player is the client for interacting with the Player builders.
 	Player *PlayerClient
 	// PlayerStatistic is the client for interacting with the PlayerStatistic builders.
@@ -66,6 +69,7 @@ func (c *Client) init() {
 	c.Department = NewDepartmentClient(c.config)
 	c.Match = NewMatchClient(c.config)
 	c.MatchPlayer = NewMatchPlayerClient(c.config)
+	c.MatchesGateway = NewMatchesGatewayClient(c.config)
 	c.Player = NewPlayerClient(c.config)
 	c.PlayerStatistic = NewPlayerStatisticClient(c.config)
 	c.SchemaMigration = NewSchemaMigrationClient(c.config)
@@ -167,6 +171,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Department:      NewDepartmentClient(cfg),
 		Match:           NewMatchClient(cfg),
 		MatchPlayer:     NewMatchPlayerClient(cfg),
+		MatchesGateway:  NewMatchesGatewayClient(cfg),
 		Player:          NewPlayerClient(cfg),
 		PlayerStatistic: NewPlayerStatisticClient(cfg),
 		SchemaMigration: NewSchemaMigrationClient(cfg),
@@ -195,6 +200,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Department:      NewDepartmentClient(cfg),
 		Match:           NewMatchClient(cfg),
 		MatchPlayer:     NewMatchPlayerClient(cfg),
+		MatchesGateway:  NewMatchesGatewayClient(cfg),
 		Player:          NewPlayerClient(cfg),
 		PlayerStatistic: NewPlayerStatisticClient(cfg),
 		SchemaMigration: NewSchemaMigrationClient(cfg),
@@ -230,8 +236,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Department, c.Match, c.MatchPlayer, c.Player, c.PlayerStatistic,
-		c.SchemaMigration, c.Team, c.TeamFee, c.User,
+		c.Department, c.Match, c.MatchPlayer, c.MatchesGateway, c.Player,
+		c.PlayerStatistic, c.SchemaMigration, c.Team, c.TeamFee, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -241,8 +247,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Department, c.Match, c.MatchPlayer, c.Player, c.PlayerStatistic,
-		c.SchemaMigration, c.Team, c.TeamFee, c.User,
+		c.Department, c.Match, c.MatchPlayer, c.MatchesGateway, c.Player,
+		c.PlayerStatistic, c.SchemaMigration, c.Team, c.TeamFee, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -257,6 +263,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Match.mutate(ctx, m)
 	case *MatchPlayerMutation:
 		return c.MatchPlayer.mutate(ctx, m)
+	case *MatchesGatewayMutation:
+		return c.MatchesGateway.mutate(ctx, m)
 	case *PlayerMutation:
 		return c.Player.mutate(ctx, m)
 	case *PlayerStatisticMutation:
@@ -750,6 +758,139 @@ func (c *MatchPlayerClient) mutate(ctx context.Context, m *MatchPlayerMutation) 
 		return (&MatchPlayerDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown MatchPlayer mutation op: %q", m.Op())
+	}
+}
+
+// MatchesGatewayClient is a client for the MatchesGateway schema.
+type MatchesGatewayClient struct {
+	config
+}
+
+// NewMatchesGatewayClient returns a client for the MatchesGateway from the given config.
+func NewMatchesGatewayClient(c config) *MatchesGatewayClient {
+	return &MatchesGatewayClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `matchesgateway.Hooks(f(g(h())))`.
+func (c *MatchesGatewayClient) Use(hooks ...Hook) {
+	c.hooks.MatchesGateway = append(c.hooks.MatchesGateway, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `matchesgateway.Intercept(f(g(h())))`.
+func (c *MatchesGatewayClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MatchesGateway = append(c.inters.MatchesGateway, interceptors...)
+}
+
+// Create returns a builder for creating a MatchesGateway entity.
+func (c *MatchesGatewayClient) Create() *MatchesGatewayCreate {
+	mutation := newMatchesGatewayMutation(c.config, OpCreate)
+	return &MatchesGatewayCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MatchesGateway entities.
+func (c *MatchesGatewayClient) CreateBulk(builders ...*MatchesGatewayCreate) *MatchesGatewayCreateBulk {
+	return &MatchesGatewayCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MatchesGatewayClient) MapCreateBulk(slice any, setFunc func(*MatchesGatewayCreate, int)) *MatchesGatewayCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MatchesGatewayCreateBulk{err: fmt.Errorf("calling to MatchesGatewayClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MatchesGatewayCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MatchesGatewayCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MatchesGateway.
+func (c *MatchesGatewayClient) Update() *MatchesGatewayUpdate {
+	mutation := newMatchesGatewayMutation(c.config, OpUpdate)
+	return &MatchesGatewayUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MatchesGatewayClient) UpdateOne(mg *MatchesGateway) *MatchesGatewayUpdateOne {
+	mutation := newMatchesGatewayMutation(c.config, OpUpdateOne, withMatchesGateway(mg))
+	return &MatchesGatewayUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MatchesGatewayClient) UpdateOneID(id int) *MatchesGatewayUpdateOne {
+	mutation := newMatchesGatewayMutation(c.config, OpUpdateOne, withMatchesGatewayID(id))
+	return &MatchesGatewayUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MatchesGateway.
+func (c *MatchesGatewayClient) Delete() *MatchesGatewayDelete {
+	mutation := newMatchesGatewayMutation(c.config, OpDelete)
+	return &MatchesGatewayDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MatchesGatewayClient) DeleteOne(mg *MatchesGateway) *MatchesGatewayDeleteOne {
+	return c.DeleteOneID(mg.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MatchesGatewayClient) DeleteOneID(id int) *MatchesGatewayDeleteOne {
+	builder := c.Delete().Where(matchesgateway.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MatchesGatewayDeleteOne{builder}
+}
+
+// Query returns a query builder for MatchesGateway.
+func (c *MatchesGatewayClient) Query() *MatchesGatewayQuery {
+	return &MatchesGatewayQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMatchesGateway},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MatchesGateway entity by its id.
+func (c *MatchesGatewayClient) Get(ctx context.Context, id int) (*MatchesGateway, error) {
+	return c.Query().Where(matchesgateway.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MatchesGatewayClient) GetX(ctx context.Context, id int) *MatchesGateway {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *MatchesGatewayClient) Hooks() []Hook {
+	return c.hooks.MatchesGateway
+}
+
+// Interceptors returns the client interceptors.
+func (c *MatchesGatewayClient) Interceptors() []Interceptor {
+	return c.inters.MatchesGateway
+}
+
+func (c *MatchesGatewayClient) mutate(ctx context.Context, m *MatchesGatewayMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MatchesGatewayCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MatchesGatewayUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MatchesGatewayUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MatchesGatewayDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown MatchesGateway mutation op: %q", m.Op())
 	}
 }
 
@@ -1634,12 +1775,12 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Department, Match, MatchPlayer, Player, PlayerStatistic, SchemaMigration, Team,
-		TeamFee, User []ent.Hook
+		Department, Match, MatchPlayer, MatchesGateway, Player, PlayerStatistic,
+		SchemaMigration, Team, TeamFee, User []ent.Hook
 	}
 	inters struct {
-		Department, Match, MatchPlayer, Player, PlayerStatistic, SchemaMigration, Team,
-		TeamFee, User []ent.Interceptor
+		Department, Match, MatchPlayer, MatchesGateway, Player, PlayerStatistic,
+		SchemaMigration, Team, TeamFee, User []ent.Interceptor
 	}
 )
 

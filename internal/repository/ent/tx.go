@@ -20,6 +20,8 @@ type Tx struct {
 	Match *MatchClient
 	// MatchPlayer is the client for interacting with the MatchPlayer builders.
 	MatchPlayer *MatchPlayerClient
+	// MatchesGateway is the client for interacting with the MatchesGateway builders.
+	MatchesGateway *MatchesGatewayClient
 	// Player is the client for interacting with the Player builders.
 	Player *PlayerClient
 	// PlayerStatistic is the client for interacting with the PlayerStatistic builders.
@@ -166,6 +168,7 @@ func (tx *Tx) init() {
 	tx.Department = NewDepartmentClient(tx.config)
 	tx.Match = NewMatchClient(tx.config)
 	tx.MatchPlayer = NewMatchPlayerClient(tx.config)
+	tx.MatchesGateway = NewMatchesGatewayClient(tx.config)
 	tx.Player = NewPlayerClient(tx.config)
 	tx.PlayerStatistic = NewPlayerStatisticClient(tx.config)
 	tx.SchemaMigration = NewSchemaMigrationClient(tx.config)

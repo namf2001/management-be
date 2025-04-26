@@ -15,6 +15,9 @@ type Match func(*sql.Selector)
 // MatchPlayer is the predicate function for matchplayer builders.
 type MatchPlayer func(*sql.Selector)
 
+// MatchesGateway is the predicate function for matchesgateway builders.
+type MatchesGateway func(*sql.Selector)
+
 // Player is the predicate function for player builders.
 type Player func(*sql.Selector)
 

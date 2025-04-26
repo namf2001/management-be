@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"management-be/internal/repository/ent/department"
 	"management-be/internal/repository/ent/match"
+	"management-be/internal/repository/ent/matchesgateway"
 	"management-be/internal/repository/ent/matchplayer"
 	"management-be/internal/repository/ent/player"
 	"management-be/internal/repository/ent/playerstatistic"
@@ -84,6 +85,7 @@ func checkColumn(table, column string) error {
 			department.Table:      department.ValidColumn,
 			match.Table:           match.ValidColumn,
 			matchplayer.Table:     matchplayer.ValidColumn,
+			matchesgateway.Table:  matchesgateway.ValidColumn,
 			player.Table:          player.ValidColumn,
 			playerstatistic.Table: playerstatistic.ValidColumn,
 			schemamigration.Table: schemamigration.ValidColumn,

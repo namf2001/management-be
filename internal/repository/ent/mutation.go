@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"management-be/internal/repository/ent/department"
 	"management-be/internal/repository/ent/match"
+	"management-be/internal/repository/ent/matchesgateway"
 	"management-be/internal/repository/ent/matchplayer"
 	"management-be/internal/repository/ent/player"
 	"management-be/internal/repository/ent/playerstatistic"
@@ -35,6 +36,7 @@ const (
 	TypeDepartment      = "Department"
 	TypeMatch           = "Match"
 	TypeMatchPlayer     = "MatchPlayer"
+	TypeMatchesGateway  = "MatchesGateway"
 	TypePlayer          = "Player"
 	TypePlayerStatistic = "PlayerStatistic"
 	TypeSchemaMigration = "SchemaMigration"
@@ -3029,6 +3031,1225 @@ func (m *MatchPlayerMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown MatchPlayer edge %s", name)
+}
+
+// MatchesGatewayMutation represents an operation that mutates the MatchesGateway nodes in the graph.
+type MatchesGatewayMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int
+	competition_name     *string
+	season_start_date    *time.Time
+	match_date           *time.Time
+	home_team_name       *string
+	home_team_short_name *string
+	home_team_logo       *string
+	away_team_name       *string
+	away_team_short_name *string
+	away_team_logo       *string
+	home_score           *int32
+	addhome_score        *int32
+	away_score           *int32
+	addaway_score        *int32
+	status               *string
+	created_at           *time.Time
+	updated_at           *time.Time
+	deleted_at           *time.Time
+	clearedFields        map[string]struct{}
+	done                 bool
+	oldValue             func(context.Context) (*MatchesGateway, error)
+	predicates           []predicate.MatchesGateway
+}
+
+var _ ent.Mutation = (*MatchesGatewayMutation)(nil)
+
+// matchesgatewayOption allows management of the mutation configuration using functional options.
+type matchesgatewayOption func(*MatchesGatewayMutation)
+
+// newMatchesGatewayMutation creates new mutation for the MatchesGateway entity.
+func newMatchesGatewayMutation(c config, op Op, opts ...matchesgatewayOption) *MatchesGatewayMutation {
+	m := &MatchesGatewayMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMatchesGateway,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMatchesGatewayID sets the ID field of the mutation.
+func withMatchesGatewayID(id int) matchesgatewayOption {
+	return func(m *MatchesGatewayMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MatchesGateway
+		)
+		m.oldValue = func(ctx context.Context) (*MatchesGateway, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MatchesGateway.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMatchesGateway sets the old MatchesGateway of the mutation.
+func withMatchesGateway(node *MatchesGateway) matchesgatewayOption {
+	return func(m *MatchesGatewayMutation) {
+		m.oldValue = func(context.Context) (*MatchesGateway, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MatchesGatewayMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MatchesGatewayMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of MatchesGateway entities.
+func (m *MatchesGatewayMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MatchesGatewayMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MatchesGatewayMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MatchesGateway.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCompetitionName sets the "competition_name" field.
+func (m *MatchesGatewayMutation) SetCompetitionName(s string) {
+	m.competition_name = &s
+}
+
+// CompetitionName returns the value of the "competition_name" field in the mutation.
+func (m *MatchesGatewayMutation) CompetitionName() (r string, exists bool) {
+	v := m.competition_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCompetitionName returns the old "competition_name" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldCompetitionName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCompetitionName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCompetitionName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCompetitionName: %w", err)
+	}
+	return oldValue.CompetitionName, nil
+}
+
+// ResetCompetitionName resets all changes to the "competition_name" field.
+func (m *MatchesGatewayMutation) ResetCompetitionName() {
+	m.competition_name = nil
+}
+
+// SetSeasonStartDate sets the "season_start_date" field.
+func (m *MatchesGatewayMutation) SetSeasonStartDate(t time.Time) {
+	m.season_start_date = &t
+}
+
+// SeasonStartDate returns the value of the "season_start_date" field in the mutation.
+func (m *MatchesGatewayMutation) SeasonStartDate() (r time.Time, exists bool) {
+	v := m.season_start_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSeasonStartDate returns the old "season_start_date" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldSeasonStartDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSeasonStartDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSeasonStartDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSeasonStartDate: %w", err)
+	}
+	return oldValue.SeasonStartDate, nil
+}
+
+// ResetSeasonStartDate resets all changes to the "season_start_date" field.
+func (m *MatchesGatewayMutation) ResetSeasonStartDate() {
+	m.season_start_date = nil
+}
+
+// SetMatchDate sets the "match_date" field.
+func (m *MatchesGatewayMutation) SetMatchDate(t time.Time) {
+	m.match_date = &t
+}
+
+// MatchDate returns the value of the "match_date" field in the mutation.
+func (m *MatchesGatewayMutation) MatchDate() (r time.Time, exists bool) {
+	v := m.match_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMatchDate returns the old "match_date" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldMatchDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMatchDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMatchDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMatchDate: %w", err)
+	}
+	return oldValue.MatchDate, nil
+}
+
+// ResetMatchDate resets all changes to the "match_date" field.
+func (m *MatchesGatewayMutation) ResetMatchDate() {
+	m.match_date = nil
+}
+
+// SetHomeTeamName sets the "home_team_name" field.
+func (m *MatchesGatewayMutation) SetHomeTeamName(s string) {
+	m.home_team_name = &s
+}
+
+// HomeTeamName returns the value of the "home_team_name" field in the mutation.
+func (m *MatchesGatewayMutation) HomeTeamName() (r string, exists bool) {
+	v := m.home_team_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHomeTeamName returns the old "home_team_name" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldHomeTeamName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHomeTeamName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHomeTeamName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHomeTeamName: %w", err)
+	}
+	return oldValue.HomeTeamName, nil
+}
+
+// ResetHomeTeamName resets all changes to the "home_team_name" field.
+func (m *MatchesGatewayMutation) ResetHomeTeamName() {
+	m.home_team_name = nil
+}
+
+// SetHomeTeamShortName sets the "home_team_short_name" field.
+func (m *MatchesGatewayMutation) SetHomeTeamShortName(s string) {
+	m.home_team_short_name = &s
+}
+
+// HomeTeamShortName returns the value of the "home_team_short_name" field in the mutation.
+func (m *MatchesGatewayMutation) HomeTeamShortName() (r string, exists bool) {
+	v := m.home_team_short_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHomeTeamShortName returns the old "home_team_short_name" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldHomeTeamShortName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHomeTeamShortName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHomeTeamShortName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHomeTeamShortName: %w", err)
+	}
+	return oldValue.HomeTeamShortName, nil
+}
+
+// ResetHomeTeamShortName resets all changes to the "home_team_short_name" field.
+func (m *MatchesGatewayMutation) ResetHomeTeamShortName() {
+	m.home_team_short_name = nil
+}
+
+// SetHomeTeamLogo sets the "home_team_logo" field.
+func (m *MatchesGatewayMutation) SetHomeTeamLogo(s string) {
+	m.home_team_logo = &s
+}
+
+// HomeTeamLogo returns the value of the "home_team_logo" field in the mutation.
+func (m *MatchesGatewayMutation) HomeTeamLogo() (r string, exists bool) {
+	v := m.home_team_logo
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHomeTeamLogo returns the old "home_team_logo" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldHomeTeamLogo(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHomeTeamLogo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHomeTeamLogo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHomeTeamLogo: %w", err)
+	}
+	return oldValue.HomeTeamLogo, nil
+}
+
+// ResetHomeTeamLogo resets all changes to the "home_team_logo" field.
+func (m *MatchesGatewayMutation) ResetHomeTeamLogo() {
+	m.home_team_logo = nil
+}
+
+// SetAwayTeamName sets the "away_team_name" field.
+func (m *MatchesGatewayMutation) SetAwayTeamName(s string) {
+	m.away_team_name = &s
+}
+
+// AwayTeamName returns the value of the "away_team_name" field in the mutation.
+func (m *MatchesGatewayMutation) AwayTeamName() (r string, exists bool) {
+	v := m.away_team_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAwayTeamName returns the old "away_team_name" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldAwayTeamName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAwayTeamName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAwayTeamName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAwayTeamName: %w", err)
+	}
+	return oldValue.AwayTeamName, nil
+}
+
+// ResetAwayTeamName resets all changes to the "away_team_name" field.
+func (m *MatchesGatewayMutation) ResetAwayTeamName() {
+	m.away_team_name = nil
+}
+
+// SetAwayTeamShortName sets the "away_team_short_name" field.
+func (m *MatchesGatewayMutation) SetAwayTeamShortName(s string) {
+	m.away_team_short_name = &s
+}
+
+// AwayTeamShortName returns the value of the "away_team_short_name" field in the mutation.
+func (m *MatchesGatewayMutation) AwayTeamShortName() (r string, exists bool) {
+	v := m.away_team_short_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAwayTeamShortName returns the old "away_team_short_name" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldAwayTeamShortName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAwayTeamShortName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAwayTeamShortName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAwayTeamShortName: %w", err)
+	}
+	return oldValue.AwayTeamShortName, nil
+}
+
+// ResetAwayTeamShortName resets all changes to the "away_team_short_name" field.
+func (m *MatchesGatewayMutation) ResetAwayTeamShortName() {
+	m.away_team_short_name = nil
+}
+
+// SetAwayTeamLogo sets the "away_team_logo" field.
+func (m *MatchesGatewayMutation) SetAwayTeamLogo(s string) {
+	m.away_team_logo = &s
+}
+
+// AwayTeamLogo returns the value of the "away_team_logo" field in the mutation.
+func (m *MatchesGatewayMutation) AwayTeamLogo() (r string, exists bool) {
+	v := m.away_team_logo
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAwayTeamLogo returns the old "away_team_logo" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldAwayTeamLogo(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAwayTeamLogo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAwayTeamLogo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAwayTeamLogo: %w", err)
+	}
+	return oldValue.AwayTeamLogo, nil
+}
+
+// ResetAwayTeamLogo resets all changes to the "away_team_logo" field.
+func (m *MatchesGatewayMutation) ResetAwayTeamLogo() {
+	m.away_team_logo = nil
+}
+
+// SetHomeScore sets the "home_score" field.
+func (m *MatchesGatewayMutation) SetHomeScore(i int32) {
+	m.home_score = &i
+	m.addhome_score = nil
+}
+
+// HomeScore returns the value of the "home_score" field in the mutation.
+func (m *MatchesGatewayMutation) HomeScore() (r int32, exists bool) {
+	v := m.home_score
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHomeScore returns the old "home_score" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldHomeScore(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHomeScore is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHomeScore requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHomeScore: %w", err)
+	}
+	return oldValue.HomeScore, nil
+}
+
+// AddHomeScore adds i to the "home_score" field.
+func (m *MatchesGatewayMutation) AddHomeScore(i int32) {
+	if m.addhome_score != nil {
+		*m.addhome_score += i
+	} else {
+		m.addhome_score = &i
+	}
+}
+
+// AddedHomeScore returns the value that was added to the "home_score" field in this mutation.
+func (m *MatchesGatewayMutation) AddedHomeScore() (r int32, exists bool) {
+	v := m.addhome_score
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearHomeScore clears the value of the "home_score" field.
+func (m *MatchesGatewayMutation) ClearHomeScore() {
+	m.home_score = nil
+	m.addhome_score = nil
+	m.clearedFields[matchesgateway.FieldHomeScore] = struct{}{}
+}
+
+// HomeScoreCleared returns if the "home_score" field was cleared in this mutation.
+func (m *MatchesGatewayMutation) HomeScoreCleared() bool {
+	_, ok := m.clearedFields[matchesgateway.FieldHomeScore]
+	return ok
+}
+
+// ResetHomeScore resets all changes to the "home_score" field.
+func (m *MatchesGatewayMutation) ResetHomeScore() {
+	m.home_score = nil
+	m.addhome_score = nil
+	delete(m.clearedFields, matchesgateway.FieldHomeScore)
+}
+
+// SetAwayScore sets the "away_score" field.
+func (m *MatchesGatewayMutation) SetAwayScore(i int32) {
+	m.away_score = &i
+	m.addaway_score = nil
+}
+
+// AwayScore returns the value of the "away_score" field in the mutation.
+func (m *MatchesGatewayMutation) AwayScore() (r int32, exists bool) {
+	v := m.away_score
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAwayScore returns the old "away_score" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldAwayScore(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAwayScore is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAwayScore requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAwayScore: %w", err)
+	}
+	return oldValue.AwayScore, nil
+}
+
+// AddAwayScore adds i to the "away_score" field.
+func (m *MatchesGatewayMutation) AddAwayScore(i int32) {
+	if m.addaway_score != nil {
+		*m.addaway_score += i
+	} else {
+		m.addaway_score = &i
+	}
+}
+
+// AddedAwayScore returns the value that was added to the "away_score" field in this mutation.
+func (m *MatchesGatewayMutation) AddedAwayScore() (r int32, exists bool) {
+	v := m.addaway_score
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearAwayScore clears the value of the "away_score" field.
+func (m *MatchesGatewayMutation) ClearAwayScore() {
+	m.away_score = nil
+	m.addaway_score = nil
+	m.clearedFields[matchesgateway.FieldAwayScore] = struct{}{}
+}
+
+// AwayScoreCleared returns if the "away_score" field was cleared in this mutation.
+func (m *MatchesGatewayMutation) AwayScoreCleared() bool {
+	_, ok := m.clearedFields[matchesgateway.FieldAwayScore]
+	return ok
+}
+
+// ResetAwayScore resets all changes to the "away_score" field.
+func (m *MatchesGatewayMutation) ResetAwayScore() {
+	m.away_score = nil
+	m.addaway_score = nil
+	delete(m.clearedFields, matchesgateway.FieldAwayScore)
+}
+
+// SetStatus sets the "status" field.
+func (m *MatchesGatewayMutation) SetStatus(s string) {
+	m.status = &s
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *MatchesGatewayMutation) Status() (r string, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldStatus(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *MatchesGatewayMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *MatchesGatewayMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *MatchesGatewayMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *MatchesGatewayMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MatchesGatewayMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MatchesGatewayMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MatchesGatewayMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *MatchesGatewayMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *MatchesGatewayMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the MatchesGateway entity.
+// If the MatchesGateway object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MatchesGatewayMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *MatchesGatewayMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[matchesgateway.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *MatchesGatewayMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[matchesgateway.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *MatchesGatewayMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, matchesgateway.FieldDeletedAt)
+}
+
+// Where appends a list predicates to the MatchesGatewayMutation builder.
+func (m *MatchesGatewayMutation) Where(ps ...predicate.MatchesGateway) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MatchesGatewayMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MatchesGatewayMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MatchesGateway, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MatchesGatewayMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MatchesGatewayMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MatchesGateway).
+func (m *MatchesGatewayMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MatchesGatewayMutation) Fields() []string {
+	fields := make([]string, 0, 15)
+	if m.competition_name != nil {
+		fields = append(fields, matchesgateway.FieldCompetitionName)
+	}
+	if m.season_start_date != nil {
+		fields = append(fields, matchesgateway.FieldSeasonStartDate)
+	}
+	if m.match_date != nil {
+		fields = append(fields, matchesgateway.FieldMatchDate)
+	}
+	if m.home_team_name != nil {
+		fields = append(fields, matchesgateway.FieldHomeTeamName)
+	}
+	if m.home_team_short_name != nil {
+		fields = append(fields, matchesgateway.FieldHomeTeamShortName)
+	}
+	if m.home_team_logo != nil {
+		fields = append(fields, matchesgateway.FieldHomeTeamLogo)
+	}
+	if m.away_team_name != nil {
+		fields = append(fields, matchesgateway.FieldAwayTeamName)
+	}
+	if m.away_team_short_name != nil {
+		fields = append(fields, matchesgateway.FieldAwayTeamShortName)
+	}
+	if m.away_team_logo != nil {
+		fields = append(fields, matchesgateway.FieldAwayTeamLogo)
+	}
+	if m.home_score != nil {
+		fields = append(fields, matchesgateway.FieldHomeScore)
+	}
+	if m.away_score != nil {
+		fields = append(fields, matchesgateway.FieldAwayScore)
+	}
+	if m.status != nil {
+		fields = append(fields, matchesgateway.FieldStatus)
+	}
+	if m.created_at != nil {
+		fields = append(fields, matchesgateway.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, matchesgateway.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, matchesgateway.FieldDeletedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MatchesGatewayMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case matchesgateway.FieldCompetitionName:
+		return m.CompetitionName()
+	case matchesgateway.FieldSeasonStartDate:
+		return m.SeasonStartDate()
+	case matchesgateway.FieldMatchDate:
+		return m.MatchDate()
+	case matchesgateway.FieldHomeTeamName:
+		return m.HomeTeamName()
+	case matchesgateway.FieldHomeTeamShortName:
+		return m.HomeTeamShortName()
+	case matchesgateway.FieldHomeTeamLogo:
+		return m.HomeTeamLogo()
+	case matchesgateway.FieldAwayTeamName:
+		return m.AwayTeamName()
+	case matchesgateway.FieldAwayTeamShortName:
+		return m.AwayTeamShortName()
+	case matchesgateway.FieldAwayTeamLogo:
+		return m.AwayTeamLogo()
+	case matchesgateway.FieldHomeScore:
+		return m.HomeScore()
+	case matchesgateway.FieldAwayScore:
+		return m.AwayScore()
+	case matchesgateway.FieldStatus:
+		return m.Status()
+	case matchesgateway.FieldCreatedAt:
+		return m.CreatedAt()
+	case matchesgateway.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case matchesgateway.FieldDeletedAt:
+		return m.DeletedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MatchesGatewayMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case matchesgateway.FieldCompetitionName:
+		return m.OldCompetitionName(ctx)
+	case matchesgateway.FieldSeasonStartDate:
+		return m.OldSeasonStartDate(ctx)
+	case matchesgateway.FieldMatchDate:
+		return m.OldMatchDate(ctx)
+	case matchesgateway.FieldHomeTeamName:
+		return m.OldHomeTeamName(ctx)
+	case matchesgateway.FieldHomeTeamShortName:
+		return m.OldHomeTeamShortName(ctx)
+	case matchesgateway.FieldHomeTeamLogo:
+		return m.OldHomeTeamLogo(ctx)
+	case matchesgateway.FieldAwayTeamName:
+		return m.OldAwayTeamName(ctx)
+	case matchesgateway.FieldAwayTeamShortName:
+		return m.OldAwayTeamShortName(ctx)
+	case matchesgateway.FieldAwayTeamLogo:
+		return m.OldAwayTeamLogo(ctx)
+	case matchesgateway.FieldHomeScore:
+		return m.OldHomeScore(ctx)
+	case matchesgateway.FieldAwayScore:
+		return m.OldAwayScore(ctx)
+	case matchesgateway.FieldStatus:
+		return m.OldStatus(ctx)
+	case matchesgateway.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case matchesgateway.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case matchesgateway.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown MatchesGateway field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MatchesGatewayMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case matchesgateway.FieldCompetitionName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCompetitionName(v)
+		return nil
+	case matchesgateway.FieldSeasonStartDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSeasonStartDate(v)
+		return nil
+	case matchesgateway.FieldMatchDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMatchDate(v)
+		return nil
+	case matchesgateway.FieldHomeTeamName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHomeTeamName(v)
+		return nil
+	case matchesgateway.FieldHomeTeamShortName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHomeTeamShortName(v)
+		return nil
+	case matchesgateway.FieldHomeTeamLogo:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHomeTeamLogo(v)
+		return nil
+	case matchesgateway.FieldAwayTeamName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAwayTeamName(v)
+		return nil
+	case matchesgateway.FieldAwayTeamShortName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAwayTeamShortName(v)
+		return nil
+	case matchesgateway.FieldAwayTeamLogo:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAwayTeamLogo(v)
+		return nil
+	case matchesgateway.FieldHomeScore:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHomeScore(v)
+		return nil
+	case matchesgateway.FieldAwayScore:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAwayScore(v)
+		return nil
+	case matchesgateway.FieldStatus:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case matchesgateway.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case matchesgateway.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case matchesgateway.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MatchesGateway field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MatchesGatewayMutation) AddedFields() []string {
+	var fields []string
+	if m.addhome_score != nil {
+		fields = append(fields, matchesgateway.FieldHomeScore)
+	}
+	if m.addaway_score != nil {
+		fields = append(fields, matchesgateway.FieldAwayScore)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MatchesGatewayMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case matchesgateway.FieldHomeScore:
+		return m.AddedHomeScore()
+	case matchesgateway.FieldAwayScore:
+		return m.AddedAwayScore()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MatchesGatewayMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case matchesgateway.FieldHomeScore:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddHomeScore(v)
+		return nil
+	case matchesgateway.FieldAwayScore:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAwayScore(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MatchesGateway numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MatchesGatewayMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(matchesgateway.FieldHomeScore) {
+		fields = append(fields, matchesgateway.FieldHomeScore)
+	}
+	if m.FieldCleared(matchesgateway.FieldAwayScore) {
+		fields = append(fields, matchesgateway.FieldAwayScore)
+	}
+	if m.FieldCleared(matchesgateway.FieldDeletedAt) {
+		fields = append(fields, matchesgateway.FieldDeletedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MatchesGatewayMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MatchesGatewayMutation) ClearField(name string) error {
+	switch name {
+	case matchesgateway.FieldHomeScore:
+		m.ClearHomeScore()
+		return nil
+	case matchesgateway.FieldAwayScore:
+		m.ClearAwayScore()
+		return nil
+	case matchesgateway.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown MatchesGateway nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MatchesGatewayMutation) ResetField(name string) error {
+	switch name {
+	case matchesgateway.FieldCompetitionName:
+		m.ResetCompetitionName()
+		return nil
+	case matchesgateway.FieldSeasonStartDate:
+		m.ResetSeasonStartDate()
+		return nil
+	case matchesgateway.FieldMatchDate:
+		m.ResetMatchDate()
+		return nil
+	case matchesgateway.FieldHomeTeamName:
+		m.ResetHomeTeamName()
+		return nil
+	case matchesgateway.FieldHomeTeamShortName:
+		m.ResetHomeTeamShortName()
+		return nil
+	case matchesgateway.FieldHomeTeamLogo:
+		m.ResetHomeTeamLogo()
+		return nil
+	case matchesgateway.FieldAwayTeamName:
+		m.ResetAwayTeamName()
+		return nil
+	case matchesgateway.FieldAwayTeamShortName:
+		m.ResetAwayTeamShortName()
+		return nil
+	case matchesgateway.FieldAwayTeamLogo:
+		m.ResetAwayTeamLogo()
+		return nil
+	case matchesgateway.FieldHomeScore:
+		m.ResetHomeScore()
+		return nil
+	case matchesgateway.FieldAwayScore:
+		m.ResetAwayScore()
+		return nil
+	case matchesgateway.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case matchesgateway.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case matchesgateway.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case matchesgateway.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown MatchesGateway field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MatchesGatewayMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MatchesGatewayMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MatchesGatewayMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MatchesGatewayMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MatchesGatewayMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MatchesGatewayMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MatchesGatewayMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown MatchesGateway unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MatchesGatewayMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown MatchesGateway edge %s", name)
 }
 
 // PlayerMutation represents an operation that mutates the Player nodes in the graph.
