@@ -23,5 +23,5 @@ func (i impl) DeleteDepartment(ctx context.Context, id int) error {
 		return nil
 	})
 
-	return nil
+	return err
 }
