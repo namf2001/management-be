@@ -11,7 +11,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1O
 
 ###
 ### Get department by ID check - ok
-GET http://localhost:8080/api/departments/1
+GET http://localhost:8080/api/departments/2
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
 
 ###
@@ -28,7 +28,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4N
 
 ###
 ### Delete department check - ok
-DELETE http://localhost:8080/api/departments/1
+DELETE http://localhost:8080/api/departments/6
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1OTcsImlhdCI6MTc0NTIxOTE5NywidXNlcl9pZCI6NDF9.Io_cS5fYUJN8lxOMlzxlmIvay_1ASkRhRhN1j3-RzVc
 
 

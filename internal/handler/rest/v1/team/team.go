@@ -1,4 +1,4 @@
-package v1
+package team
 
 import (
 	"management-be/internal/controller/team"
@@ -45,6 +45,6 @@ type MatchResponse struct {
 }
 
 // UpdateHandler to include team controller
-func (h *Handler) UpdateTeamController(teamCtrl team.Controller) {
+func (h Handler) UpdateTeamController(teamCtrl team.Controller) {
 	h.teamCtrl = teamCtrl
 }

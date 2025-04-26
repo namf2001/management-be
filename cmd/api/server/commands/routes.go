@@ -14,7 +14,10 @@ import (
 	"management-be/internal/controller/player"
 	"management-be/internal/controller/team"
 	"management-be/internal/controller/user"
-	v1 "management-be/internal/handler/rest/v1"
+	userHandler "management-be/internal/handler/rest/v1/auth"
+	departmentHandler "management-be/internal/handler/rest/v1/department"
+	matchHandler "management-be/internal/handler/rest/v1/match"
+	teamHandler "management-be/internal/handler/rest/v1/team"
 	"management-be/internal/pkg/middleware/auth"
 	"management-be/internal/repository"
 )
@@ -57,45 +60,50 @@ func (s *Server) RegisterRoutes() http.Handler {
 	teamController := team.NewController(repoRegistry)
 	playerController := player.NewController(repoRegistry)
 	matchController := match.NewController(repoRegistry)
-	handler := v1.NewHandler(userController, departmentController, teamController, playerController, matchController)
+
+	// Initialize handlers
+	userH := userHandler.NewHandler(userController)
+	teamH := teamHandler.NewHandler(teamController, playerController, matchController)
+	departmentH := departmentHandler.NewHandler(departmentController)
+	matchH := matchHandler.NewHandler(teamController, playerController, matchController)
 
 	// Routes with auth
 	userGroup := r.Group("/api/users")
 	{
-		userGroup.POST("/register", handler.Register)
-		userGroup.POST("/login", handler.Login)
-		userGroup.POST("/change-password", auth.JWTAuthMiddleware(), handler.ChangePassword)
+		userGroup.POST("/register", userH.Register)
+		userGroup.POST("/login", userH.Login)
+		userGroup.POST("/change-password", auth.JWTAuthMiddleware(), userH.ChangePassword)
 	}
 
-	departmentGroup := r.Group("/api/departments", auth.JWTAuthMiddleware())
+	departmentGroup := r.Group("/api/departments")
 	{
-		departmentGroup.GET("", handler.ListDepartments)
-		departmentGroup.GET("/:id", handler.GetDepartment)
-		departmentGroup.POST("", handler.CreateDepartment)
-		departmentGroup.PUT("/:id", handler.UpdateDepartment)
-		departmentGroup.DELETE("/:id", handler.DeleteDepartment)
+		departmentGroup.GET("", departmentH.ListDepartments)
+		departmentGroup.GET("/:id", departmentH.GetDepartment)
+		departmentGroup.POST("", departmentH.CreateDepartment)
+		departmentGroup.PUT("/:id", departmentH.UpdateDepartment)
+		departmentGroup.DELETE("/:id", departmentH.DeleteDepartment)
 	}
 
-	teamGroup := r.Group("/api/teams", auth.JWTAuthMiddleware())
+	teamGroup := r.Group("/api/teams")
 	{
-		teamGroup.GET("", handler.ListTeams)
-		teamGroup.GET("/:id", handler.GetTeam)
-		teamGroup.POST("", handler.CreateTeam)
-		teamGroup.PUT("/:id", handler.UpdateTeam)
-		teamGroup.DELETE("/:id", handler.DeleteTeam)
-		teamGroup.GET("/:id/statistics", handler.GetTeamStatistics)
+		teamGroup.GET("", teamH.ListTeams)
+		teamGroup.GET("/:id", teamH.GetTeam)
+		teamGroup.POST("", teamH.CreateTeam)
+		teamGroup.PUT("/:id", teamH.UpdateTeam)
+		teamGroup.DELETE("/:id", teamH.DeleteTeam)
+		teamGroup.GET("/:id/statistics", teamH.GetTeamStatistics)
 	}
 
-	matchGroup := r.Group("/api/matches", auth.JWTAuthMiddleware())
+	matchGroup := r.Group("/api/matches")
 	{
-		matchGroup.GET("", handler.ListMatches)
-		matchGroup.GET("/:id", handler.GetMatch)
-		matchGroup.POST("", handler.CreateMatch)
+		matchGroup.GET("", matchH.ListMatches)
+		matchGroup.GET("/:id", matchH.GetMatch)
+		matchGroup.POST("", matchH.CreateMatch)
 		//matchGroup.POST("/batch", handler.CreateManyMatches)
-		matchGroup.PUT("/:id", handler.UpdateMatch)
-		matchGroup.DELETE("/:id", handler.DeleteMatch)
-		matchGroup.PUT("/:id/players", handler.UpdateMatchPlayers)
-		matchGroup.GET("/:id/statistics", handler.GetMatchStatistics)
+		matchGroup.PUT("/:id", matchH.UpdateMatch)
+		matchGroup.DELETE("/:id", matchH.DeleteMatch)
+		matchGroup.PUT("/:id/players", matchH.UpdateMatchPlayers)
+		matchGroup.GET("/:id/statistics", matchH.GetMatchStatistics)
 	}
 
 	return r
