@@ -1,22 +1,22 @@
-### Create a new department
-POST http://localhost:8000/api/departments
+### Create a new department check - ok
+### missing error - when department already exists - failure
+POST http://localhost:8080/api/departments
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1OTcsImlhdCI6MTc0NTIxOTE5NywidXNlcl9pZCI6NDF9.Io_cS5fYUJN8lxOMlzxlmIvay_1ASkRhRhN1j3-RzVc
 
 {
-  "name": "Engineering",
-  "description": "Software Engineering Department",
-  "manager_id": 1
+  "name": "Engineering2",
+  "description": "Software Engineering Department"
 }
 
 ###
-### Get department by ID
-GET http://localhost:8000/api/departments/12
+### Get department by ID check - ok
+GET http://localhost:8080/api/departments/1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
 
 ###
-### Update department
-PUT http://localhost:8000/api/departments/1
+### Update department check - ok
+PUT http://localhost:8080/api/departments/1
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
 
@@ -27,12 +27,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4N
 }
 
 ###
-### Delete department
-DELETE http://localhost:8000/api/departments/1
+### Delete department check - ok
+DELETE http://localhost:8080/api/departments/1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1OTcsImlhdCI6MTc0NTIxOTE5NywidXNlcl9pZCI6NDF9.Io_cS5fYUJN8lxOMlzxlmIvay_1ASkRhRhN1j3-RzVc
 
 
-### Get all departments
-GET http://localhost:8000/api/departments
+### Get all departments check - ok
+GET http://localhost:8080/api/departments
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
 
