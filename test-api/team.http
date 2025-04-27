@@ -1,48 +1,52 @@
 ### List all teams
-GET http://localhost:8000/api/teams
+GET http://localhost:8080/api/teams
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
 
 
 ###
 
 ### Get team by ID
-GET http://localhost:8000/api/teams/1
+GET http://localhost:8080/api/teams/1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
 
 ###
 
 ### Create a new team
-POST http://localhost:8000/api/teams
+POST http://localhost:8080/api/teams
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
 
 {
-  "name": "Team A",
-  "description": "Description of Team A",
-  "manager_id": 1
+  "name": "Techvify",
+  "company_name": "Techvify",
+  "contact_person": "khien",
+  "contact_phone": "0966 758 012",
+  "contact_email": "namngyen@gmail.com"
 }
 
 ###
 
 ### Update a team
-PUT http://localhost:8000/api/teams/1
+PUT http://localhost:8080/api/teams/16
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
 
 {
-  "name": "Updated Team A",
-  "description": "Updated description of Team A",
-  "manager_id": 2
+  "name": "Techvify",
+  "company_name": "Techvify21",
+  "contact_person": "khien",
+  "contact_phone": "0966 758 012",
+  "contact_email": "namngyen@gmail.com"
 }
 
 ###
 
 ### Delete a team
-DELETE http://localhost:8000/api/teams/1
+DELETE http://localhost:8080/api/teams/16
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
 
 ###
 
 ### Get team statistics
-GET http://localhost:8000/api/teams/1/statistics
+GET http://localhost:8080/api/teams/1/statistics
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo 
