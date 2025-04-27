@@ -2,7 +2,9 @@ package player
 
 import (
 	"context"
+	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
+	"management-be/internal/repository/ent"
 	"management-be/internal/repository/ent/playerstatistic"
 )
 
@@ -13,7 +15,10 @@ func (i impl) GetPlayerStatistics(ctx context.Context, id int) (model.PlayerStat
 		Where(playerstatistic.PlayerID(id)).
 		Only(ctx)
 	if err != nil {
-		return model.PlayerStatistic{}, err
+		if ent.IsNotFound(err) {
+			return model.PlayerStatistic{}, pkgerrors.WithStack(ErrNotFound)
+		}
+		return model.PlayerStatistic{}, pkgerrors.WithStack(ErrDatabase)
 	}
 
 	// Convert ent.PlayerStatistic to model.PlayerStatistic

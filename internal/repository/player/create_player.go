@@ -2,30 +2,44 @@ package player
 
 import (
 	"context"
+	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
 	"time"
 )
 
+type InputPlayer struct {
+	DepartmentID int
+	FullName     string
+	Position     string
+	JerseyNumber int32
+	DateOfBirth  time.Time
+	HeightCm     int32
+	WeightKg     int32
+	Phone        string
+	Email        string
+	IsActive     bool
+}
+
 // CreatePlayer creates a new player with the provided details.
-func (i impl) CreatePlayer(ctx context.Context, departmentID int, fullName, position string, jerseyNumber int32, dateOfBirth time.Time, heightCm, weightKg int32, phone, email string, isActive bool) (model.Player, error) {
+func (i impl) CreatePlayer(ctx context.Context, input InputPlayer) (model.Player, error) {
 	// Create player using ent client
 	player, err := i.entClient.Player.Create().
-		SetFullName(fullName).
-		SetPosition(position).
-		SetJerseyNumber(jerseyNumber).
-		SetDateOfBirth(dateOfBirth).
-		SetHeightCm(heightCm).
-		SetWeightKg(weightKg).
-		SetPhone(phone).
-		SetEmail(email).
-		SetIsActive(isActive).
+		SetFullName(input.FullName).
+		SetPosition(input.Position).
+		SetJerseyNumber(input.JerseyNumber).
+		SetDateOfBirth(input.DateOfBirth).
+		SetHeightCm(input.HeightCm).
+		SetWeightKg(input.WeightKg).
+		SetPhone(input.Phone).
+		SetEmail(input.Email).
+		SetIsActive(input.IsActive).
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now()).
-		SetDepartmentID(departmentID).
+		SetDepartmentID(input.DepartmentID).
 		Save(ctx)
 
 	if err != nil {
-		return model.Player{}, err
+		return model.Player{}, pkgerrors.WithStack(ErrDatabase)
 	}
 
 	var heightCM, weightKG *int32

@@ -2,14 +2,19 @@ package player
 
 import (
 	"context"
+	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
+	"management-be/internal/repository/ent"
 )
 
 // GetPlayerByID retrieves a player by their ID from the database.
 func (i impl) GetPlayerByID(ctx context.Context, id int) (model.Player, error) {
 	player, err := i.entClient.Player.Get(ctx, id)
 	if err != nil {
-		return model.Player{}, err
+		if ent.IsNotFound(err) {
+			return model.Player{}, pkgerrors.WithStack(ErrNotFound)
+		}
+		return model.Player{}, pkgerrors.WithStack(ErrDatabase)
 	}
 
 	return model.Player{

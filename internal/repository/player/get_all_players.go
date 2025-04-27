@@ -2,6 +2,7 @@ package player
 
 import (
 	"context"
+	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
 )
 
@@ -16,13 +17,13 @@ func (i impl) GetAllPlayers(ctx context.Context, page, limit int) ([]model.Playe
 		Limit(limit).
 		All(ctx)
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, pkgerrors.WithStack(ErrDatabase)
 	}
 
 	// Get total count
 	total, err := i.entClient.Player.Query().Count(ctx)
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, pkgerrors.WithStack(ErrDatabase)
 	}
 
 	// Convert ent.Player to model.Player

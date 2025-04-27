@@ -4,15 +4,14 @@ import (
 	"context"
 	"management-be/internal/model"
 	"management-be/internal/repository/ent"
-	"time"
 )
 
 // Repository defines the interface for team repository operations
 type Repository interface {
-	CreatePlayer(ctx context.Context, departmentID int, fullName, position string, jerseyNumber int32, dateOfBirth time.Time, heightCm, weightKg int32, phone, email string, isActive bool) (model.Player, error)
+	CreatePlayer(ctx context.Context, input InputPlayer) (model.Player, error)
 	GetPlayerByID(ctx context.Context, id int) (model.Player, error)
 	GetAllPlayers(ctx context.Context, page, limit int) ([]model.Player, int, error)
-	UpdatePlayer(ctx context.Context, id, departmentID int, fullName, position string, jerseyNumber int32, dateOfBirth time.Time, heightCm, weightKg int32, phone, email string, isActive bool) (model.Player, error)
+	UpdatePlayer(ctx context.Context, id int, input InputPlayer) (model.Player, error)
 	DeletePlayer(ctx context.Context, id int) error
 	GetPlayerStatistics(ctx context.Context, id int) (model.PlayerStatistic, error)
 }

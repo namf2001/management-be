@@ -2,29 +2,34 @@ package player
 
 import (
 	"context"
+	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
+	"management-be/internal/repository/ent"
 	"time"
 )
 
-func (i impl) UpdatePlayer(ctx context.Context, id, departmentID int, fullName, position string, jerseyNumber int32, dateOfBirth time.Time, heightCm, weightKg int32, phone, email string, isActive bool) (model.Player, error) {
+func (i impl) UpdatePlayer(ctx context.Context, id int, input InputPlayer) (model.Player, error) {
 	now := time.Now()
 
 	// Update player using ent client
 	player, err := i.entClient.Player.UpdateOneID(id).
-		SetFullName(fullName).
-		SetPosition(position).
-		SetJerseyNumber(jerseyNumber).
-		SetDateOfBirth(dateOfBirth).
-		SetHeightCm(heightCm).
-		SetWeightKg(weightKg).
-		SetPhone(phone).
-		SetEmail(email).
-		SetIsActive(isActive).
+		SetFullName(input.FullName).
+		SetPosition(input.Position).
+		SetJerseyNumber(input.JerseyNumber).
+		SetDateOfBirth(input.DateOfBirth).
+		SetHeightCm(input.HeightCm).
+		SetWeightKg(input.WeightKg).
+		SetPhone(input.Phone).
+		SetEmail(input.Email).
+		SetIsActive(input.IsActive).
 		SetUpdatedAt(now).
-		SetDepartmentID(departmentID).
+		SetDepartmentID(input.DepartmentID).
 		Save(ctx)
 
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return model.Player{}, pkgerrors.WithStack(ErrNotFound)
+		}
 		return model.Player{}, err
 	}
 
