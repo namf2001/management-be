@@ -1,53 +1,54 @@
-### List all matches
+### List all matches check - ok
 GET http://localhost:8080/api/matches
-Authorization: Bearer {{token}}
+#Authorization: Bearer {{token}}
 
-### Get match by ID
+### Get match by ID check - ok
 GET http://localhost:8080/api/matches/1
-Authorization: Bearer {{token}}
+#Authorization: Bearer {{token}}
 
-### Create new match
+### Create new match check - ok
 POST http://localhost:8080/api/matches
 Content-Type: application/json
-Authorization: Bearer {{token}}
+#Authorization: Bearer {{token}}
 
 {
-    "team1Id": 1,
-    "team2Id": 2,
-    "date": "2024-04-25T10:00:00Z",
-    "location": "Stadium A",
-    "score1": 0,
-    "score2": 0
+    "opponent_team_id": 1,
+    "venue": "lorem ipusum dolor sit amet consectetur adipiscing elit",
+    "match_date": "2024-04-25T10:00:00Z",
+    "is_home_game": true,
+    "notes": "Match postponed due to weather conditions"
 }
 
-### Update match
-PUT http://localhost:8080/api/matches/1
+### Update match check - ok
+PUT http://localhost:8080/api/matches/32
 Content-Type: application/json
-Authorization: Bearer {{token}}
+#Authorization: Bearer {{token}}
 
 {
-    "team1Id": 1,
-    "team2Id": 2,
-    "date": "2024-04-25T10:00:00Z",
-    "location": "Stadium B",
-    "score1": 2,
-    "score2": 1
+  "opponent_team_id": 2,
+  "match_date": "2024-04-25T10:00:00Z",
+  "venue": "Updated venue name",
+  "is_home_game": true,
+  "our_score": 3,
+  "opponent_score": 2,
+  "status": "completed",
+  "notes": "Match successfully completed"
 }
 
-### Delete match
+### Delete match check - ok
 DELETE http://localhost:8080/api/matches/1
-Authorization: Bearer {{token}}
+#Authorization: Bearer {{token}}
 
-### Update match players
+### Update match players check - false
 PUT http://localhost:8080/api/matches/1/players
 Content-Type: application/json
-Authorization: Bearer {{token}}
+#Authorization: Bearer {{token}}
 
 {
     "team1Players": [1, 2, 3],
     "team2Players": [4, 5, 6]
 }
 
-### Get match statistics
-GET http://localhost:8080/api/matches/1/statistics
-Authorization: Bearer {{token}} 
+### Get match statistics check - ok
+GET http://localhost:8080/api/matches/2/statistics
+#Authorization: Bearer {{token}}
