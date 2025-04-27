@@ -1,9 +1,10 @@
 package player
 
-import "context"
+import (
+	"context"
+)
 
-// DeletePlayer deletes a player by ID
+// DeletePlayer deletes a player by ID from the database.
 func (i impl) DeletePlayer(ctx context.Context, id int) error {
-	//TODO implement me
-	panic("implement me")
+	return i.repo.Player().DeletePlayer(ctx, id)
 }
