@@ -2,6 +2,7 @@ package player
 
 import (
 	"context"
+	"database/sql"
 	"management-be/internal/model"
 	"management-be/internal/repository/player"
 	"time"
@@ -23,15 +24,16 @@ type InputPlayerController struct {
 
 // CreatePlayer creates a new player in the database.
 func (i impl) CreatePlayer(ctx context.Context, input InputPlayerController) (model.Player, error) {
-	var dob time.Time
-
 	_, err := i.repo.Department().GetDepartmentByID(ctx, input.DepartmentID)
 	if err != nil {
 		return model.Player{}, err
 	}
 
-	if input.DateOfBirth != nil {
-		dob = *input.DateOfBirth
+	var dbDOB sql.NullTime
+	if input.DateOfBirth != nil && !input.DateOfBirth.IsZero() {
+		dbDOB = sql.NullTime{Time: *input.DateOfBirth, Valid: true}
+	} else {
+		dbDOB = sql.NullTime{Valid: false}
 	}
 
 	playerRepo := player.InputPlayer{
@@ -39,7 +41,7 @@ func (i impl) CreatePlayer(ctx context.Context, input InputPlayerController) (mo
 		FullName:     input.FullName,
 		Position:     input.Position,
 		JerseyNumber: input.JerseyNumber,
-		DateOfBirth:  dob,
+		DateOfBirth:  dbDOB.Time,
 		HeightCm:     input.HeightCm,
 		WeightKg:     input.WeightKg,
 		Phone:        input.Phone,

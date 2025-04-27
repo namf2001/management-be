@@ -2,16 +2,18 @@ package player
 
 import (
 	"context"
+	"database/sql"
 	"management-be/internal/model"
 	"management-be/internal/repository/player"
-	"time"
 )
 
 // UpdatePlayer updates an existing player in the database.
 func (i impl) UpdatePlayer(ctx context.Context, id int, input InputPlayerController) (model.Player, error) {
-	var dob time.Time
-	if input.DateOfBirth != nil {
-		dob = *input.DateOfBirth
+	var dbDOB sql.NullTime
+	if input.DateOfBirth != nil && !input.DateOfBirth.IsZero() {
+		dbDOB = sql.NullTime{Time: *input.DateOfBirth, Valid: true}
+	} else {
+		dbDOB = sql.NullTime{Valid: false}
 	}
 
 	playerRepo := player.InputPlayer{
@@ -19,7 +21,7 @@ func (i impl) UpdatePlayer(ctx context.Context, id int, input InputPlayerControl
 		FullName:     input.FullName,
 		Position:     input.Position,
 		JerseyNumber: input.JerseyNumber,
-		DateOfBirth:  dob,
+		DateOfBirth:  dbDOB.Time,
 		HeightCm:     input.HeightCm,
 		WeightKg:     input.WeightKg,
 		Phone:        input.Phone,
