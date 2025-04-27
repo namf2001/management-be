@@ -9,6 +9,7 @@ COMPOSE := PROJECT_NAME=${PROJECT_NAME} ${DOCKER_COMPOSE_BIN} -f build/docker-co
 API_COMPOSE = ${COMPOSE} run --name ${PROJECT_NAME}-api-local --rm --service-ports -w /api api
 
 PORT_SWAGGER := 8080
+BROWSER := open
 
 build-local-go-image:
 	${DOCKER_BIN} build -f build/local.go.Dockerfile -t ${PROJECT_NAME}-api-local:latest .
@@ -116,8 +117,14 @@ swagger-docs:
 
 # Serve Swagger documentation (requires server to be running)
 swagger-serve:
-	@echo "Open Swagger UI in browser..."
-	@open http://localhost:$(PORT_SWAGGER)/swagger/index.html
+	@echo "Open Swagger UI in default browser..."
+	@$(BROWSER) http://localhost:$(PORT_SWAGGER)/swagger/index.html
+
+# Serve Swagger documentation in a specific browser (requires server to be running)
+# Usage: make swagger-serve-browser BROWSER=firefox (or chrome, safari, edge, etc.)
+swagger-serve-browser:
+	@echo "Open Swagger UI in $(BROWSER)..."
+	@$(BROWSER) http://localhost:$(PORT_SWAGGER)/swagger/index.html
 
 # Run tests with coverage
 test-coverage:

@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  v1.LoginRequest:
+  auth.LoginRequest:
     properties:
       password:
         example: password123
@@ -12,15 +12,15 @@ definitions:
     - password
     - username
     type: object
-  v1.LoginResponse:
+  auth.LoginResponse:
     properties:
       token:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         type: string
       user:
-        $ref: '#/definitions/v1.UserResponse'
+        $ref: '#/definitions/auth.UserResponse'
     type: object
-  v1.RegisterRequest:
+  auth.RegisterRequest:
     properties:
       email:
         example: john@example.com
@@ -39,7 +39,7 @@ definitions:
     - password
     - username
     type: object
-  v1.RegisterResponse:
+  auth.RegisterResponse:
     properties:
       email:
         example: john@example.com
@@ -54,7 +54,7 @@ definitions:
         example: john_doe
         type: string
     type: object
-  v1.UserResponse:
+  auth.UserResponse:
     properties:
       email:
         type: string
@@ -88,14 +88,14 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/v1.LoginRequest'
+          $ref: '#/definitions/auth.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.LoginResponse'
+            $ref: '#/definitions/auth.LoginResponse'
         "400":
           description: Bad Request
           schema:
@@ -131,14 +131,14 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/v1.RegisterRequest'
+          $ref: '#/definitions/auth.RegisterRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/v1.RegisterResponse'
+            $ref: '#/definitions/auth.RegisterResponse'
         "400":
           description: Bad Request
           schema:
