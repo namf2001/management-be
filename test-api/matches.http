@@ -9,7 +9,7 @@ Authorization: Bearer {{token}}
 ### Create new match
 POST http://localhost:8080/api/matches
 Content-Type: application/json
-Authorization: Bearer {{token}}
+
 
 {
     "team1Id": 1,

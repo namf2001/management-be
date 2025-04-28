@@ -2,10 +2,10 @@
 ### missing error - when department already exists - failure
 POST http://localhost:8080/api/departments
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1OTcsImlhdCI6MTc0NTIxOTE5NywidXNlcl9pZCI6NDF9.Io_cS5fYUJN8lxOMlzxlmIvay_1ASkRhRhN1j3-RzVc
+#Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1OTcsImlhdCI6MTc0NTIxOTE5NywidXNlcl9pZCI6NDF9.Io_cS5fYUJN8lxOMlzxlmIvay_1ASkRhRhN1j3-RzVc
 
 {
-  "name": "Engineering2",
+  "name": "",
   "description": "Software Engineering Department"
 }
 

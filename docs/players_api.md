@@ -6,7 +6,6 @@ Get all players with optional filters.
 ### Request
 ```http
 GET /players
-Authorization: Bearer <token>
 
 Query Parameters:
 - department_id (optional): Filter by department
@@ -51,7 +50,6 @@ Get player by ID with detailed statistics.
 ### Request
 ```http
 GET /players/{id}
-Authorization: Bearer <token>
 ```
 
 ### Response
@@ -201,7 +199,6 @@ Get detailed statistics for a player.
 ### Request
 ```http
 GET /players/{id}/statistics
-Authorization: Bearer <token>
 ```
 
 ### Response

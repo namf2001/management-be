@@ -6,7 +6,6 @@ Get all opponent teams.
 ### Request
 ```http
 GET /teams/page={page_number}&limit={page_size}
-Authorization: Bearer <token>
 ```
 
 ### Response
@@ -46,7 +45,6 @@ Get team by ID with match history.
 ### Request
 ```http
 GET /teams/{id}
-Authorization: Bearer <token>
 ```
 
 ### Response
@@ -169,7 +167,6 @@ Get detailed statistics for a team.
 ### Request
 ```http
 GET /teams/{id}/statistics
-Authorization: Bearer <token>
 ```
 
 ### Response

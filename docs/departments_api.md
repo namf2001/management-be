@@ -6,7 +6,6 @@ Get all departments.
 ### Request
 ```http
 GET /departments
-Authorization: Bearer <token>
 ```
 
 ### Response
@@ -33,7 +32,6 @@ Get department by ID.
 ### Request
 ```http
 GET /departments/{id}
-Authorization: Bearer <token>
 ```
 
 ### Response

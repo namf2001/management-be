@@ -18,3 +18,8 @@ var (
 	ErrUserNotFoundByID       = errors.New("user not found by id")
 	ErrDatabase               = errors.New("database error")
 )
+
+type ErrorInfo struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}

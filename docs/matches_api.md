@@ -6,7 +6,6 @@ Get all matches with optional filters.
 ### Request
 ```http
 GET /matches
-Authorization: Bearer <token>
 
 Query Parameters:
 - status (optional): Filter by match status (scheduled, completed, cancelled)
@@ -47,7 +46,6 @@ Get match by ID with detailed information.
 ### Request
 ```http
 GET /matches/{id}
-Authorization: Bearer <token>
 ```
 
 ### Response
@@ -227,7 +225,6 @@ Get match statistics and summary.
 ### Request
 ```http
 GET /matches/{id}/statistics
-Authorization: Bearer <token>
 ```
 
 ### Response

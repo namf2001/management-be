@@ -6,7 +6,6 @@ Get all team maintenance fees with optional filters.
 ### Request
 ```http
 GET /team-fees
-Authorization: Bearer <token>
 
 Query Parameters:
 - start_date (optional): Filter by start date
@@ -43,7 +42,6 @@ Get team fee by ID.
 ### Request
 ```http
 GET /team-fees/{id}
-Authorization: Bearer <token>
 ```
 
 ### Response
@@ -146,7 +144,6 @@ Get detailed statistics about team fees.
 ### Request
 ```http
 GET /team-fees/statistics
-Authorization: Bearer <token>
 
 Query Parameters:
 - year (optional): Filter by year
