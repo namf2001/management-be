@@ -17,9 +17,9 @@ func (i impl) GetMatchStatistics(ctx context.Context, matchID int) (model.MatchS
 	if err != nil {
 		return model.MatchStatistics{}, pkgerrors.WithStack(ErrDatabase)
 	}
-	
+
 	if !exists {
-		return model.MatchStatistics{}, pkgerrors.WithStack(ErrDatabase)
+		return model.MatchStatistics{}, pkgerrors.WithStack(ErrNotFound)
 	}
 
 	// Get match players
