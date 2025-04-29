@@ -14,7 +14,6 @@ func (i impl) CreateDepartment(ctx context.Context, name, description string) (m
 		SetDescription(description).
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now())
-
 	createdDepartment, err := newDepartment.Save(ctx)
 	if err != nil {
 		return model.Department{}, pkgerrors.WithStack(ErrDatabase)

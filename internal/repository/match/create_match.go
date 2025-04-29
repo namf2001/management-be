@@ -2,6 +2,7 @@ package match
 
 import (
 	"context"
+	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
 	"time"
 )
@@ -22,7 +23,7 @@ func (i impl) CreateMatch(ctx context.Context, opponentTeamID int, matchDate tim
 		Save(ctx)
 
 	if err != nil {
-		return model.Match{}, err
+		return model.Match{}, pkgerrors.WithStack(ErrDatabase)
 	}
 
 	return model.Match{

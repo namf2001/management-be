@@ -8,7 +8,7 @@ import (
 // GetMatchStatistics returns match statistics and summary
 func (i impl) GetMatchStatistics(ctx context.Context, matchID int) (model.MatchStatistics, error) {
 	// Check if match exists
-	_, err := i.repo.Match().GetMatch(ctx, matchID)
+	_, err := i.repo.Match().GetMatchByID(ctx, matchID)
 	if err != nil {
 		return model.MatchStatistics{}, err
 	}

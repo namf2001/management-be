@@ -2,7 +2,9 @@ package match
 
 import (
 	"context"
+	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
+	"management-be/internal/repository/ent"
 	"time"
 )
 
@@ -23,7 +25,10 @@ func (i impl) UpdateMatch(ctx context.Context, id int, opponentTeamID int, match
 		Save(ctx)
 
 	if err != nil {
-		return model.Match{}, err
+		if ent.IsNotFound(err) {
+			return model.Match{}, pkgerrors.WithStack(ErrNotFound)
+		}
+		return model.Match{}, pkgerrors.WithStack(ErrDatabase)
 	}
 
 	return model.Match{

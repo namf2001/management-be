@@ -17,7 +17,7 @@ func (i impl) UpdateMatchPlayers(ctx context.Context, matchID int, players []mod
 		matchRepo := i.repo.Match()
 
 		// Check if match exists
-		_, err := matchRepo.GetMatch(ctx, matchID)
+		_, err := matchRepo.GetMatchByID(ctx, matchID)
 		if err != nil {
 			return ErrMatchNotFound
 		}

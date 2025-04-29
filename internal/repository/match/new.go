@@ -11,8 +11,8 @@ import (
 type Repository interface {
 	// ListMatches returns all matches with optional filters
 	ListMatches(ctx context.Context, status string, startDate, endDate time.Time, opponentTeamID int) ([]model.Match, error)
-	// GetMatch returns a match by ID with detailed information
-	GetMatch(ctx context.Context, id int) (model.Match, error)
+	// GetMatchByID returns a match by ID with detailed information
+	GetMatchByID(ctx context.Context, id int) (model.Match, error)
 	// CreateMatch creates a new match
 	CreateMatch(ctx context.Context, opponentTeamID int, matchDate time.Time, venue string, isHomeGame bool, notes string) (model.Match, error)
 	// CreateManyMatches creates multiple matches at once

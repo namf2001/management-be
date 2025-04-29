@@ -2,14 +2,19 @@ package match
 
 import (
 	"context"
+	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
+	"management-be/internal/repository/ent"
 )
 
-// GetMatch retrieves a match by its ID.
-func (i impl) GetMatch(ctx context.Context, id int) (model.Match, error) {
+// GetMatchByID retrieves a match by its ID.
+func (i impl) GetMatchByID(ctx context.Context, id int) (model.Match, error) {
 	match, err := i.entClient.Match.Get(ctx, id)
 	if err != nil {
-		return model.Match{}, err
+		if ent.IsNotFound(err) {
+			return model.Match{}, pkgerrors.WithStack(ErrNotFound)
+		}
+		return model.Match{}, pkgerrors.WithStack(ErrDatabase)
 	}
 
 	return model.Match{

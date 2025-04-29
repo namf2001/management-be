@@ -2,6 +2,7 @@ package match
 
 import (
 	"context"
+	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
 	"management-be/internal/repository/ent"
 	"time"
@@ -25,14 +26,12 @@ func (i impl) CreateManyMatches(ctx context.Context, matches []model.Match) ([]m
 			SetNotes(match.Notes).
 			SetCreatedAt(now).
 			SetUpdatedAt(now)
-
-		// Set optional fields if they exist
 	}
 
 	// Use CreateBulk for efficient batch insertion
 	entMatches, err := i.entClient.Match.CreateBulk(creators...).Save(ctx)
 	if err != nil {
-		return nil, err
+		return nil, pkgerrors.WithStack(ErrDatabase)
 	}
 
 	// Convert ent.Match entities to model.Match

@@ -1,4 +1,4 @@
-.PHONY: build-local-go-image api-setup api-run api-down api-pg-migrate-up api-pg-migrate-down api-gen-models api-go-generate api-gen-mocks pg all build run docker-run docker-down test itest clean watch db-seed workflow swagger-docs swagger-serve test-coverage
+.PHONY: build-local-go-image api-setup api-run api-down api-pg-migrate-up api-pg-migrate-down api-gen-models api-go-generate api-gen-mocks pg all build run docker-run docker-down test itest clean watch db-seed workflow swagger-docs swagger-serve test-coverage api-drop-data
 
 DOCKER_BIN := docker
 PROJECT_NAME := management-football
@@ -125,3 +125,21 @@ test-coverage:
 	@go test -v -coverprofile=coverage.out ./...
 	@go tool cover -html=coverage.out -o coverage.html
 	@open coverage.html
+
+# Drop all data from database while keeping structure
+api-drop-data: pg
+	@echo "Dropping all data from database..."
+	@sleep 2
+	${COMPOSE} run --rm pg psql "postgresql://${PROJECT_NAME}:${PROJECT_NAME}@pg:5432/${PROJECT_NAME}?sslmode=disable" -c "\
+		TRUNCATE TABLE match_players CASCADE; \
+		TRUNCATE TABLE player_statistics CASCADE; \
+		TRUNCATE TABLE matches CASCADE; \
+		TRUNCATE TABLE players CASCADE; \
+		TRUNCATE TABLE teams CASCADE; \
+		TRUNCATE TABLE departments CASCADE; \
+		ALTER SEQUENCE departments_id_seq RESTART WITH 1; \
+		ALTER SEQUENCE teams_id_seq RESTART WITH 1; \
+		ALTER SEQUENCE players_id_seq RESTART WITH 1; \
+		ALTER SEQUENCE matches_id_seq RESTART WITH 1; \
+		ALTER SEQUENCE player_statistics_id_seq RESTART WITH 1; \
+		ALTER SEQUENCE match_players_id_seq RESTART WITH 1;"
