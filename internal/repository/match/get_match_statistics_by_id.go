@@ -2,18 +2,36 @@ package match
 
 import (
 	"context"
+	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
+	"management-be/internal/repository/ent"
+	"management-be/internal/repository/ent/match"
 	"management-be/internal/repository/ent/matchplayer"
 )
 
 func (i impl) GetMatchStatistics(ctx context.Context, matchID int) (model.MatchStatistics, error) {
+	// First check if the match exists
+	exists, err := i.entClient.Match.Query().
+		Where(match.ID(matchID)).
+		Exist(ctx)
+	if err != nil {
+		return model.MatchStatistics{}, pkgerrors.WithStack(ErrDatabase)
+	}
+	
+	if !exists {
+		return model.MatchStatistics{}, pkgerrors.WithStack(ErrDatabase)
+	}
+
 	// Get match players
 	players, err := i.entClient.MatchPlayer.Query().
 		Where(matchplayer.MatchID(matchID)).
 		WithPlayer().
 		All(ctx)
 	if err != nil {
-		return model.MatchStatistics{}, err
+		if ent.IsNotFound(err) {
+			return model.MatchStatistics{}, pkgerrors.WithStack(ErrNotFound)
+		}
+		return model.MatchStatistics{}, pkgerrors.WithStack(ErrDatabase)
 	}
 
 	var stats model.MatchStatistics

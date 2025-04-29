@@ -1,8 +1,21 @@
 package match
 
-import "context"
+import (
+	"context"
+	pkgerrors "github.com/pkg/errors"
+	"management-be/internal/repository/ent"
+)
 
 // DeleteMatchByID deletes a match by its ID.
 func (i impl) DeleteMatchByID(ctx context.Context, id int) error {
-	return i.entClient.Match.DeleteOneID(id).Exec(ctx)
+	err := i.entClient.Match.DeleteOneID(id).Exec(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return pkgerrors.WithStack(ErrNotFound)
+		}
+
+		return pkgerrors.WithStack(ErrDatabase)
+	}
+
+	return nil
 }
