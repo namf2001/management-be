@@ -30,7 +30,7 @@ func (i impl) UpdatePlayer(ctx context.Context, id int, input InputPlayer) (mode
 		if ent.IsNotFound(err) {
 			return model.Player{}, pkgerrors.WithStack(ErrNotFound)
 		}
-		return model.Player{}, err
+		return model.Player{}, pkgerrors.WithStack(err)
 	}
 
 	// Convert ent.Player to model.Player

@@ -2,9 +2,15 @@ package player
 
 import (
 	"github.com/gin-gonic/gin"
+	v1 "management-be/internal/handler/rest/v1"
 	"net/http"
 	"strconv"
 )
+
+type DeletePlayerResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+}
 
 // DeletePlayer handles the request to delete a player by ID
 func (h Handler) DeletePlayer(ctx *gin.Context) {
@@ -12,9 +18,9 @@ func (h Handler) DeletePlayer(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"error":   "Invalid player ID",
+		ctx.JSON(http.StatusBadRequest, v1.ErrorInfo{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid player ID",
 		})
 		return
 	}
@@ -22,9 +28,9 @@ func (h Handler) DeletePlayer(ctx *gin.Context) {
 	// First check if player exists
 	_, err = h.playerCtrl.GetPlayerByID(ctx.Request.Context(), id)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"success": false,
-			"error":   "Player not found",
+		ctx.JSON(http.StatusNotFound, v1.ErrorInfo{
+			Code:    http.StatusNotFound,
+			Message: err.Error(),
 		})
 		return
 	}
@@ -32,16 +38,16 @@ func (h Handler) DeletePlayer(ctx *gin.Context) {
 	// Delete player
 	err = h.playerCtrl.DeletePlayer(ctx.Request.Context(), id)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"success": false,
-			"error":   "Failed to delete player",
+		ctx.JSON(http.StatusInternalServerError, v1.ErrorInfo{
+			Code:    http.StatusInternalServerError,
+			Message: err.Error(),
 		})
 		return
 	}
 
 	// Return success message
-	ctx.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Player deleted successfully",
+	ctx.JSON(http.StatusOK, DeletePlayerResponse{
+		Success: true,
+		Message: "Player deleted successfully",
 	})
 }

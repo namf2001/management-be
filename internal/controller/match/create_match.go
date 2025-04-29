@@ -2,20 +2,32 @@ package match
 
 import (
 	"context"
-	"errors"
 	"management-be/internal/model"
+	"management-be/internal/repository/match"
 	"time"
 )
 
-// ErrMatchNotCreated is returned when a match cannot be created
-var ErrMatchNotCreated = errors.New("match could not be created")
+// CreateMatchInput represents the input for creating a match
+type CreateMatchInput struct {
+	OpponentTeamID int       `json:"opponent_team_id"`
+	MatchDate      time.Time `json:"match_date"`
+	Venue          string    `json:"venue"`
+	IsHomeGame     bool      `json:"is_home_game"`
+	Notes          string    `json:"notes"`
+}
 
 // CreateMatch creates a new match
-func (i impl) CreateMatch(ctx context.Context, opponentTeamID int, matchDate time.Time, venue string, isHomeGame bool, notes string) (model.Match, error) {
+func (i impl) CreateMatch(ctx context.Context, input CreateMatchInput) (model.Match, error) {
 	// Call the repository method
-	match, err := i.repo.Match().CreateMatch(ctx, opponentTeamID, matchDate, venue, isHomeGame, notes)
+	match, err := i.repo.Match().CreateMatch(ctx, match.CreateMatchInput{
+		OpponentTeamID: input.OpponentTeamID,
+		MatchDate:      input.MatchDate,
+		Venue:          input.Venue,
+		IsHomeGame:     input.IsHomeGame,
+		Notes:          input.Notes,
+	})
 	if err != nil {
-		return model.Match{}, ErrMatchNotCreated
+		return model.Match{}, err
 	}
 
 	return match, nil

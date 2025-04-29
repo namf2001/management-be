@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"management-be/internal/pkg/unit"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,8 +10,8 @@ import (
 // LoginRequest represents the request body for user login
 // @name LoginRequest
 type LoginRequest struct {
-	Username string `json:"username" binding:"required" example:"john_doe"`
-	Password string `json:"password" binding:"required" example:"password123"`
+	Username string `json:"username" validate:"required" example:"john_doe"`
+	Password string `json:"password" validate:"required" example:"password123"`
 }
 
 type UserResponse struct {
@@ -39,8 +40,9 @@ type LoginResponse struct {
 // @Router       /api/users/login [post]
 func (h Handler) Login(ctx *gin.Context) {
 	var req LoginRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+	// Use the validator package
+	if !unit.ValidateJSON(ctx, &req) {
 		return
 	}
 

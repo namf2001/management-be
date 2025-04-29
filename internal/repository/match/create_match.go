@@ -2,28 +2,40 @@ package match
 
 import (
 	"context"
-	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
 	"time"
+
+	pkgerrors "github.com/pkg/errors"
 )
 
-// CreateMatch is creating a match with the provided details.
-func (i impl) CreateMatch(ctx context.Context, opponentTeamID int, matchDate time.Time, venue string, isHomeGame bool, notes string) (model.Match, error) {
-	now := time.Now()
+type CreateMatchInput struct {
+	OpponentTeamID int       `json:"opponent_team_id"`
+	MatchDate      time.Time `json:"match_date"`
+	Venue          string    `json:"venue"`
+	IsHomeGame     bool      `json:"is_home_game"`
+	Notes          string    `json:"notes"`
+}
 
+// CreateMatch is creating a match with the provided details.
+func (i impl) CreateMatch(ctx context.Context, input CreateMatchInput) (model.Match, error) {
+	// Validate match date is not empty
+	if input.MatchDate.IsZero() {
+		return model.Match{}, pkgerrors.WithStack(ErrDatabase)
+	}
+
+	now := time.Now()
 	match, err := i.entClient.Match.Create().
-		SetOpponentTeamID(opponentTeamID).
-		SetMatchDate(matchDate).
-		SetVenue(venue).
-		SetIsHomeGame(isHomeGame).
+		SetOpponentTeamID(input.OpponentTeamID).
+		SetMatchDate(input.MatchDate).
+		SetVenue(input.Venue).
+		SetIsHomeGame(input.IsHomeGame).
 		SetStatus("scheduled").
-		SetNotes(notes).
+		SetNotes(input.Notes).
 		SetCreatedAt(now).
 		SetUpdatedAt(now).
 		Save(ctx)
-
 	if err != nil {
-		return model.Match{}, pkgerrors.WithStack(ErrDatabase)
+		return model.Match{}, pkgerrors.WithStack(err)
 	}
 
 	return model.Match{

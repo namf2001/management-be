@@ -1,18 +1,20 @@
 package team
 
 import (
-	"github.com/gin-gonic/gin"
+	"management-be/internal/pkg/unit"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // UpdateTeamRequest represents the request body for updating a team
 type UpdateTeamRequest struct {
-	Name          string `json:"name" binding:"required"`
-	CompanyName   string `json:"company_name" binding:"required"`
-	ContactPerson string `json:"contact_person" binding:"required"`
-	ContactPhone  string `json:"contact_phone"`
-	ContactEmail  string `json:"contact_email"`
+	Name          string `json:"name" validate:"required,min=2,max=100"`
+	CompanyName   string `json:"company_name" validate:"required"`
+	ContactPerson string `json:"contact_person" validate:"required"`
+	ContactPhone  string `json:"contact_phone" validate:"omitempty,min=5,max=20"`
+	ContactEmail  string `json:"contact_email" validate:"omitempty,email"`
 }
 
 // UpdateTeam handles the request to update an existing team
@@ -30,11 +32,7 @@ func (h Handler) UpdateTeam(ctx *gin.Context) {
 
 	// Parse request body
 	var req UpdateTeamRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"error":   "Invalid request body",
-		})
+	if !unit.ValidateJSON(ctx, &req) {
 		return
 	}
 

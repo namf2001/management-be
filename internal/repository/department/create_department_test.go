@@ -2,6 +2,7 @@ package department
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"management-be/internal/pkg/testent"
@@ -27,22 +28,24 @@ func TestCreateDepartment(t *testing.T) {
 			description: "",
 		},
 		"err - duplicate name": {
-			name:        "Test Department", // Same as in insert_department.sql
+			name:        "Test Department",
 			description: "Different description",
-			expErr:      ErrDatabase,
+			expErr:      errors.New("duplicate key value violates unique constraint \"unique_department_name\""),
 		},
 	}
 
 	for s, tc := range tcs {
 		t.Run(s, func(t *testing.T) {
 			testent.WithEntTx(t, func(tx *ent.Tx) {
-				testent.LoadTestSQLFile(t, tx, "testdata/insert_department.sql")
+
+				testent.LoadTestSQLFile(t, tx, "testdata/insert_department_without_alter.sql")
 
 				repo := NewRepository(tx.Client())
 				department, err := repo.CreateDepartment(context.Background(), tc.name, tc.description)
 
 				if tc.expErr != nil {
-					require.ErrorIs(t, err, tc.expErr)
+					require.Error(t, err)
+					require.Contains(t, err.Error(), tc.expErr.Error())
 				} else {
 					require.NoError(t, err)
 					require.NotZero(t, department.ID)

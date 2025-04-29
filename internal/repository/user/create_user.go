@@ -9,10 +9,16 @@ import (
 
 // CreateUser creates a new user in the database.
 func (i impl) CreateUser(ctx context.Context, username, email, password, fullName string) (model.User, error) {
-	newUser := i.entClient.User.Create().SetUsername(username).SetEmail(email).SetPassword(password).SetFullName(fullName).SetCreatedAt(time.Now()).SetUpdatedAt(time.Now())
-	createdUser, err := newUser.Save(ctx)
+	createdUser, err := i.entClient.User.Create().
+		SetUsername(username).
+		SetEmail(email).
+		SetPassword(password).
+		SetFullName(fullName).
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
+		Save(ctx)
 	if err != nil {
-		return model.User{}, pkgerrors.WithStack(ErrDatabase)
+		return model.User{}, pkgerrors.WithStack(err)
 	}
 
 	return model.User{

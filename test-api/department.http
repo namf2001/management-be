@@ -1,38 +1,69 @@
-### Create a new department check - ok
-### missing error - when department already exists - failure
-POST http://localhost:8080/api/departments
+### Variables
+@baseUrl = http://localhost:8080/api
+@departmentId = 1
+
+### List all departments
+GET {{baseUrl}}/departments
 Content-Type: application/json
-#Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1OTcsImlhdCI6MTc0NTIxOTE5NywidXNlcl9pZCI6NDF9.Io_cS5fYUJN8lxOMlzxlmIvay_1ASkRhRhN1j3-RzVc
+
+### Get department by ID
+GET {{baseUrl}}/departments/{{departmentId}}
+Content-Type: application/json
+
+### Create a new department
+POST {{baseUrl}}/departments
+Content-Type: application/json
 
 {
-  "name": "",
-  "description": "Software Engineering Department"
+  "name": "Marketing",
+  "description": "Marketing department"
 }
 
-###
-### Get department by ID check - ok
-GET http://localhost:8080/api/departments/2
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
-
-###
-### Update department check - ok
-PUT http://localhost:8080/api/departments/1
+### Validation Test: Create department with missing fields
+POST {{baseUrl}}/departments
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
 
 {
-    "name": "Engineering Updated",
-    "description": "Updated Software Engineering Department",
-    "manager_id": 2
+  "name": "Marketing"
 }
 
-###
-### Delete department check - ok
-DELETE http://localhost:8080/api/departments/6
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1OTcsImlhdCI6MTc0NTIxOTE5NywidXNlcl9pZCI6NDF9.Io_cS5fYUJN8lxOMlzxlmIvay_1ASkRhRhN1j3-RzVc
+### Validation Test: Create department with short name
+POST {{baseUrl}}/departments
+Content-Type: application/json
 
+{
+  "name": "X",
+  "description": "Department with too short name"
+}
 
-### Get all departments check - ok
-GET http://localhost:8080/api/departments
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
+### Validation Test: Create department with empty description
+POST {{baseUrl}}/departments
+Content-Type: application/json
+
+{
+  "name": "Operations",
+  "description": ""
+}
+
+### Update a department
+PUT {{baseUrl}}/departments/{{departmentId}}
+Content-Type: application/json
+
+{
+  "name": "Updated Marketing",
+  "description": "Updated marketing department description"
+}
+
+### Validation Test: Update department with long name
+PUT {{baseUrl}}/departments/{{departmentId}}
+Content-Type: application/json
+
+{
+  "name": "This department name is extremely long and should exceed the maximum allowed length of characters that is set in our validation which is 100 characters in length",
+  "description": "Department with too long name"
+}
+
+### Delete a department
+DELETE {{baseUrl}}/departments/{{departmentId}}
+Content-Type: application/json
 

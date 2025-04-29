@@ -2,23 +2,25 @@ package match
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
 	"management-be/internal/controller/match"
+	"management-be/internal/pkg/unit"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // UpdateMatchRequest represents the request body for updating a match
 type UpdateMatchRequest struct {
-	OpponentTeamID int       `json:"opponent_team_id" binding:"required"`
-	MatchDate      time.Time `json:"match_date" binding:"required"`
-	Venue          string    `json:"venue" binding:"required"`
+	OpponentTeamID int       `json:"opponent_team_id" validate:"required,min=1"`
+	MatchDate      time.Time `json:"match_date" validate:"required"`
+	Venue          string    `json:"venue" validate:"required,min=2"`
 	IsHomeGame     bool      `json:"is_home_game"`
-	OurScore       int32     `json:"our_score"`
-	OpponentScore  int32     `json:"opponent_score"`
-	Status         string    `json:"status" binding:"required"`
-	Notes          string    `json:"notes"`
+	OurScore       int32     `json:"our_score" validate:"min=0"`
+	OpponentScore  int32     `json:"opponent_score" validate:"min=0"`
+	Status         string    `json:"status" validate:"required,oneof=scheduled in_progress completed cancelled"`
+	Notes          string    `json:"notes" validate:"omitempty,max=1000"`
 }
 
 // UpdateMatchResponse represents the response for updating a match
@@ -48,11 +50,7 @@ func (h Handler) UpdateMatch(ctx *gin.Context) {
 	}
 
 	var req UpdateMatchRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"error":   "Invalid request body",
-		})
+	if !unit.ValidateJSON(ctx, &req) {
 		return
 	}
 
@@ -80,7 +78,7 @@ func (h Handler) UpdateMatch(ctx *gin.Context) {
 		// Fallback to 500 for all other errors
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
-			"error":   "Failed to update match",
+			"error":   err.Error(),
 		})
 		return
 	}

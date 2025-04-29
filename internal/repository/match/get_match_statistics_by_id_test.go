@@ -25,7 +25,7 @@ func TestGetMatchStatistics(t *testing.T) {
 		},
 		"err - match not found": {
 			matchID: 999, // Non-existent match ID
-			expErr:  ErrDatabase,
+			expErr:  ErrNotFound,
 		},
 	}
 
@@ -43,6 +43,7 @@ func TestGetMatchStatistics(t *testing.T) {
 				// then
 				if tc.expErr != nil {
 					require.Error(t, err)
+					require.ErrorIs(t, err, tc.expErr)
 				} else {
 					require.NoError(t, err)
 

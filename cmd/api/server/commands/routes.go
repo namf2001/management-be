@@ -17,6 +17,7 @@ import (
 	userHandler "management-be/internal/handler/rest/v1/auth"
 	departmentHandler "management-be/internal/handler/rest/v1/department"
 	matchHandler "management-be/internal/handler/rest/v1/match"
+	playerHandler "management-be/internal/handler/rest/v1/player"
 	teamHandler "management-be/internal/handler/rest/v1/team"
 	"management-be/internal/pkg/middleware/auth"
 	"management-be/internal/repository"
@@ -66,9 +67,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	teamH := teamHandler.NewHandler(teamController, playerController, matchController)
 	departmentH := departmentHandler.NewHandler(departmentController)
 	matchH := matchHandler.NewHandler(teamController, playerController, matchController)
+	playerH := playerHandler.NewHandler(teamController, playerController, matchController)
 
 	// Routes with auth
-	userGroup := r.Group("/api/users")
+	userGroup := r.Group("/api/auth")
 	{
 		userGroup.POST("/register", userH.Register)
 		userGroup.POST("/login", userH.Login)
@@ -104,6 +106,16 @@ func (s *Server) RegisterRoutes() http.Handler {
 		matchGroup.DELETE("/:id", matchH.DeleteMatch)
 		matchGroup.PUT("/:id/players", matchH.UpdateMatchPlayers)
 		matchGroup.GET("/:id/statistics", matchH.GetMatchStatistics)
+	}
+
+	playerGroup := r.Group("/api/players")
+	{
+		playerGroup.GET("", playerH.ListPlayers)
+		playerGroup.GET("/:id", playerH.GetPlayer)
+		playerGroup.POST("", playerH.CreatePlayer)
+		playerGroup.PUT("/:id", playerH.UpdatePlayer)
+		playerGroup.DELETE("/:id", playerH.DeletePlayer)
+		playerGroup.GET("/:id/statistics", playerH.GetPlayerStatistics)
 	}
 
 	return r

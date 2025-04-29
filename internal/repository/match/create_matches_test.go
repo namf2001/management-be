@@ -17,7 +17,7 @@ func TestCreateManyMatches(t *testing.T) {
 	createTestMatches := func() []model.Match {
 		matchDate1 := time.Date(2025, 6, 15, 15, 0, 0, 0, time.UTC)
 		matchDate2 := time.Date(2025, 6, 22, 18, 0, 0, 0, time.UTC)
-		
+
 		return []model.Match{
 			{
 				OpponentTeamID: 1,
@@ -73,7 +73,7 @@ func TestCreateManyMatches(t *testing.T) {
 				require.NoError(t, err)
 				_, err = tx.ExecContext(context.Background(), "DELETE FROM teams")
 				require.NoError(t, err)
-				
+
 				// Load team data
 				testent.LoadTestSQLFile(t, tx, "testdata/insert_team.sql")
 
@@ -82,24 +82,30 @@ func TestCreateManyMatches(t *testing.T) {
 
 				// then
 				if tc.expErr != nil {
-					require.ErrorIs(t, err, tc.expErr)
+					require.Error(t, err)
+					if s == "err - invalid opponent team ID" {
+						// For this specific test case, we expect a database foreign key error
+						require.Contains(t, err.Error(), "foreign key constraint")
+					} else {
+						require.ErrorIs(t, err, tc.expErr)
+					}
 				} else {
 					require.NoError(t, err)
 					require.Len(t, createdMatches, len(tc.matches))
-					
+
 					// If matches were created, verify they exist in the database
 					if len(tc.matches) > 0 {
 						for i, match := range createdMatches {
 							require.NotZero(t, match.ID)
 							require.Equal(t, tc.matches[i].OpponentTeamID, match.OpponentTeamID)
-							
+
 							// Compare time fields more carefully
 							require.Equal(t, tc.matches[i].MatchDate.Year(), match.MatchDate.Year())
 							require.Equal(t, tc.matches[i].MatchDate.Month(), match.MatchDate.Month())
 							require.Equal(t, tc.matches[i].MatchDate.Day(), match.MatchDate.Day())
 							require.Equal(t, tc.matches[i].MatchDate.Hour(), match.MatchDate.Hour())
 							require.Equal(t, tc.matches[i].MatchDate.Minute(), match.MatchDate.Minute())
-							
+
 							require.Equal(t, tc.matches[i].Venue, match.Venue)
 							require.Equal(t, tc.matches[i].IsHomeGame, match.IsHomeGame)
 							require.Equal(t, tc.matches[i].Status, match.Status)

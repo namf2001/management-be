@@ -2,6 +2,7 @@ package match
 
 import (
 	"context"
+	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
 	"management-be/internal/repository/ent/match"
 	"time"
@@ -26,7 +27,7 @@ func (i impl) ListMatches(ctx context.Context, status string, startDate, endDate
 
 	matches, err := query.All(ctx)
 	if err != nil {
-		return nil, err
+		return nil, pkgerrors.WithStack(err)
 	}
 
 	var result []model.Match

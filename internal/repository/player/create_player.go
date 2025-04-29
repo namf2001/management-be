@@ -2,9 +2,11 @@ package player
 
 import (
 	"context"
-	pkgerrors "github.com/pkg/errors"
-	"management-be/internal/model"
 	"time"
+
+	pkgerrors "github.com/pkg/errors"
+
+	"management-be/internal/model"
 )
 
 type InputPlayer struct {
@@ -39,7 +41,7 @@ func (i impl) CreatePlayer(ctx context.Context, input InputPlayer) (model.Player
 		Save(ctx)
 
 	if err != nil {
-		return model.Player{}, pkgerrors.WithStack(ErrDatabase)
+		return model.Player{}, pkgerrors.WithStack(err)
 	}
 
 	var heightCM, weightKG *int32

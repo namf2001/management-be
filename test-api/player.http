@@ -1,0 +1,137 @@
+### Variables
+@baseUrl = http://localhost:8080/api
+@playerId = 2
+
+### List all players
+GET {{baseUrl}}/players
+Content-Type: application/json
+
+### List players with filters
+GET {{baseUrl}}/players?page=1&limit=10&position=Forward
+Content-Type: application/json
+
+### Get player by ID
+GET {{baseUrl}}/players/{{playerId}}
+Content-Type: application/json
+
+### Create a new player
+POST {{baseUrl}}/players
+Content-Type: application/json
+
+{
+  "department_id": 2,
+  "full_name": "John Doe",
+  "position": "Forward",
+  "jersey_number": 10,
+  "date_of_birth": "1995-05-15",
+  "height_cm": 180,
+  "weight_kg": 75,
+  "phone": "1234567890",
+  "email": "john.doe@example.com"
+}
+
+### Validation Test: Create player with missing required fields
+POST {{baseUrl}}/players
+Content-Type: application/json
+
+{
+  "department_id": 1,
+  "position": "Forward",
+  "date_of_birth": "1995-05-15"
+}
+
+### Validation Test: Create player with invalid email format
+POST {{baseUrl}}/players
+Content-Type: application/json
+
+{
+  "department_id": 1,
+  "full_name": "Invalid Email Test",
+  "position": "Forward",
+  "jersey_number": 11,
+  "date_of_birth": "1995-05-15",
+  "height_cm": 180,
+  "weight_kg": 75,
+  "phone": "1234567890",
+  "email": "invalid-email-format"
+}
+
+### Validation Test: Create player with out-of-range values
+POST {{baseUrl}}/players
+Content-Type: application/json
+
+{
+  "department_id": 1,
+  "full_name": "Range Test Player",
+  "position": "Forward",
+  "jersey_number": 1000,
+  "date_of_birth": "1995-05-15",
+  "height_cm": 400,
+  "weight_kg": 300,
+  "phone": "1234567890",
+  "email": "range.test@example.com"
+}
+
+### Validation Test: Create player with invalid date format
+POST {{baseUrl}}/players
+Content-Type: application/json
+
+{
+  "department_id": 1,
+  "full_name": "Date Format Test",
+  "position": "Forward",
+  "jersey_number": 12,
+  "date_of_birth": "invalid-date-format",
+  "height_cm": 180,
+  "weight_kg": 75,
+  "phone": "1234567890",
+  "email": "date.test@example.com"
+}
+
+### Update a player
+PUT {{baseUrl}}/players/{{playerId}}
+Content-Type: application/json
+
+{
+  "department_id": 1,
+  "full_name": "John Doe Updated",
+  "position": "Midfielder",
+  "jersey_number": 7,
+  "date_of_birth": "1995-05-15",
+  "height_cm": 182,
+  "weight_kg": 78,
+  "phone": "9876543210",
+  "email": "john.updated@example.com"
+}
+
+### Validation Test: Update player with empty name
+PUT {{baseUrl}}/players/{{playerId}}
+Content-Type: application/json
+
+{
+  "department_id": 1,
+  "full_name": "",
+  "position": "Midfielder",
+  "jersey_number": 7,
+  "date_of_birth": "1995-05-15",
+  "height_cm": 182,
+  "weight_kg": 78,
+  "phone": "9876543210",
+  "email": "john.updated@example.com"
+}
+
+### Delete a player
+DELETE {{baseUrl}}/players/{{playerId}}
+Content-Type: application/json
+
+### Get player statistics
+GET {{baseUrl}}/players/{{playerId}}/statistics
+Content-Type: application/json
+
+### Filter players by department
+GET {{baseUrl}}/players?departmentId=1
+Content-Type: application/json
+
+### Filter players by active status
+GET {{baseUrl}}/players?isActive=true
+Content-Type: application/json

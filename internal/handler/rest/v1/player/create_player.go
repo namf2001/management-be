@@ -1,33 +1,31 @@
 package player
 
 import (
-	"github.com/gin-gonic/gin"
 	"management-be/internal/controller/player"
+	"management-be/internal/pkg/unit"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type CreatePlayerRequest struct {
-	DepartmentID int    `json:"department_id" binding:"required"`
-	FullName     string `json:"full_name" binding:"required"`
-	JerseyNumber int    `json:"jersey_number" binding:"required"`
-	Position     string `json:"position" binding:"required"`
-	DateOfBirth  string `json:"date_of_birth,omitempty"`
-	HeightCm     int    `json:"height_cm,omitempty"`
-	WeightKg     int    `json:"weight_kg,omitempty"`
-	Phone        string `json:"phone,omitempty"`
-	Email        string `json:"email,omitempty"`
+	DepartmentID int    `json:"department_id" validate:"required,min=1"`
+	FullName     string `json:"full_name" validate:"required,min=2,max=100"`
+	JerseyNumber int    `json:"jersey_number" validate:"required,min=1,max=999"`
+	Position     string `json:"position" validate:"required"`
+	DateOfBirth  string `json:"date_of_birth" validate:"omitempty,datetime=2006-01-02"`
+	HeightCm     int    `json:"height_cm" validate:"omitempty,min=50,max=300"`
+	WeightKg     int    `json:"weight_kg" validate:"omitempty,min=30,max=200"`
+	Phone        string `json:"phone" validate:"omitempty,min=5,max=20"`
+	Email        string `json:"email" validate:"omitempty,email"`
 }
 
 // CreatePlayer handles the request to create a new player
 func (h Handler) CreatePlayer(ctx *gin.Context) {
 	// Parse request body
 	var req CreatePlayerRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"error":   "Invalid request format",
-		})
+	if !unit.ValidateJSON(ctx, &req) {
 		return
 	}
 

@@ -9,28 +9,36 @@ import (
 	pkgerrors "github.com/pkg/errors"
 )
 
+type FilterGetAllPlayers struct {
+	DepartmentID *int
+	IsActive     *bool
+	Position     string
+	PageSize     int
+	Page         int
+}
+
 // GetAllPlayers retrieves all players from the database with pagination and filters.
-func (i impl) GetAllPlayers(ctx context.Context, page, pageSize int, departmentID *int, isActive *bool, position string) ([]model.Player, int, error) {
+func (i impl) GetAllPlayers(ctx context.Context, filter FilterGetAllPlayers) ([]model.Player, int, error) {
 	// Handle invalid page numbers
-	if page < 1 {
-		page = 1 // Default to page 1 for invalid values
+	if filter.Page < 1 {
+		filter.Page = 1 // Default to page 1 for invalid values
 	}
 
 	// Calculate offset based on page and pageSize
-	offset := (page - 1) * pageSize
+	offset := (filter.Page - 1) * filter.PageSize
 
 	// Start building the query
 	query := i.entClient.Player.Query()
 
 	// Apply filters if provided
-	if departmentID != nil {
-		query = query.Where(player.DepartmentID(*departmentID))
+	if filter.DepartmentID != nil {
+		query = query.Where(player.DepartmentID(*filter.DepartmentID))
 	}
-	if isActive != nil {
-		query = query.Where(player.IsActive(*isActive))
+	if filter.IsActive != nil {
+		query = query.Where(player.IsActive(*filter.IsActive))
 	}
-	if position != "" {
-		query = query.Where(player.Position(position))
+	if filter.Position != "" {
+		query = query.Where(player.Position(filter.Position))
 	}
 
 	// Get total count with the same filters before applying pagination
@@ -41,15 +49,15 @@ func (i impl) GetAllPlayers(ctx context.Context, page, pageSize int, departmentI
 	}
 
 	// Apply pagination
-	query = query.Offset(offset).Limit(pageSize)
+	query = query.Offset(offset).Limit(filter.PageSize)
 
 	// Query players
 	players, err := query.All(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return []model.Player{}, total, nil
+			return []model.Player{}, total, pkgerrors.WithStack(ErrNotFound)
 		}
-		return nil, 0, pkgerrors.WithStack(ErrDatabase)
+		return nil, 0, pkgerrors.WithStack(err)
 	}
 
 	// Convert ent.Player to model.Player

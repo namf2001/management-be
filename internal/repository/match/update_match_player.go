@@ -2,6 +2,7 @@ package match
 
 import (
 	"context"
+	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
 	"management-be/internal/repository/ent/matchplayer"
 	"time"
@@ -16,7 +17,7 @@ func (i impl) UpdateMatchPlayers(ctx context.Context, matchID int, players []mod
 		Where(matchplayer.MatchID(matchID)).
 		Exec(ctx)
 	if err != nil {
-		return err
+		return pkgerrors.WithStack(err)
 	}
 
 	// Then create new match players
@@ -34,7 +35,7 @@ func (i impl) UpdateMatchPlayers(ctx context.Context, matchID int, players []mod
 			SetUpdatedAt(now).
 			Save(ctx)
 		if err != nil {
-			return err
+			return pkgerrors.WithStack(err)
 		}
 	}
 

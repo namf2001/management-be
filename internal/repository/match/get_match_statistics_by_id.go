@@ -15,9 +15,8 @@ func (i impl) GetMatchStatistics(ctx context.Context, matchID int) (model.MatchS
 		Where(match.ID(matchID)).
 		Exist(ctx)
 	if err != nil {
-		return model.MatchStatistics{}, pkgerrors.WithStack(ErrDatabase)
+		return model.MatchStatistics{}, pkgerrors.WithStack(err)
 	}
-
 	if !exists {
 		return model.MatchStatistics{}, pkgerrors.WithStack(ErrNotFound)
 	}
@@ -31,7 +30,7 @@ func (i impl) GetMatchStatistics(ctx context.Context, matchID int) (model.MatchS
 		if ent.IsNotFound(err) {
 			return model.MatchStatistics{}, pkgerrors.WithStack(ErrNotFound)
 		}
-		return model.MatchStatistics{}, pkgerrors.WithStack(ErrDatabase)
+		return model.MatchStatistics{}, pkgerrors.WithStack(err)
 	}
 
 	var stats model.MatchStatistics

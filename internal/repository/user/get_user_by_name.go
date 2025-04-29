@@ -15,9 +15,9 @@ func (i impl) GetUserByUsername(ctx context.Context, username string) (model.Use
 	foundUser, err := i.entClient.User.Query().Where(user.UsernameEQ(username)).Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return model.User{}, pkgerrors.WithStack(ErrUserNotFoundByUsername)
+			return model.User{}, pkgerrors.WithStack(ErrNotFound)
 		}
-		return model.User{}, pkgerrors.WithStack(ErrDatabase)
+		return model.User{}, pkgerrors.WithStack(err)
 	}
 	return model.User{
 		ID:       foundUser.ID,

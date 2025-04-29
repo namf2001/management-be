@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"management-be/internal/pkg/testent"
@@ -23,7 +24,7 @@ func TestGetUserByID(t *testing.T) {
 		},
 		"err - user not found": {
 			userID: 999, // Non-existent user ID
-			expErr: ErrDatabase,
+			expErr: errors.New("user not found"),
 		},
 	}
 
@@ -44,7 +45,8 @@ func TestGetUserByID(t *testing.T) {
 
 				// then
 				if tc.expErr != nil {
-					require.ErrorIs(t, err, tc.expErr)
+					require.Error(t, err)
+					require.Contains(t, err.Error(), tc.expErr.Error())
 				} else {
 					require.NoError(t, err)
 					require.Equal(t, tc.userID, user.ID)

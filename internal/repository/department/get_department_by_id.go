@@ -2,9 +2,11 @@ package department
 
 import (
 	"context"
+
+	pkgerrors "github.com/pkg/errors"
+
 	"management-be/internal/model"
 	"management-be/internal/repository/ent"
-	pkgerrors "github.com/pkg/errors"
 )
 
 // GetDepartmentByID retrieves a department by its ID.
@@ -14,7 +16,7 @@ func (i impl) GetDepartmentByID(ctx context.Context, id int) (model.Department, 
 		if ent.IsNotFound(err) {
 			return model.Department{}, pkgerrors.WithStack(ErrNotFound)
 		}
-		return model.Department{}, pkgerrors.WithStack(ErrDatabase)
+		return model.Department{}, pkgerrors.WithStack(err)
 	}
 
 	return model.Department{

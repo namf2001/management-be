@@ -1,15 +1,8 @@
-POST http://localhost:80/api/item
-Content-Type: multipart/form-data; boundary=WebAppBoundary
+### Variables
+@baseUrl = http://localhost:8080/api
 
---WebAppBoundary
-Content-Disposition: form-data; name="field-name"
-
-field-value
---WebAppBoundary--
-
-###
 ### Register a new user
-POST http://localhost:8000/api/users/register
+POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
@@ -19,9 +12,50 @@ Content-Type: application/json
   "full_name": "Test User"
 }
 
-###
-### Login with user credentials
-POST http://localhost:8000/api/users/login
+### Validation Test: Register user with short username
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "ts",
+  "password": "password123",
+  "email": "test@example.com",
+  "full_name": "Test User"
+}
+
+### Validation Test: Register user with short password
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser2",
+  "password": "pass",
+  "email": "test2@example.com",
+  "full_name": "Test User 2"
+}
+
+### Validation Test: Register user with invalid email
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser3",
+  "password": "password123",
+  "email": "invalid-email",
+  "full_name": "Test User 3"
+}
+
+### Validation Test: Register user with missing fields
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser4",
+  "password": "password123"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
@@ -29,15 +63,50 @@ Content-Type: application/json
   "password": "password123"
 }
 
-###
-### Change Password
-POST http://localhost:8000/api/users/change-password
+### Validation Test: Login with missing username
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzMDU1OTcsImlhdCI6MTc0NTIxOTE5NywidXNlcl9pZCI6NDF9.Io_cS5fYUJN8lxOMlzxlmIvay_1ASkRhRhN1j3-RzVc
+
+{
+  "password": "password123"
+}
+
+### Validation Test: Login with missing password
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser"
+}
+
+### Set environment variable with the token from login response
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDYwMzQzNTMsImlhdCI6MTc0NTk0Nzk1MywidXNlcl9pZCI6MTF9.LcjMPEASkHOG8CgUEipWt1skG3dG2ePKSFqe0L4AYHM
+
+### Change password
+POST {{baseUrl}}/auth/change-password
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
 {
   "current_password": "password123",
   "new_password": "newpassword123"
 }
 
-###
+### Validation Test: Change password with missing fields
+POST {{baseUrl}}/auth/change-password
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "current_password": "password123"
+}
+
+### Validation Test: Change password with short new password
+POST {{baseUrl}}/auth/change-password
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "current_password": "password123",
+  "new_password": "short"
+}

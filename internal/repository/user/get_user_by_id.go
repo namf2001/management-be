@@ -11,7 +11,7 @@ import (
 func (i impl) GetUserByID(ctx context.Context, id int) (model.User, error) {
 	user, err := i.entClient.User.Get(ctx, id)
 	if err != nil {
-		return model.User{}, pkgerrors.WithStack(ErrDatabase)
+		return model.User{}, pkgerrors.WithStack(err)
 	}
 
 	return model.User{

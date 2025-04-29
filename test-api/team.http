@@ -1,48 +1,110 @@
+### Variables
+@baseUrl = http://localhost:8080/api
+@teamId = 1
+
 ### List all teams
-GET http://localhost:8000/api/teams
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
-
-
-###
+GET {{baseUrl}}/teams
+Content-Type: application/json
 
 ### Get team by ID
-GET http://localhost:8000/api/teams/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
-
-###
+GET {{baseUrl}}/teams/{{teamId}}
+Content-Type: application/json
 
 ### Create a new team
-POST http://localhost:8000/api/teams
+POST {{baseUrl}}/teams
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
 
 {
-  "name": "Team A",
-  "description": "Description of Team A",
-  "manager_id": 1
+  "name": "FC Barcelona",
+  "company_name": "FC Barcelona Sports Club",
+  "contact_person": "Joan Laporta",
+  "contact_phone": "123456789",
+  "contact_email": "contact@fcbarcelona.com"
 }
 
-###
-
-### Update a team
-PUT http://localhost:8000/api/teams/1
+### Validation Test: Create team with missing required fields
+POST {{baseUrl}}/teams
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
 
 {
-  "name": "Updated Team A",
-  "description": "Updated description of Team A",
-  "manager_id": 2
+  "name": "Real Madrid",
+  "company_name": "Real Madrid Sports Club"
 }
 
-###
+### Validation Test: Create team with short name
+POST {{baseUrl}}/teams
+Content-Type: application/json
 
-### Delete a team
-DELETE http://localhost:8000/api/teams/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo
+{
+  "name": "A",
+  "company_name": "Team with too short name",
+  "contact_person": "Contact Person",
+  "contact_phone": "123456789",
+  "contact_email": "contact@team.com"
+}
 
-###
+### Validation Test: Create team with invalid email
+POST {{baseUrl}}/teams
+Content-Type: application/json
+
+{
+  "name": "Manchester United",
+  "company_name": "Manchester United Football Club",
+  "contact_person": "Contact Person",
+  "contact_phone": "123456789",
+  "contact_email": "invalid-email-format"
+}
+
+### Validation Test: Create team with invalid phone number (too short)
+POST {{baseUrl}}/teams
+Content-Type: application/json
+
+{
+  "name": "Chelsea FC",
+  "company_name": "Chelsea Football Club",
+  "contact_person": "Contact Person",
+  "contact_phone": "123",
+  "contact_email": "contact@chelsea.com"
+}
+
+### Update team
+PUT {{baseUrl}}/teams/{{teamId}}
+Content-Type: application/json
+
+{
+  "name": "FC Barcelona Updated",
+  "company_name": "FC Barcelona Sports Club Updated",
+  "contact_person": "Updated Contact Person",
+  "contact_phone": "987654321",
+  "contact_email": "updated@fcbarcelona.com"
+}
+
+### Validation Test: Update team with missing required fields
+PUT {{baseUrl}}/teams/{{teamId}}
+Content-Type: application/json
+
+{
+  "name": "Arsenal",
+  "company_name": "Arsenal Football Club",
+  "contact_person": ""
+}
+
+### Validation Test: Update team with long name
+PUT {{baseUrl}}/teams/{{teamId}}
+Content-Type: application/json
+
+{
+  "name": "This team name is extremely long and should exceed the maximum allowed length of characters that is set in our validation which is 100 characters in length",
+  "company_name": "Very Long Team Name Football Club",
+  "contact_person": "Contact Person",
+  "contact_phone": "123456789",
+  "contact_email": "contact@team.com"
+}
+
+### Delete team
+DELETE {{baseUrl}}/teams/{{teamId}}
+Content-Type: application/json
 
 ### Get team statistics
-GET http://localhost:8000/api/teams/1/statistics
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU0MDg4NzEsImlhdCI6MTc0NTMyMjQ3MSwidXNlcl9pZCI6NTF9.njaKp4TUWqVd9-kgb-H5O4s_7OSsh07XiAtkCNpG_lo 
+GET {{baseUrl}}/teams/{{teamId}}/statistics
+Content-Type: application/json

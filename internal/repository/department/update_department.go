@@ -16,7 +16,7 @@ func (i impl) UpdateDepartment(ctx context.Context, id int, name, description st
 		if ent.IsNotFound(err) {
 			return model.Department{}, pkgerrors.WithStack(ErrNotFound)
 		}
-		return model.Department{}, pkgerrors.WithStack(ErrDatabase)
+		return model.Department{}, pkgerrors.WithStack(err)
 	}
 
 	// Update department
@@ -26,7 +26,7 @@ func (i impl) UpdateDepartment(ctx context.Context, id int, name, description st
 		SetUpdatedAt(time.Now()).
 		Save(ctx)
 	if err != nil {
-		return model.Department{}, pkgerrors.WithStack(ErrDatabase)
+		return model.Department{}, pkgerrors.WithStack(err)
 	}
 
 	return model.Department{

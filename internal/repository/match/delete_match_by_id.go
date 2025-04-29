@@ -14,7 +14,7 @@ func (i impl) DeleteMatchByID(ctx context.Context, id int) error {
 			return pkgerrors.WithStack(ErrNotFound)
 		}
 
-		return pkgerrors.WithStack(ErrDatabase)
+		return pkgerrors.WithStack(err)
 	}
 
 	return nil
