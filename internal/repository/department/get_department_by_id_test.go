@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"management-be/internal/model"
 	"management-be/internal/pkg/testent"
 	"management-be/internal/repository/ent"
 
@@ -12,13 +13,19 @@ import (
 
 func TestGetDepartmentByID(t *testing.T) {
 	type args struct {
-		id     int
-		expErr error
+		id        int
+		expResult model.Department
+		expErr    error
 	}
 
 	tcs := map[string]args{
 		"success": {
 			id: 1, // ID of the department in the database
+			expResult: model.Department{
+				ID:          1,
+				Name:        "Test Department",
+				Description: "This is a test department",
+			},
 		},
 		"err - not found": {
 			id:     999, // Non-existent ID
@@ -38,9 +45,9 @@ func TestGetDepartmentByID(t *testing.T) {
 					require.ErrorIs(t, err, tc.expErr)
 				} else {
 					require.NoError(t, err)
-					require.Equal(t, tc.id, department.ID)
-					require.Equal(t, "Engineering", department.Name) // Use the actual name from the database
-					require.NotEmpty(t, department.Description)
+					require.Equal(t, tc.expResult.ID, department.ID)
+					require.Equal(t, tc.expResult.Name, department.Name)
+					require.Equal(t, tc.expResult.Description, department.Description)
 					require.NotZero(t, department.CreatedAt)
 					require.NotZero(t, department.UpdatedAt)
 				}

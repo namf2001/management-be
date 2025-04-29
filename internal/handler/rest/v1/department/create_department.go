@@ -1,16 +1,18 @@
 package department
 
 import (
-	"github.com/gin-gonic/gin"
 	v1 "management-be/internal/handler/rest/v1"
+	"management-be/internal/pkg/unit"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // CreateDepartmentRequest represents the request body for creating a department
 type CreateDepartmentRequest struct {
-	Name        string `json:"name" binding:"required"`
-	Description string `json:"description" binding:"required"`
+	Name        string `json:"name" validate:"required,min=2,max=100"`
+	Description string `json:"description" validate:"required"`
 }
 
 // CreateDepartmentResponse represents the response format for a department
@@ -33,15 +35,8 @@ type Department struct {
 func (h Handler) CreateDepartment(ctx *gin.Context) {
 	var req CreateDepartmentRequest
 
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, CreateDepartmentResponse{
-			Success: false,
-			Message: "Invalid request payload",
-			Error: &v1.ErrorInfo{
-				Code:    http.StatusBadRequest,
-				Message: err.Error(),
-			},
-		})
+	// Use the validator package
+	if !unit.ValidateJSON(ctx, &req) {
 		return
 	}
 

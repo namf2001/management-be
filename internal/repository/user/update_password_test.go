@@ -26,7 +26,7 @@ func TestUpdatePassword(t *testing.T) {
 		"err - user not found": {
 			userID:         999, // Non-existent user ID
 			hashedPassword: "newpassword123",
-			expErr:         ErrUserNotFoundByID,
+			expErr:         ErrNotFound,
 		},
 	}
 

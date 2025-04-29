@@ -14,7 +14,7 @@ type Controller interface {
 	// GetMatch returns a match by ID with detailed information
 	GetMatch(ctx context.Context, id int) (model.Match, error)
 	// CreateMatch creates a new match
-	CreateMatch(ctx context.Context, opponentTeamID int, matchDate time.Time, venue string, isHomeGame bool, notes string) (model.Match, error)
+	CreateMatch(ctx context.Context, input CreateMatchInput) (model.Match, error)
 	// CreateManyMatches creates multiple matches at once
 	CreateManyMatches(ctx context.Context, matches []model.Match) ([]model.Match, error)
 	// UpdateMatch updates an existing match

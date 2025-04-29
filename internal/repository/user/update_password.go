@@ -15,9 +15,9 @@ func (i impl) UpdatePassword(ctx context.Context, userID int, hashedPassword str
 		Save(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return pkgerrors.WithStack(ErrUserNotFoundByID)
+			return pkgerrors.WithStack(ErrNotFound)
 		}
-		return pkgerrors.WithStack(ErrDatabase)
+		return pkgerrors.WithStack(err)
 	}
 	return nil
 }

@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"management-be/internal/pkg/unit"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,10 +10,10 @@ import (
 // RegisterRequest represents the request body for user registration
 // @name RegisterRequest
 type RegisterRequest struct {
-	Username string `json:"username" binding:"required" example:"john_doe"`
-	Password string `json:"password" binding:"required" example:"password123"`
-	Email    string `json:"email" binding:"required,email" example:"john@example.com"`
-	FullName string `json:"full_name" example:"John Doe"`
+	Username string `json:"username" binding:"required" validate:"required,min=3,max=50" example:"john_doe"`
+	Password string `json:"password" binding:"required" validate:"required,min=8" example:"password123"`
+	Email    string `json:"email" binding:"required,email" validate:"required,email" example:"john@example.com"`
+	FullName string `json:"full_name" validate:"required" example:"John Doe"`
 }
 
 // RegisterResponse represents the response body for user registration
@@ -37,8 +38,9 @@ type RegisterResponse struct {
 // @Router       /api/users/register [post]
 func (h Handler) Register(ctx *gin.Context) {
 	var req RegisterRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+	// Use the validator package
+	if !unit.ValidateJSON(ctx, &req) {
 		return
 	}
 

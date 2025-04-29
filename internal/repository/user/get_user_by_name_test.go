@@ -22,7 +22,7 @@ func TestGetUserByUsername(t *testing.T) {
 		},
 		"err - user not found": {
 			givenUsername: "nonexistentuser",
-			expErr:        ErrUserNotFoundByUsername,
+			expErr:        ErrNotFound,
 		},
 	}
 

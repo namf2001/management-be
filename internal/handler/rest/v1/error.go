@@ -17,6 +17,7 @@ var (
 	ErrUserNotFoundByUsername = errors.New("user not found by username")
 	ErrUserNotFoundByID       = errors.New("user not found by id")
 	ErrDatabase               = errors.New("database error")
+	ErrorFormat               = errors.New("error format")
 )
 
 type ErrorInfo struct {

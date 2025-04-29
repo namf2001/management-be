@@ -31,7 +31,7 @@ func (i impl) CreateManyMatches(ctx context.Context, matches []model.Match) ([]m
 	// Use CreateBulk for efficient batch insertion
 	entMatches, err := i.entClient.Match.CreateBulk(creators...).Save(ctx)
 	if err != nil {
-		return nil, pkgerrors.WithStack(ErrDatabase)
+		return nil, pkgerrors.WithStack(err)
 	}
 
 	// Convert ent.Match entities to model.Match

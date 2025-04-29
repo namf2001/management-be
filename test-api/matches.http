@@ -1,53 +1,161 @@
+### Variables
+@baseUrl = http://localhost:8080/api
+@matchId = 1
+
 ### List all matches
-GET http://localhost:8080/api/matches
-Authorization: Bearer {{token}}
+GET {{baseUrl}}/matches
+Content-Type: application/json
 
 ### Get match by ID
-GET http://localhost:8080/api/matches/1
-Authorization: Bearer {{token}}
-
-### Create new match
-POST http://localhost:8080/api/matches
+GET {{baseUrl}}/matches/{{matchId}}
 Content-Type: application/json
 
-
-{
-    "team1Id": 1,
-    "team2Id": 2,
-    "date": "2024-04-25T10:00:00Z",
-    "location": "Stadium A",
-    "score1": 0,
-    "score2": 0
-}
-
-### Update match
-PUT http://localhost:8080/api/matches/1
+### Create a new match
+POST {{baseUrl}}/matches
 Content-Type: application/json
-Authorization: Bearer {{token}}
 
 {
-    "team1Id": 1,
-    "team2Id": 2,
-    "date": "2024-04-25T10:00:00Z",
-    "location": "Stadium B",
-    "score1": 2,
-    "score2": 1
+  "opponent_team_id": 2,
+  "match_date": "2025-05-15T18:30:00Z",
+  "venue": "Home Stadium",
+  "is_home_game": true,
+  "notes": "Important league match"
 }
 
-### Delete match
-DELETE http://localhost:8080/api/matches/1
-Authorization: Bearer {{token}}
+### Validation Test: Create match with missing required fields
+POST {{baseUrl}}/matches
+Content-Type: application/json
+
+{
+  "opponent_team_id": 1,
+  "is_home_game": true
+}
+
+### Validation Test: Create match with invalid opponent_team_id
+POST {{baseUrl}}/matches
+Content-Type: application/json
+
+{
+  "opponent_team_id": 0,
+  "match_date": "2025-05-15T18:30:00Z",
+  "venue": "Home Stadium",
+  "is_home_game": true
+}
+
+### Validation Test: Create match with too short venue name
+POST {{baseUrl}}/matches
+Content-Type: application/json
+
+{
+  "opponent_team_id": 1,
+  "match_date": "2025-05-15T18:30:00Z",
+  "venue": "A",
+  "is_home_game": true
+}
+
+### Validation Test: Create match with too long notes
+POST {{baseUrl}}/matches
+Content-Type: application/json
+
+{
+  "opponent_team_id": 1,
+  "match_date": "2025-05-15T18:30:00Z",
+  "venue": "Home Stadium",
+  "is_home_game": true,
+  "notes": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+}
+
+### Update a match
+PUT {{baseUrl}}/matches/{{matchId}}
+Content-Type: application/json
+
+{
+  "opponent_team_id": 1,
+  "match_date": "2025-05-20T18:30:00Z",
+  "venue": "Away Stadium",
+  "is_home_game": false,
+  "our_score": 2,
+  "opponent_score": 1,
+  "status": "completed",
+  "notes": "Victory away from home"
+}
+
+### Validation Test: Update match with negative scores
+PUT {{baseUrl}}/matches/{{matchId}}
+Content-Type: application/json
+
+{
+  "opponent_team_id": 1,
+  "match_date": "2025-05-20T18:30:00Z",
+  "venue": "Away Stadium",
+  "is_home_game": false,
+  "our_score": -1,
+  "opponent_score": -2,
+  "status": "completed",
+  "notes": "Invalid negative scores"
+}
+
+### Validation Test: Update match with invalid status
+PUT {{baseUrl}}/matches/{{matchId}}
+Content-Type: application/json
+
+{
+  "opponent_team_id": 1,
+  "match_date": "2025-05-20T18:30:00Z",
+  "venue": "Away Stadium",
+  "is_home_game": false,
+  "our_score": 2,
+  "opponent_score": 1,
+  "status": "invalid_status",
+  "notes": "Match with invalid status"
+}
+
+### Delete a match
+DELETE {{baseUrl}}/matches/{{matchId}}
+Content-Type: application/json
 
 ### Update match players
-PUT http://localhost:8080/api/matches/1/players
+PUT {{baseUrl}}/matches/{{matchId}}/players
 Content-Type: application/json
-Authorization: Bearer {{token}}
 
 {
-    "team1Players": [1, 2, 3],
-    "team2Players": [4, 5, 6]
+  "players": [
+    {
+      "player_id": 1,
+      "minutes_played": 90,
+      "goals_scored": 1,
+      "assists": 1,
+      "yellow_cards": 0,
+      "red_card": false
+    },
+    {
+      "player_id": 2,
+      "minutes_played": 85,
+      "goals_scored": 1,
+      "assists": 0,
+      "yellow_cards": 1,
+      "red_card": false
+    }
+  ]
 }
 
-### Get match statistics
-GET http://localhost:8080/api/matches/1/statistics
-Authorization: Bearer {{token}} 
+### Validation Test: Update match players with invalid data
+PUT {{baseUrl}}/matches/{{matchId}}/players
+Content-Type: application/json
+
+{
+  "players": [
+    {
+      "player_id": 0,
+      "minutes_played": -10,
+      "goals_scored": -1,
+      "assists": -1,
+      "yellow_cards": -1,
+      "red_card": false
+    }
+  ]
+}
+
+### Get match details with player statistics
+GET {{baseUrl}}/matches/{{matchId}}/details
+Content-Type: application/json

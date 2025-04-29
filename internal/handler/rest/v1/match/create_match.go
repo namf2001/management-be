@@ -1,18 +1,22 @@
 package match
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+
+	"management-be/internal/controller/match"
+	"management-be/internal/pkg/unit"
 )
 
 // CreateMatchRequest represents the request body for creating a match
 type CreateMatchRequest struct {
-	OpponentTeamID int       `json:"opponent_team_id" binding:"required"`
-	MatchDate      time.Time `json:"match_date" binding:"required"`
-	Venue          string    `json:"venue" binding:"required"`
+	OpponentTeamID int       `json:"opponent_team_id" validate:"required,min=1"`
+	MatchDate      time.Time `json:"match_date" validate:"required"`
+	Venue          string    `json:"venue" validate:"required,min=2"`
 	IsHomeGame     bool      `json:"is_home_game"`
-	Notes          string    `json:"notes"`
+	Notes          string    `json:"notes" validate:"omitempty,max=1000"`
 }
 
 // CreateMatchResponse represents the response for creating a match
@@ -29,44 +33,39 @@ type CreateMatchResponse struct {
 // CreateMatch handles the request to create a new match
 func (h Handler) CreateMatch(ctx *gin.Context) {
 	var req CreateMatchRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"error":   "Invalid request body",
-		})
+	if !unit.ValidateJSON(ctx, &req) {
 		return
 	}
 
 	// Call the controller
 	match, err := h.matchCtrl.CreateMatch(
 		ctx.Request.Context(),
-		req.OpponentTeamID,
-		req.MatchDate,
-		req.Venue,
-		req.IsHomeGame,
-		req.Notes,
+		match.CreateMatchInput{
+			OpponentTeamID: req.OpponentTeamID,
+			MatchDate:      req.MatchDate,
+			Venue:          req.Venue,
+			IsHomeGame:     req.IsHomeGame,
+			Notes:          req.Notes,
+		},
 	)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
-			"error":   "Failed to create match",
+			"error":   err.Error(),
 		})
 		return
 	}
 
-	// Prepare response
-	response := CreateMatchResponse{
-		ID:             match.ID,
-		OpponentTeamID: match.OpponentTeamID,
-		MatchDate:      match.MatchDate,
-		Venue:          match.Venue,
-		IsHomeGame:     match.IsHomeGame,
-		Status:         match.Status,
-		Notes:          match.Notes,
-	}
-
 	ctx.JSON(http.StatusCreated, gin.H{
 		"success": true,
-		"data":    response,
+		"data": CreateMatchResponse{
+			ID:             match.ID,
+			OpponentTeamID: match.OpponentTeamID,
+			MatchDate:      match.MatchDate,
+			Venue:          match.Venue,
+			IsHomeGame:     match.IsHomeGame,
+			Status:         match.Status,
+			Notes:          match.Notes,
+		},
 	})
 }

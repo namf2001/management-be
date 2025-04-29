@@ -28,7 +28,7 @@ func (i impl) UpdateMatch(ctx context.Context, id int, opponentTeamID int, match
 		if ent.IsNotFound(err) {
 			return model.Match{}, pkgerrors.WithStack(ErrNotFound)
 		}
-		return model.Match{}, pkgerrors.WithStack(ErrDatabase)
+		return model.Match{}, pkgerrors.WithStack(err)
 	}
 
 	return model.Match{

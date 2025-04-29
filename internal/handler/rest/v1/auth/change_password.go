@@ -1,9 +1,11 @@
 package auth
 
 import (
-	"github.com/gin-gonic/gin"
+	"management-be/internal/pkg/unit"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 const (
@@ -12,8 +14,8 @@ const (
 
 // ChangePasswordRequest represents the request body for changing a password.
 type ChangePasswordRequest struct {
-	CurrentPassword string `json:"current_password" binding:"required"`
-	NewPassword     string `json:"new_password" binding:"required"`
+	CurrentPassword string `json:"current_password" validate:"required"`
+	NewPassword     string `json:"new_password" validate:"required,min=8"`
 }
 
 // ChangePassword handles the request to change a user's password.
@@ -51,11 +53,9 @@ func (h Handler) ChangePassword(ctx *gin.Context) {
 	}
 
 	var req ChangePasswordRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"error":   err.Error(),
-		})
+
+	// Use the validator package
+	if !unit.ValidateJSON(ctx, &req) {
 		return
 	}
 

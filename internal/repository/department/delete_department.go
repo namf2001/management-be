@@ -14,8 +14,7 @@ func (i impl) DeleteDepartment(ctx context.Context, id int) error {
 		if ent.IsNotFound(err) {
 			return pkgerrors.WithStack(ErrNotFound)
 		}
-
-		return pkgerrors.WithStack(ErrDatabase)
+		return pkgerrors.WithStack(err)
 	}
 
 	return nil

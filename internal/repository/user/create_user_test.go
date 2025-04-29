@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"management-be/internal/pkg/testent"
@@ -31,14 +32,14 @@ func TestCreateUser(t *testing.T) {
 			email:    "different@example.com",
 			password: "password123",
 			fullName: "Duplicate Username User",
-			expErr:   ErrDatabase,
+			expErr:   errors.New("duplicate key value violates unique constraint \"unique_username\""),
 		},
 		"err - duplicate email": {
 			username: "differentuser",
 			email:    "admintest@gmail.com", // Same as in insert_user.sql
 			password: "password123",
 			fullName: "Duplicate Email User",
-			expErr:   ErrDatabase,
+			expErr:   errors.New("duplicate key value violates unique constraint \"users_email_key\""),
 		},
 	}
 
@@ -52,7 +53,8 @@ func TestCreateUser(t *testing.T) {
 
 				// then
 				if tc.expErr != nil {
-					require.ErrorIs(t, err, tc.expErr)
+					require.Error(t, err)
+					require.Contains(t, err.Error(), tc.expErr.Error())
 				} else {
 					require.NoError(t, err)
 					require.NotZero(t, user.ID)

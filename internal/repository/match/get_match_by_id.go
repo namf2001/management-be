@@ -14,7 +14,7 @@ func (i impl) GetMatchByID(ctx context.Context, id int) (model.Match, error) {
 		if ent.IsNotFound(err) {
 			return model.Match{}, pkgerrors.WithStack(ErrNotFound)
 		}
-		return model.Match{}, pkgerrors.WithStack(ErrDatabase)
+		return model.Match{}, pkgerrors.WithStack(err)
 	}
 
 	return model.Match{

@@ -2,7 +2,9 @@ package player
 
 import (
 	"context"
+
 	pkgerrors "github.com/pkg/errors"
+
 	"management-be/internal/model"
 	"management-be/internal/repository/ent"
 )
@@ -14,7 +16,7 @@ func (i impl) GetPlayerByID(ctx context.Context, id int) (model.Player, error) {
 		if ent.IsNotFound(err) {
 			return model.Player{}, pkgerrors.WithStack(ErrNotFound)
 		}
-		return model.Player{}, pkgerrors.WithStack(ErrDatabase)
+		return model.Player{}, pkgerrors.WithStack(err)
 	}
 
 	return model.Player{

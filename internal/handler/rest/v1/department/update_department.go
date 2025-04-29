@@ -1,14 +1,16 @@
 package department
 
 import (
-	"github.com/gin-gonic/gin"
+	"management-be/internal/pkg/unit"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UpdateDepartmentRequest struct {
-	Name        string `json:"name" binding:"required"`
-	Description string `json:"description" binding:"required"`
+	Name        string `json:"name" validate:"required,min=2,max=100"`
+	Description string `json:"description" validate:"required"`
 }
 
 // UpdateDepartment handles the request to update an existing department
@@ -25,11 +27,7 @@ func (h Handler) UpdateDepartment(ctx *gin.Context) {
 	}
 
 	var req UpdateDepartmentRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"error":   err.Error(),
-		})
+	if !unit.ValidateJSON(ctx, &req) {
 		return
 	}
 
@@ -46,7 +44,7 @@ func (h Handler) UpdateDepartment(ctx *gin.Context) {
 	// Return updated department
 	ctx.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data": DepartmentResponse{
+		"data": Department{
 			ID:          department.ID,
 			Name:        department.Name,
 			Description: department.Description,

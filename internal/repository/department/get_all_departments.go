@@ -10,7 +10,7 @@ import (
 func (i impl) GetAllDepartments(ctx context.Context) ([]model.Department, error) {
 	departments, err := i.entClient.Department.Query().All(ctx)
 	if err != nil {
-		return nil, pkgerrors.WithStack(ErrDatabase)
+		return nil, pkgerrors.WithStack(err)
 	}
 
 	result := make([]model.Department, len(departments))
