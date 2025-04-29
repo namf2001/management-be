@@ -12,9 +12,13 @@ import (
 
 func TestGetAllPlayers(t *testing.T) {
 	type args struct {
-		page     int
-		pageSize int
-		expErr   error
+		page         int
+		pageSize     int
+		departmentID *int
+		isActive     *bool
+		position     string
+		expErr       error
+		expectEmpty  bool // New field to indicate if we expect empty results
 	}
 
 	tcs := map[string]args{
@@ -23,7 +27,31 @@ func TestGetAllPlayers(t *testing.T) {
 			pageSize: 10,
 		},
 		"success - empty page": {
-			page:     2,
+			page:        2,
+			pageSize:    10,
+			expectEmpty: true,
+		},
+		"success - filter by department": {
+			page:         1,
+			pageSize:     10,
+			departmentID: ptrInt(1),
+		},
+		"success - filter by active status": {
+			page:     1,
+			pageSize: 10,
+			isActive: ptrBool(true),
+		},
+		"success - filter by position": {
+			page:     1,
+			pageSize: 10,
+			position: "Forward",
+		},
+		"success - invalid page number (defaults to page 1)": {
+			page:     0,
+			pageSize: 10,
+		},
+		"success - negative page number (defaults to page 1)": {
+			page:     -1,
 			pageSize: 10,
 		},
 	}
@@ -36,7 +64,14 @@ func TestGetAllPlayers(t *testing.T) {
 				testent.LoadTestSQLFile(t, tx, "testdata/insert_player.sql")
 
 				repo := NewRepository(tx.Client())
-				players, total, err := repo.GetAllPlayers(context.Background(), tc.page, tc.pageSize)
+				players, total, err := repo.GetAllPlayers(
+					context.Background(),
+					tc.page,
+					tc.pageSize,
+					tc.departmentID,
+					tc.isActive,
+					tc.position,
+				)
 
 				if tc.expErr != nil {
 					require.ErrorIs(t, err, tc.expErr)
@@ -45,10 +80,10 @@ func TestGetAllPlayers(t *testing.T) {
 					require.NotNil(t, players)
 					require.GreaterOrEqual(t, total, 0)
 
-					if tc.page == 1 {
-						require.Greater(t, len(players), 0)
-					} else {
+					if tc.expectEmpty {
 						require.Equal(t, 0, len(players))
+					} else {
+						require.Greater(t, len(players), 0)
 					}
 
 					// Verify each player has required fields
@@ -70,4 +105,13 @@ func TestGetAllPlayers(t *testing.T) {
 			})
 		})
 	}
+}
+
+// Helper functions to create pointers
+func ptrInt(i int) *int {
+	return &i
+}
+
+func ptrBool(b bool) *bool {
+	return &b
 }
