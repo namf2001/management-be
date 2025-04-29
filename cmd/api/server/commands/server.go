@@ -9,6 +9,7 @@ import (
 
 	_ "management-be/docs/swagger"
 	"management-be/internal/database"
+	"management-be/internal/pkg/swagger"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -20,6 +21,9 @@ type Server struct {
 }
 
 func NewServer() *http.Server {
+	// Initialize Swagger with environment variables
+	swagger.Init()
+
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	NewServer := &Server{
 		port: port,
