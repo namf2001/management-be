@@ -2,11 +2,12 @@ package match
 
 import (
 	"context"
-	pkgerrors "github.com/pkg/errors"
 	"management-be/internal/model"
 	"management-be/internal/repository/ent"
 	"management-be/internal/repository/ent/match"
 	"management-be/internal/repository/ent/matchplayer"
+
+	pkgerrors "github.com/pkg/errors"
 )
 
 func (i impl) GetMatchStatistics(ctx context.Context, matchID int) (model.MatchStatistics, error) {

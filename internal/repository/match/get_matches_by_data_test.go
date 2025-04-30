@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestListMatches tests the ListMatches function of the MatchRepository.
 func TestListMatches(t *testing.T) {
 	type args struct {
 		status         string
@@ -76,7 +77,7 @@ func TestListMatches(t *testing.T) {
 				require.NoError(t, err)
 				_, err = tx.ExecContext(context.Background(), "DELETE FROM teams")
 				require.NoError(t, err)
-				
+
 				// Load team data first, then match data
 				testent.LoadTestSQLFile(t, tx, "testdata/insert_team.sql")
 				testent.LoadTestSQLFile(t, tx, "testdata/insert_match.sql")

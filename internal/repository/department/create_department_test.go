@@ -3,10 +3,11 @@ package department
 import (
 	"context"
 	"errors"
+	"management-be/internal/repository/ent"
 	"testing"
 
+	"management-be/internal/model"
 	"management-be/internal/pkg/testent"
-	"management-be/internal/repository/ent"
 
 	"github.com/stretchr/testify/require"
 )
@@ -15,6 +16,7 @@ func TestCreateDepartment(t *testing.T) {
 	type args struct {
 		name        string
 		description string
+		expResult   model.Department
 		expErr      error
 	}
 
@@ -22,10 +24,17 @@ func TestCreateDepartment(t *testing.T) {
 		"success": {
 			name:        "New Department",
 			description: "This is a new department",
+			expResult: model.Department{
+				Name: "New Department",
+			},
 		},
 		"success - empty description": {
 			name:        "Department with Empty Description",
 			description: "",
+			expResult: model.Department{
+				Name:        "Department with Empty Description",
+				Description: "",
+			},
 		},
 		"err - duplicate name": {
 			name:        "Test Department",

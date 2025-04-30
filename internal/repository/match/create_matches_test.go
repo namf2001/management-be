@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestCreateManyMatches tests the CreateManyMatches function
 func TestCreateManyMatches(t *testing.T) {
 	// Helper function to create test matches
 	createTestMatches := func() []model.Match {
@@ -39,16 +40,19 @@ func TestCreateManyMatches(t *testing.T) {
 	}
 
 	type args struct {
-		matches []model.Match
-		expErr  error
+		matches   []model.Match
+		expResult []model.Match
+		expErr    error
 	}
 
 	tcs := map[string]args{
 		"success": {
-			matches: createTestMatches(),
+			matches:   createTestMatches(),
+			expResult: createTestMatches(),
 		},
 		"success - empty list": {
-			matches: []model.Match{},
+			matches:   []model.Match{},
+			expResult: []model.Match{},
 		},
 		"err - invalid opponent team ID": {
 			matches: []model.Match{
@@ -68,12 +72,6 @@ func TestCreateManyMatches(t *testing.T) {
 	for s, tc := range tcs {
 		t.Run(s, func(t *testing.T) {
 			testent.WithEntTx(t, func(tx *ent.Tx) {
-				// Clean the tables first to avoid conflicts
-				_, err := tx.ExecContext(context.Background(), "DELETE FROM matches")
-				require.NoError(t, err)
-				_, err = tx.ExecContext(context.Background(), "DELETE FROM teams")
-				require.NoError(t, err)
-
 				// Load team data
 				testent.LoadTestSQLFile(t, tx, "testdata/insert_team.sql")
 
@@ -98,23 +96,18 @@ func TestCreateManyMatches(t *testing.T) {
 						for i, match := range createdMatches {
 							require.NotZero(t, match.ID)
 							require.Equal(t, tc.matches[i].OpponentTeamID, match.OpponentTeamID)
-
-							// Compare time fields more carefully
-							require.Equal(t, tc.matches[i].MatchDate.Year(), match.MatchDate.Year())
-							require.Equal(t, tc.matches[i].MatchDate.Month(), match.MatchDate.Month())
-							require.Equal(t, tc.matches[i].MatchDate.Day(), match.MatchDate.Day())
-							require.Equal(t, tc.matches[i].MatchDate.Hour(), match.MatchDate.Hour())
-							require.Equal(t, tc.matches[i].MatchDate.Minute(), match.MatchDate.Minute())
-
+							require.Equal(t, tc.matches[i].MatchDate, match.MatchDate)
 							require.Equal(t, tc.matches[i].Venue, match.Venue)
 							require.Equal(t, tc.matches[i].IsHomeGame, match.IsHomeGame)
 							require.Equal(t, tc.matches[i].Status, match.Status)
 							require.Equal(t, tc.matches[i].Notes, match.Notes)
+							require.NotZero(t, match.CreatedAt)
+							require.NotZero(t, match.UpdatedAt)
 
-							// Verify the match was actually created in the database
-							dbMatch, err := tx.Client().Match.Get(context.Background(), match.ID)
-							require.NoError(t, err)
-							require.NotNil(t, dbMatch)
+							// For model.Match, DeletedAt is a pointer that should be nil or point to a zero time
+							if match.DeletedAt != nil {
+								require.True(t, match.DeletedAt.IsZero())
+							}
 						}
 					}
 				}

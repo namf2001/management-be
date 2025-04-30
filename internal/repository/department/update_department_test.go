@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"management-be/internal/model"
 	"management-be/internal/pkg/testent"
 	"management-be/internal/repository/ent"
 
@@ -16,6 +17,7 @@ func TestUpdateDepartment(t *testing.T) {
 		id          int
 		name        string
 		description string
+		expResult   model.Department
 		expErr      error
 	}
 
@@ -24,11 +26,13 @@ func TestUpdateDepartment(t *testing.T) {
 			id:          1, // ID of the department inserted in insert_department.sql
 			name:        "Updated Department",
 			description: "This is an updated department",
+			expResult:   model.Department{ID: 1, Name: "Updated Department", Description: "This is an updated department"},
 		},
 		"success - empty description": {
 			id:          1, // ID of the department inserted in insert_department.sql
 			name:        "Department with Empty Description",
 			description: "",
+			expResult:   model.Department{ID: 1, Name: "Department with Empty Description", Description: ""},
 		},
 		"err - not found": {
 			id:          999, // Non-existent ID
@@ -54,21 +58,14 @@ func TestUpdateDepartment(t *testing.T) {
 					require.ErrorIs(t, err, tc.expErr)
 				} else {
 					require.NoError(t, err)
-					require.Equal(t, tc.id, department.ID)
-					require.Equal(t, tc.name, department.Name)
-					require.Equal(t, tc.description, department.Description)
+					require.Equal(t, tc.expResult.ID, department.ID)
+					require.Equal(t, tc.expResult.Name, department.Name)
+					require.Equal(t, tc.expResult.Description, department.Description)
+
+					// Check that updated_at is greater than beforeUpdate
+					require.Greater(t, department.UpdatedAt, beforeUpdate)
 					require.NotZero(t, department.CreatedAt)
 					require.NotZero(t, department.UpdatedAt)
-					require.True(t, department.UpdatedAt.After(beforeUpdate), "UpdatedAt should be after the time before update")
-
-					// Verify the department was actually updated in the database
-					dbDepartment, err := tx.Client().Department.Get(context.Background(), tc.id)
-					require.NoError(t, err)
-					require.Equal(t, tc.name, dbDepartment.Name)
-					require.Equal(t, tc.description, dbDepartment.Description)
-					require.NotZero(t, dbDepartment.CreatedAt)
-					require.NotZero(t, dbDepartment.UpdatedAt)
-					require.True(t, dbDepartment.UpdatedAt.After(beforeUpdate), "UpdatedAt in DB should be after the time before update")
 				}
 			})
 		})

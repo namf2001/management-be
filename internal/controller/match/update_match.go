@@ -4,30 +4,50 @@ import (
 	"context"
 	"management-be/internal/model"
 	"management-be/internal/repository/ent"
+	"management-be/internal/repository/match"
+
 	"time"
 )
 
+// UpdateMatchInput represents the input for updating a match
+type UpdateMatchInput struct {
+	OpponentTeamID int       `json:"opponent_team_id"`
+	MatchDate      time.Time `json:"match_date"`
+	Venue          string    `json:"venue"`
+	IsHomeGame     bool      `json:"is_home_game"`
+	OurScore       int32     `json:"our_score"`
+	OpponentScore  int32     `json:"opponent_score"`
+	Status         string    `json:"status"`
+	Notes          string    `json:"notes"`
+}
+
 // UpdateMatch updates an existing match with transaction support
-func (i impl) UpdateMatch(ctx context.Context, id int, opponentTeamID int, matchDate time.Time, venue string, isHomeGame bool, ourScore, opponentScore int32, status, notes string) (model.Match, error) {
-	var match model.Match
+func (i impl) UpdateMatch(ctx context.Context, id int, input UpdateMatchInput) (model.Match, error) {
+	var result model.Match
+
+	// Check if match exists
+	_, err := i.repo.Match().GetMatchByID(ctx, id)
+	if err != nil {
+		return model.Match{}, ErrMatchNotFound
+	}
 
 	// Execute the update operation within a transaction
-	err := i.repo.WithTransaction(ctx, func(tx *ent.Tx) error {
-		matchRepo := i.repo.Match()
-
-		// Check if match exists
-		_, err := matchRepo.GetMatchByID(ctx, id)
-		if err != nil {
-			return ErrMatchNotFound
-		}
-
+	err = i.repo.WithTransaction(ctx, func(tx *ent.Tx) error {
 		// Update match
-		updatedMatch, err := matchRepo.UpdateMatch(ctx, id, opponentTeamID, matchDate, venue, isHomeGame, ourScore, opponentScore, status, notes)
+		result, err = i.repo.Match().UpdateMatch(ctx, id, match.UpdateMatchInput{
+			OpponentTeamID: input.OpponentTeamID,
+			MatchDate:      input.MatchDate,
+			Venue:          input.Venue,
+			IsHomeGame:     input.IsHomeGame,
+			OurScore:       input.OurScore,
+			OpponentScore:  input.OpponentScore,
+			Status:         input.Status,
+			Notes:          input.Notes,
+		})
 		if err != nil {
-			return ErrMatchNotUpdated
+			return err
 		}
 
-		match = updatedMatch
 		return nil
 	})
 
@@ -35,5 +55,5 @@ func (i impl) UpdateMatch(ctx context.Context, id int, opponentTeamID int, match
 		return model.Match{}, err
 	}
 
-	return match, nil
+	return result, nil
 }

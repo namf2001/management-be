@@ -11,27 +11,45 @@ import (
 )
 
 func TestGetAllDepartments(t *testing.T) {
-	t.Run("success - get all departments", func(t *testing.T) {
-		testent.WithEntTx(t, func(tx *ent.Tx) {
-			// No need to load test data, as there are already departments in the database
+	type args struct {
+		expResult []ent.Department
+		expErr    error
+	}
 
-			repo := NewRepository(tx.Client())
-			departments, err := repo.GetAllDepartments(context.Background())
+	tcs := map[string]args{
+		"success": {
+			expResult: []ent.Department{
+				{
+					ID:          1,
+					Name:        "Test Department",
+					Description: "This is a test department",
+				},
+			},
+		},
+	}
 
-			require.NoError(t, err)
-			require.NotEmpty(t, departments)
+	for s, tc := range tcs {
+		t.Run(s, func(t *testing.T) {
+			testent.WithEntTx(t, func(tx *ent.Tx) {
+				testent.LoadTestSQLFile(t, tx, "testdata/insert_department.sql")
 
-			// Verify that departments have the expected structure
-			for _, dept := range departments {
-				require.NotZero(t, dept.ID)
-				require.NotEmpty(t, dept.Name)
-				require.NotZero(t, dept.CreatedAt)
-				require.NotZero(t, dept.UpdatedAt)
-			}
+				repo := NewRepository(tx.Client())
+				departments, err := repo.GetAllDepartments(context.Background())
+
+				if tc.expErr != nil {
+					require.ErrorIs(t, err, tc.expErr)
+				} else {
+					require.NoError(t, err)
+					require.Equal(t, len(tc.expResult), len(departments))
+					for i := range departments {
+						require.Equal(t, tc.expResult[i].ID, departments[i].ID)
+						require.Equal(t, tc.expResult[i].Name, departments[i].Name)
+						require.Equal(t, tc.expResult[i].Description, departments[i].Description)
+						require.NotZero(t, departments[i].CreatedAt)
+						require.NotZero(t, departments[i].UpdatedAt)
+					}
+				}
+			})
 		})
-	})
-
-	// Note: We can't test the "no departments" case because there are already departments in the test database
-	// and we can't delete them in a transaction that will be rolled back.
-	// In a real application, we would use a separate test database or mock the repository.
+	}
 }

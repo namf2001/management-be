@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestGetMatchStatistics tests the GetMatchStatistics function
 func TestGetMatchStatistics(t *testing.T) {
 	type args struct {
 		matchID int

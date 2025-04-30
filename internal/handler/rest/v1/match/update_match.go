@@ -58,14 +58,16 @@ func (h Handler) UpdateMatch(ctx *gin.Context) {
 	matchUpdate, err := h.matchCtrl.UpdateMatch(
 		ctx.Request.Context(),
 		id,
-		req.OpponentTeamID,
-		req.MatchDate,
-		req.Venue,
-		req.IsHomeGame,
-		req.OurScore,
-		req.OpponentScore,
-		req.Status,
-		req.Notes,
+		match.UpdateMatchInput{
+			OpponentTeamID: req.OpponentTeamID,
+			MatchDate:      req.MatchDate,
+			Venue:          req.Venue,
+			IsHomeGame:     req.IsHomeGame,
+			OurScore:       req.OurScore,
+			OpponentScore:  req.OpponentScore,
+			Status:         req.Status,
+			Notes:          req.Notes,
+		},
 	)
 	if err != nil {
 		if errors.Is(err, match.ErrMatchNotFound) {
@@ -83,21 +85,18 @@ func (h Handler) UpdateMatch(ctx *gin.Context) {
 		return
 	}
 
-	// Prepare response
-	response := UpdateMatchResponse{
-		ID:             matchUpdate.ID,
-		OpponentTeamID: matchUpdate.OpponentTeamID,
-		MatchDate:      matchUpdate.MatchDate,
-		Venue:          matchUpdate.Venue,
-		IsHomeGame:     matchUpdate.IsHomeGame,
-		OurScore:       matchUpdate.OurScore,
-		OpponentScore:  matchUpdate.OpponentScore,
-		Status:         matchUpdate.Status,
-		Notes:          matchUpdate.Notes,
-	}
-
 	ctx.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data":    response,
+		"data": UpdateMatchResponse{
+			ID:             matchUpdate.ID,
+			OpponentTeamID: matchUpdate.OpponentTeamID,
+			MatchDate:      matchUpdate.MatchDate,
+			Venue:          matchUpdate.Venue,
+			IsHomeGame:     matchUpdate.IsHomeGame,
+			OurScore:       matchUpdate.OurScore,
+			OpponentScore:  matchUpdate.OpponentScore,
+			Status:         matchUpdate.Status,
+			Notes:          matchUpdate.Notes,
+		},
 	})
 }

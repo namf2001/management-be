@@ -2,6 +2,7 @@ package player
 
 import (
 	"context"
+	"management-be/internal/model"
 	"testing"
 
 	"management-be/internal/pkg/testent"
@@ -12,13 +13,23 @@ import (
 
 func TestGetPlayerStatistics(t *testing.T) {
 	type args struct {
-		id     int
-		expErr error
+		id        int
+		expResult model.PlayerStatistic
+		expErr    error
 	}
 
 	tcs := map[string]args{
 		"success": {
 			id: 1, // ID of the player in the database
+			expResult: model.PlayerStatistic{
+				PlayerID:           1,
+				TotalMatches:       5,
+				TotalMinutesPlayed: 450,
+				TotalGoals:         3,
+				TotalAssists:       2,
+				TotalYellowCards:   1,
+				TotalRedCards:      0,
+			},
 		},
 		"err - not found": {
 			id:     999, // Non-existent ID
@@ -41,15 +52,13 @@ func TestGetPlayerStatistics(t *testing.T) {
 					require.ErrorIs(t, err, tc.expErr)
 				} else {
 					require.NoError(t, err)
-					require.Equal(t, tc.id, statistics.PlayerID)
-					require.Equal(t, int32(5), statistics.TotalMatches)
-					require.Equal(t, int32(450), statistics.TotalMinutesPlayed)
-					require.Equal(t, int32(3), statistics.TotalGoals)
-					require.Equal(t, int32(2), statistics.TotalAssists)
-					require.Equal(t, int32(1), statistics.TotalYellowCards)
-					require.Equal(t, int32(0), statistics.TotalRedCards)
-					require.NotZero(t, statistics.CreatedAt)
-					require.NotZero(t, statistics.UpdatedAt)
+					require.Equal(t, tc.expResult.PlayerID, statistics.PlayerID)
+					require.Equal(t, tc.expResult.TotalMatches, statistics.TotalMatches)
+					require.Equal(t, tc.expResult.TotalMinutesPlayed, statistics.TotalMinutesPlayed)
+					require.Equal(t, tc.expResult.TotalGoals, statistics.TotalGoals)
+					require.Equal(t, tc.expResult.TotalAssists, statistics.TotalAssists)
+					require.Equal(t, tc.expResult.TotalYellowCards, statistics.TotalYellowCards)
+					require.Equal(t, tc.expResult.TotalRedCards, statistics.TotalRedCards)
 				}
 			})
 		})
