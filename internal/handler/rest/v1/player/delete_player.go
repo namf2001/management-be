@@ -7,12 +7,25 @@ import (
 	"strconv"
 )
 
+// DeletePlayerResponse represents the response for deleting a player
+// @name DeletePlayerResponse
 type DeletePlayerResponse struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
+	Success bool   `json:"success" example:"true"`
+	Message string `json:"message" example:"Player deleted successfully"`
 }
 
-// DeletePlayer handles the request to delete a player by ID
+// DeletePlayer
+// @Summary      Delete a player
+// @Description  Delete a player by their ID
+// @Tags         players
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Player ID"
+// @Success      200  {object}  DeletePlayerResponse
+// @Failure      400  {object}  object{code=int,message=string}
+// @Failure      404  {object}  object{code=int,message=string}
+// @Failure      500  {object}  object{code=int,message=string}
+// @Router       /api/players/{id} [delete]
 func (h Handler) DeletePlayer(ctx *gin.Context) {
 	// Get player ID from URL parameter
 	idStr := ctx.Param("id")

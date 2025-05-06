@@ -10,13 +10,24 @@ import (
 )
 
 // CreateTeamFeeRequest represents the request body for creating a team fee
+// @name CreateTeamFeeRequest
 type CreateTeamFeeRequest struct {
-	Amount      float64 `json:"amount" validate:"required,gt=0"`
-	PaymentDate string  `json:"payment_date" validate:"required,datetime=2006-01-02"`
-	Description string  `json:"description" validate:"required,min=2,max=200"`
+	Amount      float64 `json:"amount" validate:"required,gt=0" example:"1000000"`
+	PaymentDate string  `json:"payment_date" validate:"required,datetime=2006-01-02" example:"2024-06-01"`
+	Description string  `json:"description" validate:"required,min=2,max=200" example:"Tournament registration fee"`
 }
 
-// CreateTeamFee handles the request to create a new team fee
+// CreateTeamFee
+// @Summary      Create a new team fee
+// @Description  Create a new team fee with amount, payment date and description
+// @Tags         team-fees
+// @Accept       json
+// @Produce      json
+// @Param        team_fee  body      CreateTeamFeeRequest  true  "Team fee information"
+// @Success      201  {object}  object{success=bool,data=TeamFeeResponse}
+// @Failure      400  {object}  object{success=bool,error=string}
+// @Failure      500  {object}  object{success=bool,error=string}
+// @Router       /api/team-fees [post]
 func (h Handler) CreateTeamFee(ctx *gin.Context) {
 	var req CreateTeamFeeRequest
 	if !unit.ValidateJSON(ctx, &req) {

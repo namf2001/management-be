@@ -7,7 +7,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ListTeamFees handles the request to list all team fees with optional filters
+// ListTeamFees
+// @Summary      List all team fees
+// @Description  Get a list of all team fees with optional date range filters
+// @Tags         team-fees
+// @Accept       json
+// @Produce      json
+// @Param        start_date  query     string  false  "Start date (YYYY-MM-DD)"
+// @Param        end_date    query     string  false  "End date (YYYY-MM-DD)"
+// @Success      200  {object}  object{success=bool,data=TeamFeeListResponse}
+// @Failure      400  {object}  object{success=bool,error=string}
+// @Failure      500  {object}  object{success=bool,error=string}
+// @Router       /api/team-fees [get]
 func (h Handler) ListTeamFees(ctx *gin.Context) {
 	// Get date range filters from query parameters
 	startDateStr := ctx.Query("start_date")

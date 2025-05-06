@@ -1,12 +1,23 @@
 package team
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
-// ListTeams handles the request to list all teams with pagination
+// ListTeams
+// @Summary      List all teams
+// @Description  Get a paginated list of all teams
+// @Tags         teams
+// @Accept       json
+// @Produce      json
+// @Param        page   query     int  false  "Page number (default: 1)"
+// @Param        limit  query     int  false  "Items per page (default: 10, max: 100)"
+// @Success      200  {object}  object{success=bool,data=object{teams=[]TeamResponse,pagination=object{current_page=int,total_pages=int,total_items=int,items_per_page=int}}}
+// @Failure      500  {object}  object{success=bool,error=string}
+// @Router       /api/teams [get]
 func (h Handler) ListTeams(ctx *gin.Context) {
 	// Get pagination parameters from query string
 	pageStr := ctx.DefaultQuery("page", "1")

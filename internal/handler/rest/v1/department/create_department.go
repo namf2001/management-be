@@ -10,12 +10,14 @@ import (
 )
 
 // CreateDepartmentRequest represents the request body for creating a department
+// @name CreateDepartmentRequest
 type CreateDepartmentRequest struct {
-	Name        string `json:"name" validate:"required,min=2,max=100"`
-	Description string `json:"description" validate:"required"`
+	Name        string `json:"name" validate:"required,min=2,max=100" example:"Engineering"`
+	Description string `json:"description" validate:"required" example:"Software Engineering Department"`
 }
 
 // CreateDepartmentResponse represents the response format for a department
+// @name CreateDepartmentResponse
 type CreateDepartmentResponse struct {
 	Success bool          `json:"success"`
 	Data    *Department   `json:"data,omitempty"`
@@ -23,15 +25,27 @@ type CreateDepartmentResponse struct {
 	Error   *v1.ErrorInfo `json:"error,omitempty"`
 }
 
+// Department represents a department in the system
+// @name Department
 type Department struct {
-	ID          int       `json:"id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	ID          int       `json:"id" example:"1"`
+	Name        string    `json:"name" example:"Engineering"`
+	Description string    `json:"description" example:"Software Engineering Department"`
+	CreatedAt   time.Time `json:"created_at" example:"2024-03-20T10:00:00Z"`
+	UpdatedAt   time.Time `json:"updated_at" example:"2024-03-20T10:00:00Z"`
 }
 
-// CreateDepartment handles the request to create a new department
+// CreateDepartment
+// @Summary      Create a new department
+// @Description  Create a new department with name and description
+// @Tags         departments
+// @Accept       json
+// @Produce      json
+// @Param        department  body      CreateDepartmentRequest  true  "Department information"
+// @Success      201  {object}  CreateDepartmentResponse
+// @Failure      400  {object}  CreateDepartmentResponse
+// @Failure      500  {object}  CreateDepartmentResponse
+// @Router       /api/departments [post]
 func (h Handler) CreateDepartment(ctx *gin.Context) {
 	var req CreateDepartmentRequest
 

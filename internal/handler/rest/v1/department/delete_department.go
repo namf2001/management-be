@@ -1,12 +1,23 @@
 package department
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
-// DeleteDepartment handles the request to delete a department by ID
+// DeleteDepartment
+// @Summary      Delete a department
+// @Description  Delete a department by its ID
+// @Tags         departments
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Department ID"
+// @Success      200  {object}  object{success=bool,message=string}
+// @Failure      400  {object}  object{success=bool,error=string}
+// @Failure      500  {object}  object{success=bool,error=string}
+// @Router       /api/departments/{id} [delete]
 func (h Handler) DeleteDepartment(ctx *gin.Context) {
 	// Get department ID from URL parameter
 	idStr := ctx.Param("id")

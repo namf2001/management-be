@@ -11,13 +11,25 @@ import (
 )
 
 // UpdateTeamFeeRequest represents the request body for updating a team fee
+// @name UpdateTeamFeeRequest
 type UpdateTeamFeeRequest struct {
-	Amount      float64 `json:"amount" validate:"required,gt=0"`
-	PaymentDate string  `json:"payment_date" validate:"required,datetime=2006-01-02"`
-	Description string  `json:"description" validate:"required,min=2,max=200"`
+	Amount      float64 `json:"amount" validate:"required,gt=0" example:"2000000"`
+	PaymentDate string  `json:"payment_date" validate:"required,datetime=2006-01-02" example:"2024-06-10"`
+	Description string  `json:"description" validate:"required,min=2,max=200" example:"League membership fee"`
 }
 
-// UpdateTeamFee handles the request to update an existing team fee
+// UpdateTeamFee
+// @Summary      Update a team fee
+// @Description  Update an existing team fee's information
+// @Tags         team-fees
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Team Fee ID"
+// @Param        team_fee  body      UpdateTeamFeeRequest  true  "Team fee information"
+// @Success      200  {object}  object{success=bool,data=TeamFeeResponse}
+// @Failure      400  {object}  object{success=bool,error=string}
+// @Failure      500  {object}  object{success=bool,error=string}
+// @Router       /api/team-fees/{id} [put]
 func (h Handler) UpdateTeamFee(ctx *gin.Context) {
 	// Get team fee ID from URL parameter
 	idStr := ctx.Param("id")

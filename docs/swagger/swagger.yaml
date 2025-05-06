@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  v1.LoginRequest:
+  auth.LoginRequest:
     properties:
       password:
         example: password123
@@ -12,15 +12,15 @@ definitions:
     - password
     - username
     type: object
-  v1.LoginResponse:
+  auth.LoginResponse:
     properties:
       token:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         type: string
       user:
-        $ref: '#/definitions/v1.UserResponse'
+        $ref: '#/definitions/auth.UserResponse'
     type: object
-  v1.RegisterRequest:
+  auth.RegisterRequest:
     properties:
       email:
         example: john@example.com
@@ -30,16 +30,20 @@ definitions:
         type: string
       password:
         example: password123
+        minLength: 8
         type: string
       username:
         example: john_doe
+        maxLength: 50
+        minLength: 3
         type: string
     required:
     - email
+    - full_name
     - password
     - username
     type: object
-  v1.RegisterResponse:
+  auth.RegisterResponse:
     properties:
       email:
         example: john@example.com
@@ -54,13 +58,484 @@ definitions:
         example: john_doe
         type: string
     type: object
-  v1.UserResponse:
+  auth.UserResponse:
     properties:
       email:
         type: string
       id:
         type: integer
       username:
+        type: string
+    type: object
+  department.CreateDepartmentRequest:
+    properties:
+      description:
+        example: Software Engineering Department
+        type: string
+      name:
+        example: Engineering
+        maxLength: 100
+        minLength: 2
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  department.CreateDepartmentResponse:
+    properties:
+      data:
+        $ref: '#/definitions/department.Department'
+      error:
+        $ref: '#/definitions/v1.ErrorInfo'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  department.Department:
+    properties:
+      created_at:
+        example: "2024-03-20T10:00:00Z"
+        type: string
+      description:
+        example: Software Engineering Department
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Engineering
+        type: string
+      updated_at:
+        example: "2024-03-20T10:00:00Z"
+        type: string
+    type: object
+  department.DepartmentResponse:
+    properties:
+      created_at:
+        example: "2024-03-20T10:00:00Z"
+        type: string
+      description:
+        example: Software Engineering Department
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Engineering
+        type: string
+      updated_at:
+        example: "2024-03-20T10:00:00Z"
+        type: string
+    type: object
+  department.UpdateDepartmentRequest:
+    properties:
+      description:
+        example: Software Engineering Department
+        type: string
+      name:
+        example: Engineering
+        maxLength: 100
+        minLength: 2
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  player.CreatePlayerRequest:
+    properties:
+      date_of_birth:
+        example: "1990-01-01"
+        type: string
+      department_id:
+        example: 1
+        minimum: 1
+        type: integer
+      email:
+        example: john.doe@example.com
+        type: string
+      full_name:
+        example: John Doe
+        maxLength: 100
+        minLength: 2
+        type: string
+      height_cm:
+        example: 180
+        maximum: 300
+        minimum: 50
+        type: integer
+      jersey_number:
+        example: 10
+        maximum: 999
+        minimum: 1
+        type: integer
+      phone:
+        example: "+1234567890"
+        maxLength: 20
+        minLength: 5
+        type: string
+      position:
+        example: Forward
+        type: string
+      weight_kg:
+        example: 75
+        maximum: 200
+        minimum: 30
+        type: integer
+    required:
+    - department_id
+    - full_name
+    - jersey_number
+    - position
+    type: object
+  player.DeletePlayerResponse:
+    properties:
+      message:
+        example: Player deleted successfully
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  player.ListPlayersResponse:
+    properties:
+      players:
+        items:
+          $ref: '#/definitions/player.PlayerListItem'
+        type: array
+      total:
+        example: 50
+        type: integer
+    type: object
+  player.PlayerBasicStats:
+    properties:
+      total_assists:
+        example: 3
+        type: integer
+      total_goals:
+        example: 5
+        type: integer
+      total_matches:
+        example: 10
+        type: integer
+      total_minutes_played:
+        example: 900
+        type: integer
+    type: object
+  player.PlayerListItem:
+    properties:
+      date_of_birth:
+        example: "1990-01-01"
+        type: string
+      department_id:
+        example: 1
+        type: integer
+      department_name:
+        example: Engineering
+        type: string
+      email:
+        example: john.doe@example.com
+        type: string
+      full_name:
+        example: John Doe
+        type: string
+      height_cm:
+        example: 180
+        type: integer
+      id:
+        example: 1
+        type: integer
+      is_active:
+        example: true
+        type: boolean
+      jersey_number:
+        example: 10
+        type: integer
+      phone:
+        example: "+1234567890"
+        type: string
+      position:
+        example: Forward
+        type: string
+      statistics:
+        $ref: '#/definitions/player.PlayerBasicStats'
+      weight_kg:
+        example: 75
+        type: integer
+    type: object
+  player.PlayerResponse:
+    properties:
+      date_of_birth:
+        type: string
+      department_id:
+        type: integer
+      department_name:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      height_cm:
+        type: integer
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      jersey_number:
+        type: integer
+      phone:
+        type: string
+      position:
+        type: string
+      weight_kg:
+        type: integer
+    type: object
+  player.UpdatePlayerRequest:
+    properties:
+      date_of_birth:
+        example: "1990-01-01"
+        type: string
+      department_id:
+        example: 1
+        type: integer
+      email:
+        example: john.doe@example.com
+        type: string
+      full_name:
+        example: John Doe
+        type: string
+      height_cm:
+        example: 180
+        type: integer
+      is_active:
+        example: true
+        type: boolean
+      jersey_number:
+        example: 10
+        type: integer
+      phone:
+        example: "+1234567890"
+        type: string
+      position:
+        example: Forward
+        type: string
+      weight_kg:
+        example: 75
+        type: integer
+    type: object
+  team.CreateTeamRequest:
+    properties:
+      company_name:
+        example: FC Barcelona Sports Club
+        type: string
+      contact_email:
+        example: contact@fcbarcelona.com
+        type: string
+      contact_person:
+        example: Joan Laporta
+        type: string
+      contact_phone:
+        example: "123456789"
+        maxLength: 20
+        minLength: 5
+        type: string
+      name:
+        example: FC Barcelona
+        maxLength: 100
+        minLength: 2
+        type: string
+    required:
+    - company_name
+    - contact_person
+    - name
+    type: object
+  team.MatchHistoryResponse:
+    properties:
+      draws:
+        example: 1
+        type: integer
+      losses:
+        example: 3
+        type: integer
+      matches:
+        items:
+          $ref: '#/definitions/team.MatchResponse'
+        type: array
+      total_matches:
+        example: 10
+        type: integer
+      wins:
+        example: 6
+        type: integer
+    type: object
+  team.MatchResponse:
+    properties:
+      match_date:
+        example: "2024-06-01T15:00:00Z"
+        type: string
+      match_id:
+        example: 1
+        type: integer
+      opponent_score:
+        example: 1
+        type: integer
+      our_score:
+        example: 3
+        type: integer
+      status:
+        example: completed
+        type: string
+      venue:
+        example: Camp Nou
+        type: string
+    type: object
+  team.TeamResponse:
+    properties:
+      company_name:
+        example: FC Barcelona Sports Club
+        type: string
+      contact_email:
+        example: contact@fcbarcelona.com
+        type: string
+      contact_person:
+        example: Joan Laporta
+        type: string
+      contact_phone:
+        example: "123456789"
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: FC Barcelona
+        type: string
+    type: object
+  team.TeamWithStatsResponse:
+    properties:
+      company_name:
+        example: FC Barcelona Sports Club
+        type: string
+      contact_email:
+        example: contact@fcbarcelona.com
+        type: string
+      contact_person:
+        example: Joan Laporta
+        type: string
+      contact_phone:
+        example: "123456789"
+        type: string
+      id:
+        example: 1
+        type: integer
+      match_history:
+        $ref: '#/definitions/team.MatchHistoryResponse'
+      name:
+        example: FC Barcelona
+        type: string
+    type: object
+  team.UpdateTeamRequest:
+    properties:
+      company_name:
+        example: FC Barcelona Sports Club Updated
+        type: string
+      contact_email:
+        example: updated@fcbarcelona.com
+        type: string
+      contact_person:
+        example: Updated Contact Person
+        type: string
+      contact_phone:
+        example: "987654321"
+        maxLength: 20
+        minLength: 5
+        type: string
+      name:
+        example: FC Barcelona Updated
+        maxLength: 100
+        minLength: 2
+        type: string
+    required:
+    - company_name
+    - contact_person
+    - name
+    type: object
+  team_fee.CreateTeamFeeRequest:
+    properties:
+      amount:
+        example: 1000000
+        type: number
+      description:
+        example: Tournament registration fee
+        maxLength: 200
+        minLength: 2
+        type: string
+      payment_date:
+        example: "2024-06-01"
+        type: string
+    required:
+    - amount
+    - description
+    - payment_date
+    type: object
+  team_fee.TeamFeeListResponse:
+    properties:
+      summary:
+        $ref: '#/definitions/team_fee.TeamFeeSummaryResponse'
+      team_fees:
+        items:
+          $ref: '#/definitions/team_fee.TeamFeeResponse'
+        type: array
+    type: object
+  team_fee.TeamFeeResponse:
+    properties:
+      amount:
+        example: 1000000
+        type: number
+      description:
+        example: Tournament registration fee
+        type: string
+      id:
+        example: 1
+        type: integer
+      payment_date:
+        example: "2024-06-01T00:00:00Z"
+        type: string
+    type: object
+  team_fee.TeamFeeSummaryResponse:
+    properties:
+      average_amount:
+        example: 1000000
+        type: number
+      total_amount:
+        example: 5000000
+        type: number
+      total_payments:
+        example: 5
+        type: integer
+    type: object
+  team_fee.UpdateTeamFeeRequest:
+    properties:
+      amount:
+        example: 2000000
+        type: number
+      description:
+        example: League membership fee
+        maxLength: 200
+        minLength: 2
+        type: string
+      payment_date:
+        example: "2024-06-10"
+        type: string
+    required:
+    - amount
+    - description
+    - payment_date
+    type: object
+  v1.ErrorInfo:
+    properties:
+      code:
+        type: integer
+      message:
         type: string
     type: object
 host: localhost:8080
@@ -77,6 +552,841 @@ info:
   title: Management BE API
   version: "1.0"
 paths:
+  /api/departments:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all departments in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              data:
+                properties:
+                  departments:
+                    items:
+                      $ref: '#/definitions/department.DepartmentResponse'
+                    type: array
+                type: object
+              success:
+                type: boolean
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: List all departments
+      tags:
+      - departments
+    post:
+      consumes:
+      - application/json
+      description: Create a new department with name and description
+      parameters:
+      - description: Department information
+        in: body
+        name: department
+        required: true
+        schema:
+          $ref: '#/definitions/department.CreateDepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/department.CreateDepartmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/department.CreateDepartmentResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/department.CreateDepartmentResponse'
+      summary: Create a new department
+      tags:
+      - departments
+  /api/departments/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a department by its ID
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              message:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: Delete a department
+      tags:
+      - departments
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific department
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/department.DepartmentResponse'
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: Get a department by ID
+      tags:
+      - departments
+    put:
+      consumes:
+      - application/json
+      description: Update an existing department's information
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Department information
+        in: body
+        name: department
+        required: true
+        schema:
+          $ref: '#/definitions/department.UpdateDepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/department.Department'
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: Update a department
+      tags:
+      - departments
+  /api/players:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all players with their basic statistics
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/player.ListPlayersResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: List all players
+      tags:
+      - players
+    post:
+      consumes:
+      - application/json
+      description: Create a new player with their details
+      parameters:
+      - description: Player information
+        in: body
+        name: player
+        required: true
+        schema:
+          $ref: '#/definitions/player.CreatePlayerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/player.PlayerResponse'
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: Create a new player
+      tags:
+      - players
+  /api/players/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a player by their ID
+      parameters:
+      - description: Player ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/player.DeletePlayerResponse'
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+            type: object
+      summary: Delete a player
+      tags:
+      - players
+    put:
+      consumes:
+      - application/json
+      description: Update an existing player's information
+      parameters:
+      - description: Player ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Player information
+        in: body
+        name: player
+        required: true
+        schema:
+          $ref: '#/definitions/player.UpdatePlayerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/player.PlayerResponse'
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: Update a player
+      tags:
+      - players
+  /api/team-fees:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all team fees with optional date range filters
+      parameters:
+      - description: Start date (YYYY-MM-DD)
+        in: query
+        name: start_date
+        type: string
+      - description: End date (YYYY-MM-DD)
+        in: query
+        name: end_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/team_fee.TeamFeeListResponse'
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: List all team fees
+      tags:
+      - team-fees
+    post:
+      consumes:
+      - application/json
+      description: Create a new team fee with amount, payment date and description
+      parameters:
+      - description: Team fee information
+        in: body
+        name: team_fee
+        required: true
+        schema:
+          $ref: '#/definitions/team_fee.CreateTeamFeeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/team_fee.TeamFeeResponse'
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: Create a new team fee
+      tags:
+      - team-fees
+  /api/team-fees/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing team fee by ID
+      parameters:
+      - description: Team Fee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              message:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: Delete a team fee
+      tags:
+      - team-fees
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific team fee
+      parameters:
+      - description: Team Fee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/team_fee.TeamFeeResponse'
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: Get a team fee by ID
+      tags:
+      - team-fees
+    put:
+      consumes:
+      - application/json
+      description: Update an existing team fee's information
+      parameters:
+      - description: Team Fee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Team fee information
+        in: body
+        name: team_fee
+        required: true
+        schema:
+          $ref: '#/definitions/team_fee.UpdateTeamFeeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/team_fee.TeamFeeResponse'
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: Update a team fee
+      tags:
+      - team-fees
+  /api/teams:
+    get:
+      consumes:
+      - application/json
+      description: Get a paginated list of all teams
+      parameters:
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Items per page (default: 10, max: 100)'
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              data:
+                properties:
+                  pagination:
+                    properties:
+                      current_page:
+                        type: integer
+                      items_per_page:
+                        type: integer
+                      total_items:
+                        type: integer
+                      total_pages:
+                        type: integer
+                    type: object
+                  teams:
+                    items:
+                      $ref: '#/definitions/team.TeamResponse'
+                    type: array
+                type: object
+              success:
+                type: boolean
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: List all teams
+      tags:
+      - teams
+    post:
+      consumes:
+      - application/json
+      description: Create a new team with name, company name, and contact information
+      parameters:
+      - description: Team information
+        in: body
+        name: team
+        required: true
+        schema:
+          $ref: '#/definitions/team.CreateTeamRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/team.TeamResponse'
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: Create a new team
+      tags:
+      - teams
+  /api/teams/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing team by ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              message:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: Delete a team
+      tags:
+      - teams
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific team including match
+        statistics
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/team.TeamWithStatsResponse'
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: Get a team by ID
+      tags:
+      - teams
+    put:
+      consumes:
+      - application/json
+      description: Update an existing team's information
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Team information
+        in: body
+        name: team
+        required: true
+        schema:
+          $ref: '#/definitions/team.UpdateTeamRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/team.TeamResponse'
+              success:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+              success:
+                type: boolean
+            type: object
+      summary: Update a team
+      tags:
+      - teams
   /api/users/login:
     post:
       consumes:
@@ -88,14 +1398,14 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/v1.LoginRequest'
+          $ref: '#/definitions/auth.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.LoginResponse'
+            $ref: '#/definitions/auth.LoginResponse'
         "400":
           description: Bad Request
           schema:
@@ -131,14 +1441,14 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/v1.RegisterRequest'
+          $ref: '#/definitions/auth.RegisterRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/v1.RegisterResponse'
+            $ref: '#/definitions/auth.RegisterResponse'
         "400":
           description: Bad Request
           schema:

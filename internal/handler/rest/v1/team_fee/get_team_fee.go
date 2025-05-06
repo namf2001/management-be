@@ -7,7 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetTeamFee handles the request to get a team fee by ID
+// GetTeamFee
+// @Summary      Get a team fee by ID
+// @Description  Get detailed information about a specific team fee
+// @Tags         team-fees
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Team Fee ID"
+// @Success      200  {object}  object{success=bool,data=TeamFeeResponse}
+// @Failure      400  {object}  object{success=bool,error=string}
+// @Failure      404  {object}  object{success=bool,error=string}
+// @Router       /api/team-fees/{id} [get]
 func (h Handler) GetTeamFee(ctx *gin.Context) {
 	// Get team fee ID from URL parameter
 	idStr := ctx.Param("id")
