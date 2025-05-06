@@ -108,3 +108,49 @@ Content-Type: application/json
 ### Get team statistics
 GET {{baseUrl}}/teams/{{teamId}}/statistics
 Content-Type: application/json
+
+### Team Fee: Create a new team fee
+POST {{baseUrl}}/team-fees
+Content-Type: application/json
+
+{
+  "amount": 1000000,
+  "payment_date": "2024-06-01",
+  "description": "Tournament registration fee"
+}
+
+### Team Fee: Validation Test - Missing required fields
+POST {{baseUrl}}/team-fees
+Content-Type: application/json
+
+{
+  "amount": 500000
+}
+
+### Team Fee: Get team fee by ID
+# Thay {{teamFeeId}} bằng ID thực tế sau khi tạo
+@teamFeeId = 1
+GET {{baseUrl}}/team-fees/{{teamFeeId}}
+Content-Type: application/json
+
+### Team Fee: Update team fee
+PUT {{baseUrl}}/team-fees/{{teamFeeId}}
+Content-Type: application/json
+
+{
+  "amount": 2000000,
+  "payment_date": "2024-06-10",
+  "description": "League membership fee"
+}
+
+### Team Fee: Delete team fee
+DELETE {{baseUrl}}/team-fees/{{teamFeeId}}
+Content-Type: application/json
+
+### Team Fee: List all team fees
+GET {{baseUrl}}/team-fees
+Content-Type: application/json
+
+### Team Fee: List team fees with date filter
+GET {{baseUrl}}/team-fees?start_date=2024-06-01&end_date=2024-06-30
+Content-Type: application/json
