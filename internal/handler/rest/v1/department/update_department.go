@@ -8,12 +8,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// UpdateDepartmentRequest represents the request body for updating a department
+// @name UpdateDepartmentRequest
 type UpdateDepartmentRequest struct {
-	Name        string `json:"name" validate:"required,min=2,max=100"`
-	Description string `json:"description" validate:"required"`
+	Name        string `json:"name" validate:"required,min=2,max=100" example:"Engineering"`
+	Description string `json:"description" validate:"required" example:"Software Engineering Department"`
 }
 
-// UpdateDepartment handles the request to update an existing department
+// UpdateDepartment
+// @Summary      Update a department
+// @Description  Update an existing department's information
+// @Tags         departments
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Department ID"
+// @Param        department  body      UpdateDepartmentRequest  true  "Department information"
+// @Success      200  {object}  object{success=bool,data=Department}
+// @Failure      400  {object}  object{success=bool,error=string}
+// @Failure      500  {object}  object{success=bool,error=string}
+// @Router       /api/departments/{id} [put]
 func (h Handler) UpdateDepartment(ctx *gin.Context) {
 	// Get department ID from URL parameter
 	idStr := ctx.Param("id")

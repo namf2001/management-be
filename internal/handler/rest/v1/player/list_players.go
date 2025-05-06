@@ -7,35 +7,49 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// ListPlayersResponse represents the response for listing players
+// @name ListPlayersResponse
 type ListPlayersResponse struct {
 	Players []PlayerListItem `json:"players"`
-	Total   int              `json:"total"`
+	Total   int              `json:"total" example:"50"`
 }
 
+// PlayerListItem represents a player in the list
+// @name PlayerListItem
 type PlayerListItem struct {
-	ID             int              `json:"id"`
-	DepartmentID   int              `json:"department_id"`
-	DepartmentName string           `json:"department_name"`
-	FullName       string           `json:"full_name"`
-	JerseyNumber   int              `json:"jersey_number"`
-	Position       string           `json:"position"`
-	DateOfBirth    string           `json:"date_of_birth,omitempty"`
-	HeightCm       int              `json:"height_cm,omitempty"`
-	WeightKg       int              `json:"weight_kg,omitempty"`
-	Phone          string           `json:"phone,omitempty"`
-	Email          string           `json:"email,omitempty"`
-	IsActive       bool             `json:"is_active"`
+	ID             int              `json:"id" example:"1"`
+	DepartmentID   int              `json:"department_id" example:"1"`
+	DepartmentName string           `json:"department_name" example:"Engineering"`
+	FullName       string           `json:"full_name" example:"John Doe"`
+	JerseyNumber   int              `json:"jersey_number" example:"10"`
+	Position       string           `json:"position" example:"Forward"`
+	DateOfBirth    string           `json:"date_of_birth,omitempty" example:"1990-01-01"`
+	HeightCm       int              `json:"height_cm,omitempty" example:"180"`
+	WeightKg       int              `json:"weight_kg,omitempty" example:"75"`
+	Phone          string           `json:"phone,omitempty" example:"+1234567890"`
+	Email          string           `json:"email,omitempty" example:"john.doe@example.com"`
+	IsActive       bool             `json:"is_active" example:"true"`
 	Statistics     PlayerBasicStats `json:"statistics"`
 }
 
+// PlayerBasicStats represents basic statistics for a player
+// @name PlayerBasicStats
 type PlayerBasicStats struct {
-	TotalMatches       int `json:"total_matches"`
-	TotalMinutesPlayed int `json:"total_minutes_played"`
-	TotalGoals         int `json:"total_goals"`
-	TotalAssists       int `json:"total_assists"`
+	TotalMatches       int `json:"total_matches" example:"10"`
+	TotalMinutesPlayed int `json:"total_minutes_played" example:"900"`
+	TotalGoals         int `json:"total_goals" example:"5"`
+	TotalAssists       int `json:"total_assists" example:"3"`
 }
 
-// ListPlayers handles the request to get all players with optional filters
+// ListPlayers
+// @Summary      List all players
+// @Description  Get a list of all players with their basic statistics
+// @Tags         players
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  ListPlayersResponse
+// @Failure      500  {object}  object{success=bool,error=string}
+// @Router       /api/players [get]
 func (h Handler) ListPlayers(ctx *gin.Context) {
 	// Get query parameters
 	departmentIDStr := ctx.Query("department_id")

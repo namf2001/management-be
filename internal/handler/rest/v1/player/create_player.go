@@ -9,19 +9,31 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreatePlayerRequest represents the request body for creating a player
+// @name CreatePlayerRequest
 type CreatePlayerRequest struct {
-	DepartmentID int    `json:"department_id" validate:"required,min=1"`
-	FullName     string `json:"full_name" validate:"required,min=2,max=100"`
-	JerseyNumber int    `json:"jersey_number" validate:"required,min=1,max=999"`
-	Position     string `json:"position" validate:"required"`
-	DateOfBirth  string `json:"date_of_birth" validate:"omitempty,datetime=2006-01-02"`
-	HeightCm     int    `json:"height_cm" validate:"omitempty,min=50,max=300"`
-	WeightKg     int    `json:"weight_kg" validate:"omitempty,min=30,max=200"`
-	Phone        string `json:"phone" validate:"omitempty,min=5,max=20"`
-	Email        string `json:"email" validate:"omitempty,email"`
+	DepartmentID int    `json:"department_id" validate:"required,min=1" example:"1"`
+	FullName     string `json:"full_name" validate:"required,min=2,max=100" example:"John Doe"`
+	JerseyNumber int    `json:"jersey_number" validate:"required,min=1,max=999" example:"10"`
+	Position     string `json:"position" validate:"required" example:"Forward"`
+	DateOfBirth  string `json:"date_of_birth" validate:"omitempty,datetime=2006-01-02" example:"1990-01-01"`
+	HeightCm     int    `json:"height_cm" validate:"omitempty,min=50,max=300" example:"180"`
+	WeightKg     int    `json:"weight_kg" validate:"omitempty,min=30,max=200" example:"75"`
+	Phone        string `json:"phone" validate:"omitempty,min=5,max=20" example:"+1234567890"`
+	Email        string `json:"email" validate:"omitempty,email" example:"john.doe@example.com"`
 }
 
-// CreatePlayer handles the request to create a new player
+// CreatePlayer
+// @Summary      Create a new player
+// @Description  Create a new player with their details
+// @Tags         players
+// @Accept       json
+// @Produce      json
+// @Param        player  body      CreatePlayerRequest  true  "Player information"
+// @Success      201  {object}  object{success=bool,data=PlayerResponse}
+// @Failure      400  {object}  object{success=bool,error=string}
+// @Failure      500  {object}  object{success=bool,error=string}
+// @Router       /api/players [post]
 func (h Handler) CreatePlayer(ctx *gin.Context) {
 	// Parse request body
 	var req CreatePlayerRequest

@@ -9,20 +9,34 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// UpdatePlayerRequest represents the request body for updating a player
+// @name UpdatePlayerRequest
 type UpdatePlayerRequest struct {
-	DepartmentID int    `json:"department_id"`
-	FullName     string `json:"full_name"`
-	JerseyNumber int    `json:"jersey_number"`
-	Position     string `json:"position"`
-	DateOfBirth  string `json:"date_of_birth,omitempty"`
-	HeightCm     int    `json:"height_cm,omitempty"`
-	WeightKg     int    `json:"weight_kg,omitempty"`
-	Phone        string `json:"phone,omitempty"`
-	Email        string `json:"email,omitempty"`
-	IsActive     bool   `json:"is_active"`
+	DepartmentID int    `json:"department_id" example:"1"`
+	FullName     string `json:"full_name" example:"John Doe"`
+	JerseyNumber int    `json:"jersey_number" example:"10"`
+	Position     string `json:"position" example:"Forward"`
+	DateOfBirth  string `json:"date_of_birth,omitempty" example:"1990-01-01"`
+	HeightCm     int    `json:"height_cm,omitempty" example:"180"`
+	WeightKg     int    `json:"weight_kg,omitempty" example:"75"`
+	Phone        string `json:"phone,omitempty" example:"+1234567890"`
+	Email        string `json:"email,omitempty" example:"john.doe@example.com"`
+	IsActive     bool   `json:"is_active" example:"true"`
 }
 
-// UpdatePlayer handles the request to update a player by ID
+// UpdatePlayer
+// @Summary      Update a player
+// @Description  Update an existing player's information
+// @Tags         players
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Player ID"
+// @Param        player  body      UpdatePlayerRequest  true  "Player information"
+// @Success      200  {object}  object{success=bool,data=PlayerResponse}
+// @Failure      400  {object}  object{success=bool,error=string}
+// @Failure      404  {object}  object{success=bool,error=string}
+// @Failure      500  {object}  object{success=bool,error=string}
+// @Router       /api/players/{id} [put]
 func (h Handler) UpdatePlayer(ctx *gin.Context) {
 	// Get player ID from URL parameter
 	idStr := ctx.Param("id")

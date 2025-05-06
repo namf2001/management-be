@@ -1,12 +1,23 @@
 package department
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
-// GetDepartment handles the request to get a department by ID
+// GetDepartment
+// @Summary      Get a department by ID
+// @Description  Get detailed information about a specific department
+// @Tags         departments
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Department ID"
+// @Success      200  {object}  object{success=bool,data=DepartmentResponse}
+// @Failure      400  {object}  object{success=bool,error=string}
+// @Failure      404  {object}  object{success=bool,error=string}
+// @Router       /api/departments/{id} [get]
 func (h Handler) GetDepartment(ctx *gin.Context) {
 	// Get department ID from URL parameter
 	idStr := ctx.Param("id")

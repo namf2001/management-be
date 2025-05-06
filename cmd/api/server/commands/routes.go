@@ -13,12 +13,14 @@ import (
 	"management-be/internal/controller/match"
 	"management-be/internal/controller/player"
 	"management-be/internal/controller/team"
+	"management-be/internal/controller/team_fee"
 	"management-be/internal/controller/user"
 	userHandler "management-be/internal/handler/rest/v1/auth"
 	departmentHandler "management-be/internal/handler/rest/v1/department"
 	matchHandler "management-be/internal/handler/rest/v1/match"
 	playerHandler "management-be/internal/handler/rest/v1/player"
 	teamHandler "management-be/internal/handler/rest/v1/team"
+	teamFeeHandler "management-be/internal/handler/rest/v1/team_fee"
 	"management-be/internal/pkg/middleware/auth"
 	"management-be/internal/repository"
 )
@@ -61,6 +63,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	teamController := team.NewController(repoRegistry)
 	playerController := player.NewController(repoRegistry)
 	matchController := match.NewController(repoRegistry)
+	teamFeeController := team_fee.NewController(repoRegistry)
 
 	// Initialize handlers
 	userH := userHandler.NewHandler(userController)
@@ -68,6 +71,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	departmentH := departmentHandler.NewHandler(departmentController)
 	matchH := matchHandler.NewHandler(teamController, playerController, matchController)
 	playerH := playerHandler.NewHandler(teamController, playerController, matchController)
+	teamFeeH := teamFeeHandler.NewHandler(teamFeeController)
 
 	// Routes with auth
 	userGroup := r.Group("/api/auth")
@@ -116,6 +120,16 @@ func (s *Server) RegisterRoutes() http.Handler {
 		playerGroup.PUT("/:id", playerH.UpdatePlayer)
 		playerGroup.DELETE("/:id", playerH.DeletePlayer)
 		playerGroup.GET("/:id/statistics", playerH.GetPlayerStatistics)
+	}
+
+	teamFeeGroup := r.Group("/api/team-fees")
+	{
+		teamFeeGroup.GET("", teamFeeH.ListTeamFees)
+		teamFeeGroup.GET("/:id", teamFeeH.GetTeamFee)
+		teamFeeGroup.POST("", teamFeeH.CreateTeamFee)
+		teamFeeGroup.PUT("/:id", teamFeeH.UpdateTeamFee)
+		teamFeeGroup.DELETE("/:id", teamFeeH.DeleteTeamFee)
+		teamFeeGroup.GET("/statistics", teamFeeH.GetTeamFeeStatistics)
 	}
 
 	return r

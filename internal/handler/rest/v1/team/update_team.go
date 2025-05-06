@@ -9,15 +9,27 @@ import (
 )
 
 // UpdateTeamRequest represents the request body for updating a team
+// @name UpdateTeamRequest
 type UpdateTeamRequest struct {
-	Name          string `json:"name" validate:"required,min=2,max=100"`
-	CompanyName   string `json:"company_name" validate:"required"`
-	ContactPerson string `json:"contact_person" validate:"required"`
-	ContactPhone  string `json:"contact_phone" validate:"omitempty,min=5,max=20"`
-	ContactEmail  string `json:"contact_email" validate:"omitempty,email"`
+	Name          string `json:"name" validate:"required,min=2,max=100" example:"FC Barcelona Updated"`
+	CompanyName   string `json:"company_name" validate:"required" example:"FC Barcelona Sports Club Updated"`
+	ContactPerson string `json:"contact_person" validate:"required" example:"Updated Contact Person"`
+	ContactPhone  string `json:"contact_phone" validate:"omitempty,min=5,max=20" example:"987654321"`
+	ContactEmail  string `json:"contact_email" validate:"omitempty,email" example:"updated@fcbarcelona.com"`
 }
 
-// UpdateTeam handles the request to update an existing team
+// UpdateTeam
+// @Summary      Update a team
+// @Description  Update an existing team's information
+// @Tags         teams
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Team ID"
+// @Param        team  body      UpdateTeamRequest  true  "Team information"
+// @Success      200  {object}  object{success=bool,data=TeamResponse}
+// @Failure      400  {object}  object{success=bool,error=string}
+// @Failure      500  {object}  object{success=bool,error=string}
+// @Router       /api/teams/{id} [put]
 func (h Handler) UpdateTeam(ctx *gin.Context) {
 	// Get team ID from URL parameter
 	idStr := ctx.Param("id")

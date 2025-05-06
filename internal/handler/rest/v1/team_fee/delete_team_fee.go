@@ -1,4 +1,4 @@
-package department
+package team_fee
 
 import (
 	"net/http"
@@ -7,35 +7,35 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// DeleteDepartment
-// @Summary      Delete a department
-// @Description  Delete a department by its ID
-// @Tags         departments
+// DeleteTeamFee
+// @Summary      Delete a team fee
+// @Description  Delete an existing team fee by ID
+// @Tags         team-fees
 // @Accept       json
 // @Produce      json
-// @Param        id   path      int  true  "Department ID"
+// @Param        id   path      int  true  "Team Fee ID"
 // @Success      200  {object}  object{success=bool,message=string}
 // @Failure      400  {object}  object{success=bool,error=string}
 // @Failure      500  {object}  object{success=bool,error=string}
-// @Router       /api/departments/{id} [delete]
-func (h Handler) DeleteDepartment(ctx *gin.Context) {
-	// Get department ID from URL parameter
+// @Router       /api/team-fees/{id} [delete]
+func (h Handler) DeleteTeamFee(ctx *gin.Context) {
+	// Get team fee ID from URL parameter
 	idStr := ctx.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"error":   "Invalid department ID",
+			"error":   "Invalid team fee ID",
 		})
 		return
 	}
 
-	// Delete department
-	err = h.departmentCtrl.DeleteDepartment(ctx.Request.Context(), id)
+	// Delete team fee
+	err = h.teamFeeCtrl.DeleteTeamFee(ctx.Request.Context(), id)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
-			"error":   err.Error(),
+			"error":   "Failed to delete team fee",
 		})
 		return
 	}
@@ -43,6 +43,6 @@ func (h Handler) DeleteDepartment(ctx *gin.Context) {
 	// Return success message
 	ctx.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"message": "Department deleted successfully",
+		"message": "Team fee deleted successfully",
 	})
 }

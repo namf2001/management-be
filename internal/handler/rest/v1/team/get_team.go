@@ -1,12 +1,23 @@
 package team
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
-// GetTeam handles the request to get a team by ID
+// GetTeam
+// @Summary      Get a team by ID
+// @Description  Get detailed information about a specific team including match statistics
+// @Tags         teams
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Team ID"
+// @Success      200  {object}  object{success=bool,data=TeamWithStatsResponse}
+// @Failure      400  {object}  object{success=bool,error=string}
+// @Failure      404  {object}  object{success=bool,error=string}
+// @Router       /api/teams/{id} [get]
 func (h Handler) GetTeam(ctx *gin.Context) {
 	// Get team ID from URL parameter
 	idStr := ctx.Param("id")
