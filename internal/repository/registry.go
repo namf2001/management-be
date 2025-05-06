@@ -5,6 +5,7 @@ import (
 	"management-be/internal/repository/department"
 	"management-be/internal/repository/ent"
 	"management-be/internal/repository/match"
+	"management-be/internal/repository/match_statistics"
 	"management-be/internal/repository/player"
 	"management-be/internal/repository/player_statistics"
 	"management-be/internal/repository/team"
@@ -20,6 +21,7 @@ type Registry interface {
 	Match() match.Repository
 	TeamFee() team_fee.Repository
 	PlayerStatistics() player_statistics.Repository
+	MatchStatistics() match_statistics.Repository
 	WithTransaction(ctx context.Context, fn func(tx *ent.Tx) error) error
 }
 
@@ -32,6 +34,7 @@ type impl struct {
 	match            match.Repository
 	teamFee          team_fee.Repository
 	playerStatistics player_statistics.Repository
+	matchStatistics  match_statistics.Repository
 }
 
 func NewRegistry(entConn *ent.Client) Registry {
@@ -44,6 +47,7 @@ func NewRegistry(entConn *ent.Client) Registry {
 		match:            match.NewRepository(entConn),
 		teamFee:          team_fee.NewRepository(entConn),
 		playerStatistics: player_statistics.NewRepository(entConn),
+		matchStatistics:  match_statistics.NewRepository(entConn),
 	}
 }
 
@@ -73,6 +77,10 @@ func (i *impl) Match() match.Repository {
 
 func (i *impl) TeamFee() team_fee.Repository {
 	return i.teamFee
+}
+
+func (i *impl) MatchStatistics() match_statistics.Repository {
+	return i.matchStatistics
 }
 
 // WithTransaction executes the given function within a transaction
