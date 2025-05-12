@@ -17,11 +17,11 @@ type UpdateMatchPlayersRequest struct {
 // MatchPlayerUpdateRequest represents a player's performance in a match for update
 type MatchPlayerUpdateRequest struct {
 	PlayerID      int  `json:"player_id" binding:"required"`
-	MinutesPlayed int  `json:"minutes_played"`
-	GoalsScored   int  `json:"goals_scored"`
-	Assists       int  `json:"assists"`
-	YellowCards   int  `json:"yellow_cards"`
-	RedCard       bool `json:"red_card"`
+	MinutesPlayed int32  `json:"minutes_played"`
+	GoalsScored   int32  `json:"goals_scored"`
+	Assists       int32  `json:"assists"`
+	YellowCards   int32  `json:"yellow_cards"`
+	RedCard       bool   `json:"red_card"`
 }
 
 // UpdateMatchPlayersResponse represents the response for updating match players
@@ -99,10 +99,10 @@ func (h Handler) UpdateMatchPlayers(ctx *gin.Context) {
 			PlayerName:    "", // Need to fetch player name
 			JerseyNumber:  0,  // Need to fetch jersey number
 			Position:      "", // Need to fetch position
-			MinutesPlayed: player.MinutesPlayed,
-			GoalsScored:   player.GoalsScored,
-			Assists:       player.Assists,
-			YellowCards:   player.YellowCards,
+			MinutesPlayed: int(player.MinutesPlayed),
+			GoalsScored:   int(player.GoalsScored),
+			Assists:       int(player.Assists),
+			YellowCards:   int(player.YellowCards),
 			RedCard:       player.RedCard,
 		})
 	}

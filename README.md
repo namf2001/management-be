@@ -1,6 +1,40 @@
-# Project management-be
+# Football Team Management Backend
 
-One Paragraph of project description goes here
+A comprehensive backend system for managing company football teams, players, matches, and team fees. This project provides REST APIs for football team management operations.
+
+> **Note:** This project is currently under development.
+
+## Project Overview
+
+This backend service provides functionality for:
+- Team management (creation, updates, listing)
+- Player management and statistics
+- Match scheduling and results recording
+- Department organization
+- Team fee tracking and management
+- User authentication and authorization
+
+## Project Structure
+
+```
+management-be/
+├── build/ - Docker configuration files
+├── cmd/ - Application entry points
+├── configs/ - Configuration files
+├── data/
+│   ├── migrations/ - Database migration files
+│   └── seed/ - Database seed data
+├── docs/ - API documentation
+│   └── swagger/ - OpenAPI/Swagger documentation
+├── internal/
+│   ├── controller/ - Business logic
+│   ├── database/ - Database connection
+│   ├── handler/ - API handlers
+│   ├── model/ - Data models
+│   ├── pkg/ - Internal packages
+│   └── repository/ - Data access layer
+└── test-api/ - API test files
+```
 
 ## Getting Started
 
@@ -90,3 +124,48 @@ make api-gen-mocks
 5. Run `make api-gen-models` to generate models from the database
 6. Run `make api-go-generate` to generate Go code
 7. Run `make api-run` to run the API service
+
+### API Endpoints
+
+The application provides the following API endpoints:
+
+- **Auth API**: User authentication and authorization
+- **Teams API**: Create, update, delete, and list football teams
+- **Players API**: Manage player profiles and statistics
+- **Matches API**: Schedule matches and record results
+- **Team Fees API**: Track team payments and expenses
+- **Departments API**: Organize players by department
+
+For detailed API documentation, see the files in the `docs/` directory or run the application and access the Swagger UI.
+
+### Database Schema
+
+The database includes tables for:
+- Teams
+- Players
+- Matches
+- Player statistics
+- Team fees
+- Departments
+- Users
+
+## Development
+
+To run tests:
+```bash
+make test
+```
+
+For API testing, you can use the HTTP files in the `test-api/` directory with a REST client like VS Code's REST Client extension.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Contributors
+
+Add your name and contact information here.
+
+## Last Updated
+
+May 8, 2025
