@@ -95,7 +95,7 @@ func (h Handler) GetPlayer(ctx *gin.Context) {
 			"data": PlayerResponse{
 				ID:             player.ID,
 				DepartmentID:   player.DepartmentID,
-				DepartmentName: "", // Department name would be fetched in a real implementation
+				DepartmentName: player.DepartmentName,
 				FullName:       player.FullName,
 				JerseyNumber:   jerseyNumber,
 				Position:       player.Position,
@@ -145,7 +145,7 @@ func (h Handler) GetPlayer(ctx *gin.Context) {
 			PlayerResponse: PlayerResponse{
 				ID:             player.ID,
 				DepartmentID:   player.DepartmentID,
-				DepartmentName: "", // Department name would be fetched in a real implementation
+				DepartmentName: player.DepartmentName,
 				FullName:       player.FullName,
 				JerseyNumber:   jerseyNumber,
 				Position:       player.Position,

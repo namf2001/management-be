@@ -107,10 +107,9 @@ func (h Handler) CreatePlayer(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{
 		"success": true,
 		"data": PlayerResponse{
-			ID:           newPlayer.ID,
-			DepartmentID: newPlayer.DepartmentID,
-			// DepartmentName would be fetched from a department service
-			DepartmentName: "", // This would be populated in a real implementation
+			ID:             newPlayer.ID,
+			DepartmentID:   newPlayer.DepartmentID,
+			DepartmentName: newPlayer.DepartmentName,
 			FullName:       newPlayer.FullName,
 			JerseyNumber:   jerseyNumber,
 			Position:       newPlayer.Position,

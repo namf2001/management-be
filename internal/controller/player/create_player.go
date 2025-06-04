@@ -24,7 +24,7 @@ type InputPlayerController struct {
 
 // CreatePlayer creates a new player in the database.
 func (i impl) CreatePlayer(ctx context.Context, input InputPlayerController) (model.Player, error) {
-	_, err := i.repo.Department().GetDepartmentByID(ctx, input.DepartmentID)
+	department, err := i.repo.Department().GetDepartmentByID(ctx, input.DepartmentID)
 	if err != nil {
 		return model.Player{}, err
 	}
@@ -53,6 +53,9 @@ func (i impl) CreatePlayer(ctx context.Context, input InputPlayerController) (mo
 	if err != nil {
 		return model.Player{}, err
 	}
+
+	// Add department name to the player model
+	player.DepartmentName = department.Name
 
 	return player, nil
 }
